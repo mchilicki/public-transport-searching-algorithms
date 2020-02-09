@@ -6,8 +6,16 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chilicki.Ptsa.Data", "Chilicki.Ptsa.Data\Chilicki.Ptsa.Data.csproj", "{ED619C2C-8DFF-43B4-AC35-5C1FF6047A1D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chilicki.Ptsa.Domain.Search", "Chilicki.Ptsa.Domain.Search\Chilicki.Ptsa.Domain.Search.csproj", "{D51781E2-336D-4766-8E40-09E7A7488B41}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ED619C2C-8DFF-43B4-AC35-5C1FF6047A1D} = {ED619C2C-8DFF-43B4-AC35-5C1FF6047A1D}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chilicki.Ptsa.Gtfs", "Chilicki.Ptsa.Gtfs\Chilicki.Ptsa.Gtfs.csproj", "{7987B14D-4873-484B-A24C-B25F368D468D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chilicki.Ptsa.Search", "Chilicki.Ptsa.Search\Chilicki.Ptsa.Search.csproj", "{C681CB99-7E13-45AE-A5ED-6B26FA754F6C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chilicki.Ptsa.Domain.Gtfs", "Chilicki.Ptsa.Domain.Gtfs\Chilicki.Ptsa.Domain.Gtfs.csproj", "{342F8891-8148-4C9A-A0DA-67F962F1DE5B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ED619C2C-8DFF-43B4-AC35-5C1FF6047A1D} = {ED619C2C-8DFF-43B4-AC35-5C1FF6047A1D}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +31,14 @@ Global
 		{D51781E2-336D-4766-8E40-09E7A7488B41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D51781E2-336D-4766-8E40-09E7A7488B41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D51781E2-336D-4766-8E40-09E7A7488B41}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7987B14D-4873-484B-A24C-B25F368D468D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7987B14D-4873-484B-A24C-B25F368D468D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7987B14D-4873-484B-A24C-B25F368D468D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7987B14D-4873-484B-A24C-B25F368D468D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C681CB99-7E13-45AE-A5ED-6B26FA754F6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C681CB99-7E13-45AE-A5ED-6B26FA754F6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C681CB99-7E13-45AE-A5ED-6B26FA754F6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C681CB99-7E13-45AE-A5ED-6B26FA754F6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{342F8891-8148-4C9A-A0DA-67F962F1DE5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{342F8891-8148-4C9A-A0DA-67F962F1DE5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{342F8891-8148-4C9A-A0DA-67F962F1DE5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{342F8891-8148-4C9A-A0DA-67F962F1DE5B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
