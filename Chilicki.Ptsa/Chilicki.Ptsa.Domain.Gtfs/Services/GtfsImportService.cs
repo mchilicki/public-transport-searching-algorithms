@@ -21,7 +21,7 @@ namespace Chilicki.Ptsa.Domain.Gtfs.Services
             var stops = ReadStops($"{gtfsFolderPath}{STOPS}");
             var routes = ReadRoutes($"{gtfsFolderPath}{ROUTES}", agency);
             var trips = ReadTrips($"{gtfsFolderPath}{TRIPS}", routes);            
-            var stopTimes = ReadStopTimes($"{gtfsFolderPath}{STOP_TIMES}");
+            var stopTimes = ReadStopTimes($"{gtfsFolderPath}{STOP_TIMES}", trips, stops);
         }
 
         private Agency ReadAgency(string path)
@@ -105,6 +105,7 @@ namespace Chilicki.Ptsa.Domain.Gtfs.Services
         private IEnumerable<Trip> ReadTrips(string path, IEnumerable<Route> routes)
         {
             var trips = new List<Trip>();
+            string serviceId = null;
             using (FileStream fs = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             using (BufferedStream bs = new BufferedStream(fs))
             using (StreamReader sr = new StreamReader(bs))
@@ -113,24 +114,36 @@ namespace Chilicki.Ptsa.Domain.Gtfs.Services
                 bool isFirstLine = true;
                 while ((line = sr.ReadLine()) != null)
                 {
+                    var splittedLine = line.Split(",");
+                    if (!isFirstLine && serviceId == null)
+                    {
+                        serviceId = splittedLine[1];
+                    }
                     if (isFirstLine)
                     {
                         isFirstLine = false;
                         continue;
-                    }
-                    var splittedLine = line.Split(",");
-                    var trip = new Trip()
+                    }    
+                    if (serviceId == splittedLine[1])
                     {
-                        GtfsId = splittedLine[2].Replace("\"", string.Empty),
-                        HeadSign = splittedLine[3].Replace("\"", string.Empty),
-                    };
-                    trips.Add(trip);
+                        var route = routes.FirstOrDefault(p => p.GtfsId == splittedLine[0]);
+                        if (route != null)
+                        {
+                            var trip = new Trip()
+                            {
+                                GtfsId = splittedLine[2].Replace("\"", string.Empty),
+                                HeadSign = splittedLine[3].Replace("\"", string.Empty),
+                                Route = route,
+                            };                            
+                            trips.Add(trip);                            
+                        }                                             
+                    }                    
                 }
             }
             return trips;
         }
 
-        private IEnumerable<StopTime> ReadStopTimes(string path)
+        private IEnumerable<StopTime> ReadStopTimes(string path, IEnumerable<Trip> trips, IEnumerable<Stop> stops)
         {
             var stopTimes = new List<StopTime>();
             using (FileStream fs = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -151,12 +164,22 @@ namespace Chilicki.Ptsa.Domain.Gtfs.Services
                         int.Parse(splittedLine[2].Split(':')[0]),    // hours
                         int.Parse(splittedLine[2].Split(':')[1]),    // minutes
                         int.Parse(splittedLine[2].Split(':')[2]));   // seconds
-                    var stopTime = new StopTime()
+                    var trip = trips.FirstOrDefault(p => p.GtfsId == splittedLine[0].Replace("\"", string.Empty));
+                    if (trip != null)
                     {
-                        DepartureTime = timespan,
-                        StopSequence = int.Parse(splittedLine[4]),
-                    };
-                    stopTimes.Add(stopTime);
+                        var stop = stops.FirstOrDefault(p => p.GtfsId == splittedLine[3].Replace("\"", string.Empty));
+                        if (stop != null)
+                        {
+                            var stopTime = new StopTime()
+                            {
+                                DepartureTime = timespan,
+                                StopSequence = int.Parse(splittedLine[4]),
+                                Trip = trip,
+                                Stop = stop,
+                            };
+                            stopTimes.Add(stopTime);
+                        }
+                    }                                         
                 }
             }
             return stopTimes;
