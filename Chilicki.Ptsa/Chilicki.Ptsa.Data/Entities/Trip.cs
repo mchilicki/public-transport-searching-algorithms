@@ -7,8 +7,8 @@ namespace Chilicki.Ptsa.Data.Entities
 {
     public class Trip : BaseGtfsEntity
     {
-        public Route Route { get; set; }
+        public virtual Route Route { get; set; }
         public string HeadSign { get; set; }
-        public ICollection<StopTime> StopTimes { get; set; }
+        public virtual ICollection<StopTime> StopTimes { get; set; }
     }
 }

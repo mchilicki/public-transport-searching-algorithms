@@ -8,6 +8,6 @@ namespace Chilicki.Ptsa.Data.Entities
     public class Agency : BaseEntity
     {
         public string Name { get; set; }
-        public ICollection<Route> Routes { get; set; }
+        public virtual ICollection<Route> Routes { get; set; }
     }
 }

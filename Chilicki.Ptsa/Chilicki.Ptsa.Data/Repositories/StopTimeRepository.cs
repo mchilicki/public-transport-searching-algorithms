@@ -1,0 +1,15 @@
+﻿using Chilicki.Ptsa.Data.Entities;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Chilicki.Ptsa.Data.Repositories
+{
+    public class StopTimeRepository : BaseRepository<StopTime>
+    {
+        public StopTimeRepository(DbContext context) : base(context)
+        {
+        }
+    }
+}
