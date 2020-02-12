@@ -3,6 +3,7 @@ using Chilicki.Ptsa.Search.Configurations.DependencyInjection;
 using Chilicki.Ptsa.Search.Views;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -31,8 +32,10 @@ namespace Chilicki.Ptsa.Gtfs
                 (Configuration.GetSection(nameof(AppSettings)));
             serviceCollection.Configure<ConnectionStrings>
                 (Configuration.GetSection(nameof(ConnectionStrings)));
+            ServiceProvider = serviceCollection.BuildServiceProvider();
             var searchDependencyInjection = new SearchDependencyInjection();
-            searchDependencyInjection.Configure(serviceCollection);
+            var connectionStrings = ServiceProvider.GetService<IOptions<ConnectionStrings>>().Value;
+            searchDependencyInjection.Configure(serviceCollection, connectionStrings);
             ServiceProvider = serviceCollection.BuildServiceProvider();
             var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();

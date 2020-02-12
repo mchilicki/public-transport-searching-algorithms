@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Chilicki.Ptsa.Domain.Search.Entities.Base
+namespace Chilicki.Ptsa.Data.Entities.Base
 {
     public class BaseGtfsEntity : BaseEntity
     {

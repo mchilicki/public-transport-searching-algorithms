@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Chilicki.Ptsa.Data\Chilicki.Ptsa.Data.csproj" />
     <ProjectReference Include="..\Chilicki.Ptsa.Domain.Search\Chilicki.Ptsa.Domain.Search.csproj" />
   </ItemGroup>
 

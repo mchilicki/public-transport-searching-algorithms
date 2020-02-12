@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Chilicki.Ptsa.Domain.Search.Entities
+namespace Chilicki.Ptsa.Data.Entities
 {
     public enum TripDirection
     {

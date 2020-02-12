@@ -1,12 +1,13 @@
-﻿using Chilicki.Ptsa.Domain.Search.Entities.Base;
+﻿using Chilicki.Ptsa.Data.Entities.Base;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Chilicki.Ptsa.Domain.Search.Entities
+namespace Chilicki.Ptsa.Data.Entities
 {
     public class Agency : BaseEntity
     {
         public string Name { get; set; }
+        public ICollection<Route> Routes { get; set; }
     }
 }
