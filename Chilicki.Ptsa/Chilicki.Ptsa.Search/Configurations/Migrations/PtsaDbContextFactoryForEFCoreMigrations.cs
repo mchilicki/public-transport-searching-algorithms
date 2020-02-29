@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Chilicki.Ptsa.Data.Databases;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -6,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Chilicki.Ptsa.Data.Databases
+namespace Chilicki.Ptsa.Search.Configurations.Migrations
 {
     public class PtsaDbContextFactoryForEFCoreMigrations : IDesignTimeDbContextFactory<PtsaDbContext>
     {
@@ -28,7 +29,7 @@ namespace Chilicki.Ptsa.Data.Databases
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile($"appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{environmentName}.json", optional: false, reloadOnChange: true)
+                //.AddJsonFile($"appsettings.{environmentName}.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables();
             var configuration = builder.Build();
             return configuration;

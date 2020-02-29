@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "Chilicki.Ptsa.Search": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "GtfsImport"
+      }
+    },
+    "GtfsImport": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "GtfsImport"
+      }
+    }
+  }
+}

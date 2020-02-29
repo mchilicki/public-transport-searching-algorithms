@@ -1,0 +1,42 @@
+﻿using Chilicki.Ptsa.Data.Configurations.ProjectConfiguration;
+using Chilicki.Ptsa.Search.Configurations.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+
+namespace Chilicki.Ptsa.Search.Configurations.Startup
+{
+    public class StartupService
+    {
+        public IServiceProvider ServiceProvider { get; private set; }
+        public IConfiguration Configuration { get; private set; }
+
+        public void Run()
+        {
+            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile($"appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{environmentName}.json", optional: false, reloadOnChange: true)
+                .AddEnvironmentVariables();
+            Configuration = builder.Build();
+
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.Configure<AppSettings>
+                (Configuration.GetSection(nameof(AppSettings)));
+            serviceCollection.Configure<ConnectionStrings>
+                (Configuration.GetSection(nameof(ConnectionStrings)));
+            ServiceProvider = serviceCollection.BuildServiceProvider();
+            var searchDependencyInjection = new SearchDependencyInjection();
+            var connectionStrings = ServiceProvider.GetService<IOptions<ConnectionStrings>>().Value;
+            searchDependencyInjection.Configure(serviceCollection, connectionStrings);
+            ServiceProvider = serviceCollection.BuildServiceProvider();
+            var service = ServiceProvider.GetRequiredService<ConsoleSearchSerivce>();
+            service.Run();
+        }
+    }
+}
