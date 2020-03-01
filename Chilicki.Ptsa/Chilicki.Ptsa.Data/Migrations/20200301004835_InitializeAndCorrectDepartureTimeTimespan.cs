@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Chilicki.Ptsa.Data.Migrations
 {
-    public partial class InitilizeDatabase : Migration
+    public partial class InitializeAndCorrectDepartureTimeTimespan : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -82,7 +82,7 @@ namespace Chilicki.Ptsa.Data.Migrations
                     Id = table.Column<Guid>(nullable: false, defaultValueSql: "newid()"),
                     TripId = table.Column<Guid>(nullable: false),
                     StopId = table.Column<Guid>(nullable: false),
-                    DepartureTime = table.Column<TimeSpan>(nullable: false),
+                    DepartureTime = table.Column<long>(nullable: false),
                     StopSequence = table.Column<int>(nullable: false)
                 },
                 constraints: table =>

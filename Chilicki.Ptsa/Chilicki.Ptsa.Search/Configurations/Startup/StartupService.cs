@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Chilicki.Ptsa.Search.Configurations.Startup
 {
@@ -15,7 +16,7 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
         public IServiceProvider ServiceProvider { get; private set; }
         public IConfiguration Configuration { get; private set; }
 
-        public void Run()
+        public async Task Run()
         {
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             var builder = new ConfigurationBuilder()
@@ -36,7 +37,7 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
             searchDependencyInjection.Configure(serviceCollection, connectionStrings);
             ServiceProvider = serviceCollection.BuildServiceProvider();
             var service = ServiceProvider.GetRequiredService<ConsoleSearchSerivce>();
-            service.Run();
+            await service.Run();
         }
     }
 }

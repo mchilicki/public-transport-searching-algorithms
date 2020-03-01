@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Chilicki.Ptsa.Search
 {
@@ -11,8 +12,8 @@ namespace Chilicki.Ptsa.Search
     {
         public static void Main(string[] args)
         {
-            new StartupService().Run();
-            Console.ReadKey();
+            Task task = new StartupService().Run();
+            task.Wait();
         }
     }
 }

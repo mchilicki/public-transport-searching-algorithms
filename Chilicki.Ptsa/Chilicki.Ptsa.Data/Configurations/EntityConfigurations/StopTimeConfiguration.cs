@@ -1,6 +1,7 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -21,6 +22,8 @@ namespace Chilicki.Ptsa.Data.Configurations.EntityConfigurations
                 .HasForeignKey("StopId")
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
+            builder.Property(p => p.DepartureTime)
+                .HasConversion(new TimeSpanToTicksConverter());
         }
     }
 }

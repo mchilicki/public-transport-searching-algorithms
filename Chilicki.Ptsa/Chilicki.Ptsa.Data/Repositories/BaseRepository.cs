@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Chilicki.Ptsa.Data.Repositories
 {
-    public class BaseRepository<TEntity> where TEntity : BaseEntity
+    public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : BaseEntity
     {
         protected DbContext context;
         protected DbSet<TEntity> entities;
@@ -25,18 +25,9 @@ namespace Chilicki.Ptsa.Data.Repositories
             return await entities.IncludeAll().ToListAsync();
         }
 
-        public async Task<TEntity> FindAsync(params Guid[] keyValues)
+        public async Task<TEntity> FindAsync(Guid id)
         {
-            if (keyValues.Count() > 1)
-                throw new InvalidOperationException("Wrong number of keyValues");
-            return await entities.IncludeAll().SingleOrDefaultAsync(p => p.Id == keyValues[0]);
-        }
-
-        public TEntity Find(params Guid[] keyValues)
-        {
-            if (keyValues.Count() > 1)
-                throw new InvalidOperationException("Wrong number of keyValues");
-            return entities.IncludeAll().SingleOrDefault(p => p.Id == keyValues[0]);
+            return await entities.IncludeAll().SingleOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<TEntity> AddAsync(TEntity entity)

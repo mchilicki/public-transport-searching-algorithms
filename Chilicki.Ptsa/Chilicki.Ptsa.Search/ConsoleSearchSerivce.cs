@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Chilicki.Ptsa.Search.Configurations.Startup
 {
@@ -20,17 +21,17 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
             this.importService = importService;
         }
 
-        public void Run()
+        public async Task Run()
         {
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             if (environmentName == "GtfsImport")
-                ImportGtfs();
+                await ImportGtfs();
         }
 
-        public void ImportGtfs()
+        public async Task ImportGtfs()
         {
             var gtfsFolderPath = appSettings.ImportGtfsPath1;
-            importService.ImportGtfs(gtfsFolderPath);
+            await importService.ImportGtfs(gtfsFolderPath);
         }
     }
 }

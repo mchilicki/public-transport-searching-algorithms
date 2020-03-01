@@ -1,9 +1,12 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
+using Chilicki.Ptsa.Data.Repositories;
+using Chilicki.Ptsa.Data.UnitsOfWork;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Chilicki.Ptsa.Domain.Gtfs.Services
 {
@@ -15,13 +18,42 @@ namespace Chilicki.Ptsa.Domain.Gtfs.Services
         private readonly string STOPS = "stops.txt";
         private readonly string TRIPS = "trips.txt";
 
-        public void ImportGtfs(string gtfsFolderPath)
+        private readonly IBaseRepository<Agency> agencyRepository;
+        private readonly IBaseRepository<Stop> stopRepository;
+        private readonly IBaseRepository<StopTime> stopTimeRepository;
+        private readonly IBaseRepository<Route> routeRepository;
+        private readonly IBaseRepository<Trip> tripRepository;
+        private readonly IUnitOfWork unitOfWork;
+
+        public GtfsImportService(
+            IBaseRepository<Agency> agencyRepository,
+            IBaseRepository<Stop> stopRepository,
+            IBaseRepository<StopTime> stopTimeRepository,
+            IBaseRepository<Route> routeRepository,
+            IBaseRepository<Trip> tripRepository,
+            IUnitOfWork unitOfWork)
+        {
+            this.agencyRepository = agencyRepository;
+            this.unitOfWork = unitOfWork;
+            this.stopRepository = stopRepository;
+            this.stopTimeRepository = stopTimeRepository;
+            this.routeRepository = routeRepository;
+            this.tripRepository = tripRepository;
+        }
+
+        public async Task ImportGtfs(string gtfsFolderPath)
         {
             var agency = ReadAgency($"{gtfsFolderPath}{AGENCY}");
             var stops = ReadStops($"{gtfsFolderPath}{STOPS}");
             var routes = ReadRoutes($"{gtfsFolderPath}{ROUTES}", agency);
-            var trips = ReadTrips($"{gtfsFolderPath}{TRIPS}", routes);            
+            var trips = ReadTrips($"{gtfsFolderPath}{TRIPS}", routes);
             var stopTimes = ReadStopTimes($"{gtfsFolderPath}{STOP_TIMES}", trips, stops);
+            await agencyRepository.AddAsync(agency);
+            await stopRepository.AddRangeAsync(stops);
+            await routeRepository.AddRangeAsync(routes);
+            await tripRepository.AddRangeAsync(trips);
+            await stopTimeRepository.AddRangeAsync(stopTimes);
+            await unitOfWork.SaveAsync();            
         }
 
         private Agency ReadAgency(string path)
@@ -160,10 +192,17 @@ namespace Chilicki.Ptsa.Domain.Gtfs.Services
                         continue;
                     }
                     var splittedLine = line.Split(",");
-                    var timespan = new TimeSpan(
-                        int.Parse(splittedLine[2].Split(':')[0]),    // hours
-                        int.Parse(splittedLine[2].Split(':')[1]),    // minutes
-                        int.Parse(splittedLine[2].Split(':')[2]));   // seconds
+                    var splittedHour = splittedLine[2].Split(':');
+                    if (splittedHour.Length != 3)
+                        splittedHour = splittedLine[3].Split(':');
+                    if (splittedHour.Length != 3)
+                        splittedHour = splittedLine[4].Split(':');
+                    bool isHourOk = int.TryParse(splittedHour[0], out int hour);
+                    bool isMinuteOk = int.TryParse(splittedHour[1], out int minute);
+                    bool isSecondOk = int.TryParse(splittedHour[2], out int second);
+                    if (!isHourOk || !isMinuteOk || !isSecondOk)
+                        throw new InvalidOperationException(splittedLine[0] + "," + splittedLine[1] + "," + splittedLine[2]);
+                    var timespan = new TimeSpan(hour, minute, second);
                     var trip = trips.FirstOrDefault(p => p.GtfsId == splittedLine[0].Replace("\"", string.Empty));
                     if (trip != null)
                     {

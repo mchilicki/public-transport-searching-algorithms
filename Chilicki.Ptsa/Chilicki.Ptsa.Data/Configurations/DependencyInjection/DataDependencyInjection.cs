@@ -1,5 +1,6 @@
 ﻿using Chilicki.Ptsa.Data.Configurations.ProjectConfiguration;
 using Chilicki.Ptsa.Data.Databases;
+using Chilicki.Ptsa.Data.Repositories;
 using Chilicki.Ptsa.Data.UnitsOfWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,7 +22,7 @@ namespace Chilicki.Ptsa.Data.Configurations.DependencyInjection
 
         private void ConfigureRepositories(IServiceCollection services)
         {
-
+            services.AddTransient(typeof(IBaseRepository<>), typeof(BaseRepository<>));
         }
 
         private void ConfigureServices(IServiceCollection services)
