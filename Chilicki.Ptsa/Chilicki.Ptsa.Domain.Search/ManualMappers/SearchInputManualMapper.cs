@@ -8,24 +8,21 @@ namespace Chilicki.Ptsa.Domain.Search.ManualMappers
 {
     public class SearchInputManualMapper 
     {
-        readonly StopRepository _stopRepository;
-        readonly SearchValidator _searchValidator;
+        readonly StopRepository stopRepository;
 
 
         public SearchInputManualMapper(           
-            StopRepository stopRepository,
-            SearchValidator searchValidator)
+            StopRepository stopRepository)
         {
-            _stopRepository = stopRepository;
-            _searchValidator = searchValidator;
+            this.stopRepository = stopRepository;
         }
 
         public async Task<SearchInput> ToDomain(SearchInputDto searchInput)
         {            
             return new SearchInput()
             {
-                StartStop = await _stopRepository.FindAsync(searchInput.StartStopId),
-                DestinationStop = await _stopRepository.FindAsync(searchInput.DestinationStopId),
+                StartStop = await stopRepository.FindAsync(searchInput.StartStopId),
+                DestinationStop = await stopRepository.FindAsync(searchInput.DestinationStopId),
                 StartTime = searchInput.StartTime,
             };
         }

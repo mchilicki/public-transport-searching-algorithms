@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
 {
-    public class DijkstraStopConnectionsService
+    public class DijkstraStopConnectionService
     {
         public StopConnection GetDestinationStopFastestConnection(
             IEnumerable<StopConnection> vertexFastestConnections,

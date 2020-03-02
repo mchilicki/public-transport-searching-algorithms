@@ -5,12 +5,12 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
 {
     public class DijkstraFastestConnectionReplacer
     {
-        readonly DijkstraStopConnectionsService _dijkstraStopConnectionsService;
+        readonly DijkstraStopConnectionService dijkstraStopConnectionsService;
 
         public DijkstraFastestConnectionReplacer(
-            DijkstraStopConnectionsService dijkstraStopConnectionsService)
+            DijkstraStopConnectionService dijkstraStopConnectionsService)
         {
-            _dijkstraStopConnectionsService = dijkstraStopConnectionsService;
+            this.dijkstraStopConnectionsService = dijkstraStopConnectionsService;
         }
 
         public bool ShouldConnectionBeReplaced(
@@ -21,9 +21,9 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
         {
             bool isDestinationVertexMarkedAsVisited = destinationStopCurrentFastestConnection
                 .EndStopVertex.IsVisited;
-            bool isCurrentFastestConnectionEmpty = _dijkstraStopConnectionsService
+            bool isCurrentFastestConnectionEmpty = dijkstraStopConnectionsService
                     .IsConnectionEmpty(destinationStopCurrentFastestConnection);
-            bool isPreviousVertexFastestConnectionEmpty = _dijkstraStopConnectionsService
+            bool isPreviousVertexFastestConnectionEmpty = dijkstraStopConnectionsService
                     .IsConnectionEmpty(stopConnectionFromPreviousVertex);
             bool canMaybeNewFastestConnectionExist =
                 searchInput.StartTime <= maybeNewFastestConnection.StartStopTime.DepartureTime &&

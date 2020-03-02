@@ -8,15 +8,15 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
 {
     public class FastestPathResolver
     {
-        readonly FastestPathTransferService _fastestPathTransferService;
-        readonly StopConnectionCloner _cloner;
+        readonly FastestPathTransferService fastestPathTransferService;
+        readonly StopConnectionCloner cloner;
 
         public FastestPathResolver(
             FastestPathTransferService fastestPathTransferService,
             StopConnectionCloner cloner)
         {
-            _fastestPathTransferService = fastestPathTransferService;
-            _cloner = cloner;
+            this.fastestPathTransferService = fastestPathTransferService;
+            this.cloner = cloner;
         }
 
         public FastestPath ResolveFastestPath
@@ -32,11 +32,11 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
                 var sourceVertex = currentConnection.SourceStopVertex;
                 currentConnection = vertexFastestConnection
                     .First(p => p.EndStopVertex.Stop.Id == sourceVertex.Stop.Id);
-                if (!_fastestPathTransferService.IsAlreadyTransfer(currentConnection) &&
-                    !_fastestPathTransferService.IsAlreadyTransfer(nextConnection) &&
-                    _fastestPathTransferService.ShouldBeTransfer(currentConnection, nextConnection))
+                if (!fastestPathTransferService.IsAlreadyTransfer(currentConnection) &&
+                    !fastestPathTransferService.IsAlreadyTransfer(nextConnection) &&
+                    fastestPathTransferService.ShouldBeTransfer(currentConnection, nextConnection))
                 {
-                    var transferBeetweenVertices = _fastestPathTransferService
+                    var transferBeetweenVertices = fastestPathTransferService
                         .GenerateTransferAsStopConnection(currentConnection, nextConnection);
                     fastestPath.Add(transferBeetweenVertices);
                 }
@@ -71,17 +71,17 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
                         }
                         else
                         {
-                            flattenPath.Add(_cloner.CloneFrom(currentConnection));
+                            flattenPath.Add(cloner.CloneFrom(currentConnection));
                         }                        
                     }
                     else
                     {
-                        flattenPath.Add(_cloner.CloneFrom(currentConnection));
+                        flattenPath.Add(cloner.CloneFrom(currentConnection));
                     }
                 }
                 else
                 {
-                    flattenPath.Add(_cloner.CloneFrom(currentConnection));
+                    flattenPath.Add(cloner.CloneFrom(currentConnection));
                 }
             }
             return flattenPath;

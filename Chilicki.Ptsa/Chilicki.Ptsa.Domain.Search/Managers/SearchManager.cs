@@ -13,12 +13,12 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
 {
     public class SearchManager
     {
-        readonly IConnectionSearchEngine _connectionSearchEngine;
-        readonly IGraphFactory<StopGraph> _graphGenerator;
-        readonly FastestPathResolver _fastestPathResolver;
-        readonly SearchValidator _searchValidator;
-        readonly SearchInputManualMapper _searchInputManualMapper;
-        readonly StopRepository _stopRepository;
+        readonly IConnectionSearchEngine connectionSearchEngine;
+        readonly IGraphFactory<StopGraph> graphGenerator;
+        readonly FastestPathResolver fastestPathResolver;
+        readonly SearchValidator searchValidator;
+        readonly SearchInputManualMapper searchInputManualMapper;
+        readonly StopRepository stopRepository;
 
         public SearchManager(
             IConnectionSearchEngine connectionSearchEngine,
@@ -28,22 +28,22 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             SearchInputManualMapper searchInputManualMapper,
             StopRepository stopRepository)
         {
-            _connectionSearchEngine = connectionSearchEngine;
-            _graphGenerator = graphGenerator;
-            _searchValidator = searchValidator;
-            _searchInputManualMapper = searchInputManualMapper;
-            _stopRepository = stopRepository;
-            _fastestPathResolver = fastestPathResolver;
+            this.connectionSearchEngine = connectionSearchEngine;
+            this.graphGenerator = graphGenerator;
+            this.searchValidator = searchValidator;
+            this.searchInputManualMapper = searchInputManualMapper;
+            this.stopRepository = stopRepository;
+            this.fastestPathResolver = fastestPathResolver;
         }
 
         public async Task<FastestPath> SearchFastestConnections(SearchInputDto searchInputDTO)
         {
-            await _searchValidator.Validate(searchInputDTO);
-            var searchInput = await _searchInputManualMapper.ToDomain(searchInputDTO);
-            var stops = await _stopRepository.GetAllAsync();
-            var stopGraph = _graphGenerator.CreateGraph(stops, searchInput.StartTime);
-            var fastestConnections = _connectionSearchEngine.SearchConnections(searchInput, stopGraph);
-            var fastestPath = _fastestPathResolver.ResolveFastestPath(searchInput, fastestConnections);
+            await searchValidator.Validate(searchInputDTO);
+            var searchInput = await searchInputManualMapper.ToDomain(searchInputDTO);
+            var stops = await stopRepository.GetAllAsync();
+            var stopGraph = graphGenerator.CreateGraph(stops, searchInput.StartTime);
+            var fastestConnections = connectionSearchEngine.SearchConnections(searchInput, stopGraph);
+            var fastestPath = fastestPathResolver.ResolveFastestPath(searchInput, fastestConnections);
             return fastestPath;
         }
     }

@@ -6,20 +6,20 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
 {
     public class DijkstraNextVertexResolver
     {
-        readonly DijkstraStopConnectionsService _dijkstraStopConnectionsService;
-        readonly DijkstraStopGraphService _dijkstraStopGraphService; 
+        readonly DijkstraStopConnectionService dijkstraStopConnectionsService;
+        readonly DijkstraStopGraphService dijkstraStopGraphService; 
 
         public DijkstraNextVertexResolver(
-            DijkstraStopConnectionsService dijkstraStopConnectionsService,
+            DijkstraStopConnectionService dijkstraStopConnectionsService,
             DijkstraStopGraphService dijkstraStopGraphService)
         {
-            _dijkstraStopConnectionsService = dijkstraStopConnectionsService;
-            _dijkstraStopGraphService = dijkstraStopGraphService;
+            this.dijkstraStopConnectionsService = dijkstraStopConnectionsService;
+            this.dijkstraStopGraphService = dijkstraStopGraphService;
         }
 
         public StopVertex GetFirstVertex(StopGraph graph, Stop startingStop)
         {
-            return _dijkstraStopGraphService
+            return dijkstraStopGraphService
                 .GetStopVertexByStop(graph, startingStop);         
         }
 
@@ -28,7 +28,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
             StopConnection fastestConnection = null;
             foreach (var maybeNewFastestConnection in vertexFastestConnections)
             {
-                if (!_dijkstraStopConnectionsService.IsConnectionEmpty(maybeNewFastestConnection))
+                if (!dijkstraStopConnectionsService.IsConnectionEmpty(maybeNewFastestConnection))
                 {
                     if (!maybeNewFastestConnection.EndStopVertex.IsVisited)
                     {
