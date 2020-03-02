@@ -15,7 +15,7 @@ namespace Chilicki.Ptsa.Data.Configurations.EntityConfigurations
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
             builder.HasOne(p => p.Stop)
-                .WithMany()
+                .WithMany(p => p.StopTimes)
                 .HasForeignKey("StopId")
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);

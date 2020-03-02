@@ -21,8 +21,8 @@ namespace Chilicki.Ptsa.Domain.Search.Factories.Dijkstra
         {
             var vertexFastestConnections = new List<StopConnection>();
             var startingVertex = graph
-                    .StopVertices
-                    .First(p => p.Stop.Id == search.StartStop.Id);
+                .StopVertices
+                .First(p => p.Stop.Id == search.StartStop.Id);
             var startingConnection = stopConnectionFactory
                 .Create(startingVertex, null, startingVertex, null);
             vertexFastestConnections.Add(startingConnection);
