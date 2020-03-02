@@ -1,7 +1,5 @@
 ﻿using Chilicki.Ptsa.Data.Entities.Base;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Chilicki.Ptsa.Data.Entities
 {

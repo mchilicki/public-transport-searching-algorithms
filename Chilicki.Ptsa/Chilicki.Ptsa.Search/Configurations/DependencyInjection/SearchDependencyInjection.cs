@@ -4,9 +4,6 @@ using Chilicki.Ptsa.Domain.Gtfs.Configurations.DependencyInjection;
 using Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection;
 using Chilicki.Ptsa.Search.Configurations.Startup;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Chilicki.Ptsa.Search.Configurations.DependencyInjection
 {

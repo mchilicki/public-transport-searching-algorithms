@@ -3,11 +3,7 @@ using Chilicki.Ptsa.Data.Databases;
 using Chilicki.Ptsa.Data.Repositories;
 using Chilicki.Ptsa.Data.UnitsOfWork;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Chilicki.Ptsa.Data.Configurations.DependencyInjection
 {

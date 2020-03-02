@@ -11,6 +11,12 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "GtfsImport"
       }
+    },
+    "DijkstraSearch": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "DijkstraSearch"
+      }
     }
   }
 }

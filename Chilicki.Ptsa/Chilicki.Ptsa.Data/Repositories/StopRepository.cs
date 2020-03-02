@@ -1,8 +1,7 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace Chilicki.Ptsa.Data.Repositories
 {
@@ -10,6 +9,12 @@ namespace Chilicki.Ptsa.Data.Repositories
     {
         public StopRepository(DbContext context) : base(context)
         {
+        }
+
+        public async Task<bool> DoesStopWithIdExist(Guid id)
+        {
+            return await entities
+                .SingleOrDefaultAsync(p => p.Id == id) != null;
         }
     }
 }

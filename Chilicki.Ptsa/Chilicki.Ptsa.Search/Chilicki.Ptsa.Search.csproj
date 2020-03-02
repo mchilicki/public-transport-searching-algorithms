@@ -12,10 +12,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="appsettings.DijkstraSearch.json" />
+    <None Remove="appsettings.GtfsImport.json" />
     <None Remove="appsettings.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="appsettings.DijkstraSearch.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="appsettings.GtfsImport.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -36,12 +44,6 @@
     <ProjectReference Include="..\Chilicki.Ptsa.Data\Chilicki.Ptsa.Data.csproj" />
     <ProjectReference Include="..\Chilicki.Ptsa.Domain.Gtfs\Chilicki.Ptsa.Domain.Gtfs.csproj" />
     <ProjectReference Include="..\Chilicki.Ptsa.Domain.Search\Chilicki.Ptsa.Domain.Search.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="appsettings.GtfsImport.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

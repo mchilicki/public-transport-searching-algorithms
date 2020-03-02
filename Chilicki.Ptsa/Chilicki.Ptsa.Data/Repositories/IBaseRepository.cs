@@ -1,7 +1,6 @@
 ﻿using Chilicki.Ptsa.Data.Entities.Base;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Chilicki.Ptsa.Data.Repositories

@@ -1,8 +1,5 @@
 ﻿using Chilicki.Ptsa.Data.Configurations.EntityConfigurations;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Chilicki.Ptsa.Data.Databases
 {

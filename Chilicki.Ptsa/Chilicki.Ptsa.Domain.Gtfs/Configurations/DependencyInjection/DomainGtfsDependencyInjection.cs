@@ -1,8 +1,5 @@
 ﻿using Chilicki.Ptsa.Domain.Gtfs.Services;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Chilicki.Ptsa.Domain.Gtfs.Configurations.DependencyInjection
 {
