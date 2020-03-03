@@ -12,13 +12,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="appsettings.DijkstraSearch.json" />
+    <None Remove="appsettings.CreateGraph.json" />
     <None Remove="appsettings.GtfsImport.json" />
     <None Remove="appsettings.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="appsettings.DijkstraSearch.json">
+    <Content Include="appsettings.CreateGraph.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="appsettings.GtfsImport.json">

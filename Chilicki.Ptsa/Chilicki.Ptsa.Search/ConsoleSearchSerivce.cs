@@ -31,6 +31,8 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
                 await ImportGtfs();
             if (environmentName == "DijkstraSearch")
                 await SearchWithDijkstra();
+            if (environmentName == "CreateGraph")
+                await CreateGraph();
         }
 
         private async Task SearchWithDijkstra()
@@ -44,7 +46,12 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
             await searchManager.SearchFastestConnections(searchInput);
         }
 
-        public async Task ImportGtfs()
+        private async Task CreateGraph()
+        {
+            await searchManager.CreateGraph();
+        }
+
+        private async Task ImportGtfs()
         {
             var gtfsFolderPath = appSettings.ImportGtfsPath;
             await importService.ImportGtfs(gtfsFolderPath);

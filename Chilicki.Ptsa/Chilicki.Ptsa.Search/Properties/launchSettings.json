@@ -17,6 +17,12 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "DijkstraSearch"
       }
+    },
+    "CreateGraph": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "CreateGraph"
+      }
     }
   }
 }
