@@ -1,5 +1,5 @@
 ﻿using Chilicki.Ptsa.Domain.Search.Aggregates;
-using Chilicki.Ptsa.Domain.Search.Aggregates.Graphs;
+using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Domain.Search.Factories.StopConnections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,29 +9,29 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
     public class FastestPathResolver
     {
         readonly FastestPathTransferService fastestPathTransferService;
-        readonly StopConnectionCloner cloner;
+        readonly ConnectionCloner cloner;
 
         public FastestPathResolver(
             FastestPathTransferService fastestPathTransferService,
-            StopConnectionCloner cloner)
+            ConnectionCloner cloner)
         {
             this.fastestPathTransferService = fastestPathTransferService;
             this.cloner = cloner;
         }
 
         public FastestPath ResolveFastestPath
-            (SearchInput search, IEnumerable<StopConnection> vertexFastestConnection)
+            (SearchInput search, IEnumerable<Connection> vertexFastestConnection)
         {
-            var fastestPath = new List<StopConnection>();
+            var fastestPath = new List<Connection>();
             var currentConnection = vertexFastestConnection
-                .First(p => p.EndStopVertex.Stop.Id == search.DestinationStop.Id);            
+                .First(p => p.EndVertex.Stop.Id == search.DestinationStop.Id);            
             fastestPath.Add(currentConnection);
-            while (currentConnection.SourceStopVertex.Stop.Id != search.StartStop.Id)
+            while (currentConnection.StartVertex.Stop.Id != search.StartStop.Id)
             {
                 var nextConnection = currentConnection;
-                var sourceVertex = currentConnection.SourceStopVertex;
+                var sourceVertex = currentConnection.StartVertex;
                 currentConnection = vertexFastestConnection
-                    .First(p => p.EndStopVertex.Stop.Id == sourceVertex.Stop.Id);
+                    .First(p => p.EndVertex.Stop.Id == sourceVertex.Stop.Id);
                 if (!fastestPathTransferService.IsAlreadyTransfer(currentConnection) &&
                     !fastestPathTransferService.IsAlreadyTransfer(nextConnection) &&
                     fastestPathTransferService.ShouldBeTransfer(currentConnection, nextConnection))
@@ -50,10 +50,10 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
             };
         } 
 
-        private IEnumerable<StopConnection> FlattenFastestPath
-            (IList<StopConnection> fastestPath)
+        private IEnumerable<Connection> FlattenFastestPath
+            (IList<Connection> fastestPath)
         {
-            var flattenPath = new List<StopConnection>();
+            var flattenPath = new List<Connection>();
             foreach (var currentConnection  in fastestPath)
             {
                 if (flattenPath.Count() > 0)
@@ -66,7 +66,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
                             currentLine.HeadSign == lastAddedLine.HeadSign)
                         {
                             var lastAddedConnection = flattenPath.Last();
-                            lastAddedConnection.EndStopVertex = currentConnection.EndStopVertex;
+                            lastAddedConnection.EndVertex = currentConnection.EndVertex;
                             lastAddedConnection.EndStopTime = currentConnection.EndStopTime;
                         }
                         else

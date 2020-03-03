@@ -1,4 +1,4 @@
-﻿using Chilicki.Ptsa.Domain.Search.Aggregates.Graphs;
+﻿using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Domain.Search.Factories.Dijkstra;
 using Chilicki.Ptsa.Domain.Search.Factories.StopConnections;
 using Chilicki.Ptsa.Domain.Search.Managers;
@@ -11,7 +11,6 @@ using Chilicki.Ptsa.Domain.Search.Services.GraphFactories.Base;
 using Chilicki.Ptsa.Domain.Search.Services.Path;
 using Chilicki.Ptsa.Domain.Search.Validators;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
 {
@@ -31,8 +30,8 @@ namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
             services.AddTransient<IConnectionSearchEngine, DijkstraConnectionSearchEngine>();
             services.AddTransient<DijkstraFastestConnectionReplacer>();
             services.AddTransient<DijkstraNextVertexResolver>();
-            services.AddTransient<DijkstraStopConnectionService>();
-            services.AddTransient<DijkstraStopGraphService>();
+            services.AddTransient<DijkstraConnectionService>();
+            services.AddTransient<DijkstraGraphService>();
             services.AddTransient<FastestPathResolver>();
             services.AddTransient<FastestPathTimeCalculator>();
             services.AddTransient<FastestPathTransferService>();
@@ -41,9 +40,9 @@ namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
         private void ConfigureFactories(IServiceCollection services)
         {
             services.AddTransient<DijkstraEmptyFastestConnectionsFactory>();
-            services.AddTransient<StopConnectionFactory>();
-            services.AddTransient<IGraphFactory<StopGraph>, StopGraphFactory>();
-            services.AddTransient<StopConnectionCloner>();
+            services.AddTransient<ConnectionFactory>();
+            services.AddTransient<IGraphFactory<Graph>, GraphFactory>();
+            services.AddTransient<ConnectionCloner>();
         }
 
         private void ConfigureValidators(IServiceCollection services)

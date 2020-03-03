@@ -1,5 +1,5 @@
 ﻿using Chilicki.Ptsa.Domain.Search.Aggregates;
-using Chilicki.Ptsa.Domain.Search.Aggregates.Graphs;
+using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Domain.Search.Exceptions;
 using Chilicki.Ptsa.Domain.Search.Factories.Dijkstra;
 using Chilicki.Ptsa.Domain.Search.Services.Base;
@@ -13,65 +13,65 @@ namespace Chilicki.Ptsa.Domain.Search.Services
         readonly DijkstraEmptyFastestConnectionsFactory dijkstraEmptyFastestConnectionsFactory;
         readonly DijkstraNextVertexResolver dijkstraNextVertexResolver;
         readonly DijkstraFastestConnectionReplacer dijkstraFastestConnectionReplacer;
-        readonly DijkstraStopConnectionService dijkstraStopConnectionsService;
-        readonly DijkstraStopGraphService dijkstraStopGraphService;
+        readonly DijkstraConnectionService dijkstraConnectionsService;
+        readonly DijkstraGraphService dijkstraGraphService;
 
         public DijkstraConnectionSearchEngine(
-            DijkstraEmptyFastestConnectionsFactory dijkstraEmptyFastestConnectionsArrayFactory,
+            DijkstraEmptyFastestConnectionsFactory dijkstraEmptyFastestConnectionsFactory,
             DijkstraNextVertexResolver dijkstraNextVertexResolver,
-            DijkstraFastestConnectionReplacer dijkstraReplaceFastestConnectionService,
-            DijkstraStopConnectionService dijkstraStopConnectionsService,
-            DijkstraStopGraphService dijkstraStopGraphService)
+            DijkstraFastestConnectionReplacer dijkstraFastestConnectionReplacer,
+            DijkstraConnectionService dijkstraConnectionsService,
+            DijkstraGraphService dijkstraGraphService)
         {
-            dijkstraEmptyFastestConnectionsFactory = dijkstraEmptyFastestConnectionsArrayFactory;
+            this.dijkstraEmptyFastestConnectionsFactory = dijkstraEmptyFastestConnectionsFactory;
             this.dijkstraNextVertexResolver = dijkstraNextVertexResolver;
-            dijkstraFastestConnectionReplacer = dijkstraReplaceFastestConnectionService;
-            this.dijkstraStopConnectionsService = dijkstraStopConnectionsService;
-            this.dijkstraStopGraphService = dijkstraStopGraphService;
+            this.dijkstraFastestConnectionReplacer = dijkstraFastestConnectionReplacer;
+            this.dijkstraConnectionsService = dijkstraConnectionsService;
+            this.dijkstraGraphService = dijkstraGraphService;
         }
 
-        public IEnumerable<StopConnection> SearchConnections(SearchInput search, StopGraph graph)
+        public IEnumerable<Connection> SearchConnections(SearchInput search, Graph graph)
         {
             var vertexFastestConnections = dijkstraEmptyFastestConnectionsFactory
                 .Create(graph, search);
             var currentVertex = dijkstraNextVertexResolver.GetFirstVertex(graph, search.StartStop);
-            vertexFastestConnections = dijkstraStopGraphService.SetTransferConnectionsToSimilarVertices(
-                    vertexFastestConnections, currentVertex, currentVertex.SimilarStopVertices);
+            vertexFastestConnections = dijkstraGraphService.SetTransferConnectionsToSimilarVertices(
+                vertexFastestConnections, currentVertex, currentVertex.SimilarVertices);
             while (ShouldSearchingContinue(search, currentVertex))
             {
-                var allStopConnections = dijkstraStopGraphService.GetConnectionsFromSimilarVertices
-                    (currentVertex, currentVertex.SimilarStopVertices);
-                foreach (var stopConnection in allStopConnections)
+                var allConnections = dijkstraGraphService.GetConnectionsFromSimilarVertices
+                    (currentVertex, currentVertex.SimilarVertices);
+                foreach (var connection in allConnections)
                 {
-                    var destinationStopFastestConnection = dijkstraStopConnectionsService
-                        .GetDestinationStopFastestConnection(vertexFastestConnections, stopConnection);
-                    var stopConnectionFromPreviousVertex = dijkstraStopConnectionsService
-                        .GetStopConnectionFromPreviousVertex(vertexFastestConnections, stopConnection);
+                    var destinationStopFastestConnection = dijkstraConnectionsService
+                        .GetDestinationStopFastestConnection(vertexFastestConnections, connection);
+                    var connectionFromPreviousVertex = dijkstraConnectionsService
+                        .GetConnectionFromPreviousVertex(vertexFastestConnections, connection);
                     if (dijkstraFastestConnectionReplacer
-                        .ShouldConnectionBeReplaced(search, stopConnectionFromPreviousVertex, 
-                            destinationStopFastestConnection, stopConnection))
+                        .ShouldConnectionBeReplaced(search, connectionFromPreviousVertex, 
+                            destinationStopFastestConnection, connection))
                     {
                         dijkstraFastestConnectionReplacer
-                            .ReplaceWithNewFastestConnection(destinationStopFastestConnection, stopConnection);
+                            .ReplaceWithNewFastestConnection(destinationStopFastestConnection, connection);
                     }
                 }
-                dijkstraStopGraphService.MarkVertexAsVisited(currentVertex);
+                dijkstraGraphService.MarkVertexAsVisited(currentVertex);
                 currentVertex = dijkstraNextVertexResolver.GetNextVertex(vertexFastestConnections);
                 if (currentVertex == null)
                     throw new DijkstraNoFastestPathExistsException();
-                vertexFastestConnections = dijkstraStopGraphService.SetTransferConnectionsToSimilarVertices(
-                    vertexFastestConnections, currentVertex, currentVertex.SimilarStopVertices);                
+                vertexFastestConnections = dijkstraGraphService.SetTransferConnectionsToSimilarVertices(
+                    vertexFastestConnections, currentVertex, currentVertex.SimilarVertices);                
             }            
             return vertexFastestConnections;
         }
 
-        private bool ShouldSearchingContinue(SearchInput search, StopVertex currentVertex)
+        private bool ShouldSearchingContinue(SearchInput search, Vertex currentVertex)
         {
             bool isCurrentVertexDestinationStop = currentVertex != null &&
                 currentVertex.Stop.Id == search.DestinationStop.Id;
             if (isCurrentVertexDestinationStop == true)
                 return false;
-            foreach (var similarVertex in currentVertex.SimilarStopVertices)
+            foreach (var similarVertex in currentVertex.SimilarVertices)
             {
                 if (similarVertex.Stop.Id == search.DestinationStop.Id)
                     return false;

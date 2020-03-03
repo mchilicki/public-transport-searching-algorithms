@@ -1,24 +1,21 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
-using Chilicki.Ptsa.Domain.Search.Aggregates.Graphs;
-using System;
-using System.Linq;
 
 namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
 {
-    public class StopConnectionFactory
+    public class ConnectionFactory
     {
-        public StopConnection Create(
-            StopVertex currentVertex,
+        public Connection Create(
+            Vertex currentVertex,
             StopTime startStopTime,
-            StopVertex nextVertex,
+            Vertex nextVertex,
             StopTime endStopTime,
             bool isTransfer = false)
         {
-            return new StopConnection()
+            return new Connection()
             {
                 Trip = startStopTime.Trip,
-                SourceStopVertex = currentVertex,
-                EndStopVertex = nextVertex,
+                StartVertex = currentVertex,
+                EndVertex = nextVertex,
                 StartStopTime = startStopTime,
                 EndStopTime = endStopTime,
                 IsTransfer = isTransfer,

@@ -9,6 +9,14 @@
     <Compile Remove="Migrations\20200212120225_InitilizeDatabase.Designer.cs" />
     <Compile Remove="Migrations\20200301004104_CorrectDepartureTimeTimespan.cs" />
     <Compile Remove="Migrations\20200301004104_CorrectDepartureTimeTimespan.Designer.cs" />
+    <Compile Remove="Migrations\20200303183619_AddGraphsVerticesAndConnections.cs" />
+    <Compile Remove="Migrations\20200303183619_AddGraphsVerticesAndConnections.Designer.cs" />
+    <Compile Remove="Migrations\20200303184811_AddGraphsVerticesAndConnections.cs" />
+    <Compile Remove="Migrations\20200303184811_AddGraphsVerticesAndConnections.Designer.cs" />
+    <Compile Remove="Migrations\20200303185033_AddGraphsVerticesAndConnections.cs" />
+    <Compile Remove="Migrations\20200303185033_AddGraphsVerticesAndConnections.Designer.cs" />
+    <Compile Remove="Migrations\20200303185143_AddGraphsVerticesAndConnections.cs" />
+    <Compile Remove="Migrations\20200303185143_AddGraphsVerticesAndConnections.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

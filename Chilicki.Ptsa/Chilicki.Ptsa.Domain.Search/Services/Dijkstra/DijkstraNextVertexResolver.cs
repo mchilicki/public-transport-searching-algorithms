@@ -1,36 +1,35 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
-using Chilicki.Ptsa.Domain.Search.Aggregates.Graphs;
 using System.Collections.Generic;
 
 namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
 {
     public class DijkstraNextVertexResolver
     {
-        readonly DijkstraStopConnectionService dijkstraStopConnectionsService;
-        readonly DijkstraStopGraphService dijkstraStopGraphService; 
+        readonly DijkstraConnectionService dijkstraConnectionsService;
+        readonly DijkstraGraphService dijkstraGraphService; 
 
         public DijkstraNextVertexResolver(
-            DijkstraStopConnectionService dijkstraStopConnectionsService,
-            DijkstraStopGraphService dijkstraStopGraphService)
+            DijkstraConnectionService dijkstraConnectionsService,
+            DijkstraGraphService dijkstraGraphService)
         {
-            this.dijkstraStopConnectionsService = dijkstraStopConnectionsService;
-            this.dijkstraStopGraphService = dijkstraStopGraphService;
+            this.dijkstraConnectionsService = dijkstraConnectionsService;
+            this.dijkstraGraphService = dijkstraGraphService;
         }
 
-        public StopVertex GetFirstVertex(StopGraph graph, Stop startingStop)
+        public Vertex GetFirstVertex(Graph graph, Stop startingStop)
         {
-            return dijkstraStopGraphService
+            return dijkstraGraphService
                 .GetStopVertexByStop(graph, startingStop);         
         }
 
-        public StopVertex GetNextVertex(IEnumerable<StopConnection> vertexFastestConnections)
+        public Vertex GetNextVertex(IEnumerable<Connection> vertexFastestConnections)
         {
-            StopConnection fastestConnection = null;
+            Connection fastestConnection = null;
             foreach (var maybeNewFastestConnection in vertexFastestConnections)
             {
-                if (!dijkstraStopConnectionsService.IsConnectionEmpty(maybeNewFastestConnection))
+                if (!dijkstraConnectionsService.IsConnectionEmpty(maybeNewFastestConnection))
                 {
-                    if (!maybeNewFastestConnection.EndStopVertex.IsVisited)
+                    if (!maybeNewFastestConnection.EndVertex.IsVisited)
                     {
                         if (fastestConnection == null || 
                             fastestConnection.StartStopTime.DepartureTime > 
@@ -43,7 +42,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
             }
             if (fastestConnection == null)
                 return null;
-            return fastestConnection.EndStopVertex;
+            return fastestConnection.EndVertex;
         }
     }
 }

@@ -1,7 +1,6 @@
-﻿using Chilicki.Ptsa.Domain.Search.Aggregates;
-using Chilicki.Ptsa.Domain.Search.Aggregates.Graphs;
+﻿using Chilicki.Ptsa.Data.Entities;
+using Chilicki.Ptsa.Domain.Search.Aggregates;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,30 +8,30 @@ namespace Chilicki.Ptsa.Domain.Search.Factories.Dijkstra
 {
     public class DijkstraEmptyFastestConnectionsFactory
     {
-        private readonly StopConnectionFactory stopConnectionFactory;
+        private readonly ConnectionFactory connectionFactory;
 
         public DijkstraEmptyFastestConnectionsFactory(
-            StopConnectionFactory stopConnectionFactory)
+            ConnectionFactory connectionFactory)
         {
-            this.stopConnectionFactory = stopConnectionFactory;
+            this.connectionFactory = connectionFactory;
         }
 
-        public IEnumerable<StopConnection> Create(StopGraph graph, SearchInput search)
+        public IEnumerable<Connection> Create(Graph graph, SearchInput search)
         {
-            var vertexFastestConnections = new List<StopConnection>();
+            var vertexFastestConnections = new List<Connection>();
             var startingVertex = graph
-                .StopVertices
+                .Vertices
                 .First(p => p.Stop.Id == search.StartStop.Id);
-            var startingConnection = stopConnectionFactory
+            var startingConnection = connectionFactory
                 .Create(startingVertex, null, startingVertex, null);
             vertexFastestConnections.Add(startingConnection);
-            foreach (var vertex in graph.StopVertices)
+            foreach (var vertex in graph.Vertices)
             {
                 if (vertex.Stop.Id != search.StartStop.Id)
                 {
-                    var stopConnection = stopConnectionFactory
+                    var connection = connectionFactory
                         .Create(null, null, vertex, null);
-                    vertexFastestConnections.Add(stopConnection);
+                    vertexFastestConnections.Add(connection);
                 }                
             }
             return vertexFastestConnections;

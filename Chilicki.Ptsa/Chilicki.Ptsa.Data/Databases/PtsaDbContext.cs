@@ -10,13 +10,16 @@ namespace Chilicki.Ptsa.Data.Databases
 
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            modelBuilder.ApplyConfiguration(new AgencyConfiguration());
-            modelBuilder.ApplyConfiguration(new RouteConfiguration());
-            modelBuilder.ApplyConfiguration(new StopConfiguration());
-            modelBuilder.ApplyConfiguration(new StopTimeConfiguration());
-            modelBuilder.ApplyConfiguration(new TripConfiguration());
+            builder.ApplyConfiguration(new AgencyConfiguration());
+            builder.ApplyConfiguration(new RouteConfiguration());
+            builder.ApplyConfiguration(new StopConfiguration());
+            builder.ApplyConfiguration(new StopTimeConfiguration());
+            builder.ApplyConfiguration(new TripConfiguration());
+            builder.ApplyConfiguration(new ConnectionConfiguration());
+            builder.ApplyConfiguration(new GraphConfiguration());
+            builder.ApplyConfiguration(new VertexConfiguration());
         }
     }
 }

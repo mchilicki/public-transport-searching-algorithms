@@ -1,5 +1,5 @@
 ﻿using Chilicki.Ptsa.Domain.Search.Aggregates;
-using Chilicki.Ptsa.Domain.Search.Aggregates.Graphs;
+using Chilicki.Ptsa.Data.Entities;
 using System;
 using System.Linq;
 
@@ -18,7 +18,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
             return (int)Math.Abs((travelEndTime - travelStartTime).TotalMinutes);
         }
 
-        public int CalculateConnectionTime(StopConnection waitingConnection)
+        public int CalculateConnectionTime(Connection waitingConnection)
         {
             var travelStartTime = waitingConnection.StartStopTime.DepartureTime;
             var travelEndTime = waitingConnection.EndStopTime.DepartureTime;

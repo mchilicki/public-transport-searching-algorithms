@@ -1,5 +1,4 @@
 ﻿using Chilicki.Ptsa.Domain.Search.Dtos;
-using Chilicki.Ptsa.Domain.Search.Validators;
 using Chilicki.Ptsa.Domain.Search.Aggregates;
 using Chilicki.Ptsa.Data.Repositories;
 using System.Threading.Tasks;

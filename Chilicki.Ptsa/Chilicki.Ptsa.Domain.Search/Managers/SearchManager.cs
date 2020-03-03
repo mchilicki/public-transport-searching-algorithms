@@ -3,7 +3,7 @@ using Chilicki.Ptsa.Domain.Search.Validators;
 using Chilicki.Ptsa.Domain.Search.Dtos;
 using Chilicki.Ptsa.Domain.Search.ManualMappers;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories.Base;
-using Chilicki.Ptsa.Domain.Search.Aggregates.Graphs;
+using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Data.Repositories;
 using Chilicki.Ptsa.Domain.Search.Services.Path;
 using Chilicki.Ptsa.Domain.Search.Aggregates;
@@ -14,7 +14,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
     public class SearchManager
     {
         readonly IConnectionSearchEngine connectionSearchEngine;
-        readonly IGraphFactory<StopGraph> graphGenerator;
+        readonly IGraphFactory<Graph> graphGenerator;
         readonly FastestPathResolver fastestPathResolver;
         readonly SearchValidator searchValidator;
         readonly SearchInputManualMapper searchInputManualMapper;
@@ -22,7 +22,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
 
         public SearchManager(
             IConnectionSearchEngine connectionSearchEngine,
-            IGraphFactory<StopGraph> graphGenerator,
+            IGraphFactory<Graph> graphGenerator,
             FastestPathResolver fastestPathResolver,
             SearchValidator searchValidator,
             SearchInputManualMapper searchInputManualMapper,

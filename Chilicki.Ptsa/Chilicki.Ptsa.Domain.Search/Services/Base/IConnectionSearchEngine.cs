@@ -1,11 +1,11 @@
 ﻿using Chilicki.Ptsa.Domain.Search.Aggregates;
-using Chilicki.Ptsa.Domain.Search.Aggregates.Graphs;
+using Chilicki.Ptsa.Data.Entities;
 using System.Collections.Generic;
 
 namespace Chilicki.Ptsa.Domain.Search.Services.Base
 {
     public interface IConnectionSearchEngine
     {
-        IEnumerable<StopConnection> SearchConnections(SearchInput search, StopGraph graph);
+        IEnumerable<Connection> SearchConnections(SearchInput search, Graph graph);
     }
 }

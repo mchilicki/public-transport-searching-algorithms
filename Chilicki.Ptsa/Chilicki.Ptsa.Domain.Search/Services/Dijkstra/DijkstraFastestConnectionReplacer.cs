@@ -1,34 +1,34 @@
 ﻿using Chilicki.Ptsa.Domain.Search.Aggregates;
-using Chilicki.Ptsa.Domain.Search.Aggregates.Graphs;
+using Chilicki.Ptsa.Data.Entities;
 
 namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
 {
     public class DijkstraFastestConnectionReplacer
     {
-        readonly DijkstraStopConnectionService dijkstraStopConnectionsService;
+        readonly DijkstraConnectionService dijkstraConnectionsService;
 
         public DijkstraFastestConnectionReplacer(
-            DijkstraStopConnectionService dijkstraStopConnectionsService)
+            DijkstraConnectionService dijkstraConnectionsService)
         {
-            this.dijkstraStopConnectionsService = dijkstraStopConnectionsService;
+            this.dijkstraConnectionsService = dijkstraConnectionsService;
         }
 
         public bool ShouldConnectionBeReplaced(
             SearchInput searchInput,
-            StopConnection stopConnectionFromPreviousVertex,
-            StopConnection destinationStopCurrentFastestConnection,
-            StopConnection maybeNewFastestConnection)
+            Connection connectionFromPreviousVertex,
+            Connection destinationStopCurrentFastestConnection,
+            Connection maybeNewFastestConnection)
         {
             bool isDestinationVertexMarkedAsVisited = destinationStopCurrentFastestConnection
-                .EndStopVertex.IsVisited;
-            bool isCurrentFastestConnectionEmpty = dijkstraStopConnectionsService
+                .EndVertex.IsVisited;
+            bool isCurrentFastestConnectionEmpty = dijkstraConnectionsService
                     .IsConnectionEmpty(destinationStopCurrentFastestConnection);
-            bool isPreviousVertexFastestConnectionEmpty = dijkstraStopConnectionsService
-                    .IsConnectionEmpty(stopConnectionFromPreviousVertex);
+            bool isPreviousVertexFastestConnectionEmpty = dijkstraConnectionsService
+                    .IsConnectionEmpty(connectionFromPreviousVertex);
             bool canMaybeNewFastestConnectionExist =
                 searchInput.StartTime <= maybeNewFastestConnection.StartStopTime.DepartureTime &&
                     (isPreviousVertexFastestConnectionEmpty ||
-                    stopConnectionFromPreviousVertex.EndStopTime.DepartureTime <= maybeNewFastestConnection.StartStopTime.DepartureTime);
+                    connectionFromPreviousVertex.EndStopTime.DepartureTime <= maybeNewFastestConnection.StartStopTime.DepartureTime);
             bool isMaybeNewFastestConnectionFaster =
                 maybeNewFastestConnection.EndStopTime.DepartureTime < destinationStopCurrentFastestConnection.EndStopTime.DepartureTime;
             if (isDestinationVertexMarkedAsVisited)
@@ -39,13 +39,13 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
         }
 
         public void ReplaceWithNewFastestConnection(
-            StopConnection currentFastestStopConnection, 
-            StopConnection newFastestConnection)
+            Connection currentFastestConnection, 
+            Connection newFastestConnection)
         {
-            currentFastestStopConnection.Trip = newFastestConnection.Trip;
-            currentFastestStopConnection.StartStopTime = newFastestConnection.StartStopTime;
-            currentFastestStopConnection.SourceStopVertex = newFastestConnection.SourceStopVertex;
-            currentFastestStopConnection.EndStopTime = newFastestConnection.EndStopTime;
+            currentFastestConnection.Trip = newFastestConnection.Trip;
+            currentFastestConnection.StartStopTime = newFastestConnection.StartStopTime;
+            currentFastestConnection.StartVertex = newFastestConnection.StartVertex;
+            currentFastestConnection.EndStopTime = newFastestConnection.EndStopTime;
         }
     }
 }

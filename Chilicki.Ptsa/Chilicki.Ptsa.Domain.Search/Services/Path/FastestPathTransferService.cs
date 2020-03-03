@@ -1,37 +1,36 @@
-﻿using Chilicki.Ptsa.Domain.Search.Aggregates;
-using Chilicki.Ptsa.Domain.Search.Aggregates.Graphs;
+﻿using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories;
 
 namespace Chilicki.Ptsa.Domain.Search.Services.Path
 {
     public class FastestPathTransferService
     {
-        private readonly StopConnectionFactory stopConnectionFactory;
+        private readonly ConnectionFactory stopConnectionFactory;
 
         public FastestPathTransferService(
-            StopConnectionFactory stopConnectionFactory)
+            ConnectionFactory stopConnectionFactory)
         {
             this.stopConnectionFactory = stopConnectionFactory;
         }
         
-        public bool IsAlreadyTransfer(StopConnection currentConnection)
+        public bool IsAlreadyTransfer(Connection currentConnection)
         {
             return currentConnection.IsTransfer;
         }
 
         public bool ShouldBeTransfer(
-            StopConnection sourceConnection, StopConnection nextConnection)
+            Connection sourceConnection, Connection nextConnection)
         {
             return sourceConnection.Trip.Id != nextConnection.Trip.Id;
         }
 
-        public StopConnection GenerateTransferAsStopConnection(
-            StopConnection sourceConnection, StopConnection nextConnection)
+        public Connection GenerateTransferAsStopConnection(
+            Connection sourceConnection, Connection nextConnection)
         {
             return stopConnectionFactory.Create(
-                currentVertex: sourceConnection.EndStopVertex,
+                currentVertex: sourceConnection.EndVertex,
                 startStopTime: sourceConnection.StartStopTime,
-                nextVertex: sourceConnection.EndStopVertex,
+                nextVertex: sourceConnection.EndVertex,
                 endStopTime: nextConnection.EndStopTime,
                 isTransfer: true);
         }

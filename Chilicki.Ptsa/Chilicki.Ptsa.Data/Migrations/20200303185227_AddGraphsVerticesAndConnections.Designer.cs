@@ -4,14 +4,16 @@ using Chilicki.Ptsa.Data.Databases;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Chilicki.Ptsa.Data.Migrations
 {
     [DbContext(typeof(PtsaDbContext))]
-    partial class PtsaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200303185227_AddGraphsVerticesAndConnections")]
+    partial class AddGraphsVerticesAndConnections
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
