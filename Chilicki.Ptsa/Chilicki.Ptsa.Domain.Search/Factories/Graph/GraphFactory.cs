@@ -1,26 +1,35 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
+using Chilicki.Ptsa.Data.Repositories;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
 {
     public class GraphFactory : IGraphFactory<Graph>
     {
         readonly ConnectionFactory connectionFactory;
+        readonly IBaseRepository<Connection> connectionRepository;
+        readonly IBaseRepository<Vertex> vertexRepository;
 
         public GraphFactory(
-            ConnectionFactory connectionFactory)
+            ConnectionFactory connectionFactory,
+            IBaseRepository<Connection> connectionRepository,
+            IBaseRepository<Vertex> vertexRepository)
         {
             this.connectionFactory = connectionFactory;
+            this.connectionRepository = connectionRepository;
+            this.vertexRepository = vertexRepository;
         }
 
-        public Graph CreateGraph(IEnumerable<Stop> stops, TimeSpan timeSpan)
+        public async Task<Graph> CreateGraph(IEnumerable<Stop> stops)
         {
             var graph = new Graph();
-            var stopVertices = CreateEmptyVertices(graph, stops);
-            FillVerticesWithConnections(graph, stopVertices);
+            var vertices = CreateEmptyVertices(graph, stops);
+            vertices = await FillVerticesWithConnections(graph, vertices);
+            await vertexRepository.AddRangeAsync(vertices);
             return graph;
         }
 
@@ -63,12 +72,12 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
             return stopVertices;
         }
 
-        private ICollection<Vertex> FillVerticesWithConnections(
+        private async Task<ICollection<Vertex>> FillVerticesWithConnections(
             Graph graph, ICollection<Vertex> allVertices)
         {
             foreach (var vertex in allVertices)
             {
-                var stopConnections = vertex.Connections.ToList();
+                var connections = vertex.Connections.ToList();
                 foreach (var stopTime in vertex.Stop.StopTimes)
                 {
                     var departureStopTime = stopTime.GetTripNextStopTime();
@@ -77,12 +86,13 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
                         var departureVertex = allVertices
                             .Where(p => p.Stop.Id == departureStopTime.Stop.Id)
                             .First();
-                        var stopConnection = connectionFactory
+                        var connection = connectionFactory
                             .Create(graph, vertex, stopTime, departureVertex, departureStopTime);
-                        stopConnections.Add(stopConnection);
+                        connections.Add(connection);
                     }
                 }
-                vertex.Connections = stopConnections;
+                vertex.Connections = connections;
+                await connectionRepository.AddRangeAsync(connections);
             }
             return allVertices;
         }        

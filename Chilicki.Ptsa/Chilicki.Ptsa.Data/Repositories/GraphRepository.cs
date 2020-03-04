@@ -24,14 +24,7 @@ namespace Chilicki.Ptsa.Data.Repositories
         public async Task<Graph> GetWholeGraph()
         {
             var graph = await entities.FirstOrDefaultAsync();
-            ValidateGraph(graph);
-            throw new NotImplementedException();
-            foreach (var vertex in graph.Vertices)
-            {
-                vertex.Connections = vertex.Connections
-                    .OrderBy(p => p.Trip.Id)
-                    .ToList();
-            }
+            ValidateGraph(graph);       
             return graph;
         }
 

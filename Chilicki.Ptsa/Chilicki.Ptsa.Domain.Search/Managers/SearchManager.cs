@@ -57,7 +57,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
         public async Task CreateGraph()
         {
             var stops = await stopRepository.GetAllAsync();
-            var graph = graphFactory.CreateGraph(stops, TimeSpan.Zero);
+            var graph = await graphFactory.CreateGraph(stops);
             await graphRepository.AddAsync(graph);
             await unitOfWork.SaveAsync();
             graph = await graphRepository.GetWholeGraph();
