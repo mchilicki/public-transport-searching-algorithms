@@ -19,12 +19,33 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
         public Graph CreateGraph(IEnumerable<Stop> stops, TimeSpan timeSpan)
         {
             var stopVertices = CreateEmptyVertices(stops);
-            stopVertices = FillVerticesWithSimilarVertices(stopVertices, stops);
             stopVertices = FillVerticesWithConnections(stopVertices);
             return new Graph()
             {
                 Vertices = stopVertices,
             };
+        }
+
+        public void FillVerticesWithSimilarVertices(
+            Graph graph, IEnumerable<Stop> stops)
+        {
+            foreach (var vertex in graph.Vertices)
+            {
+                var similarVertices = new List<Vertex>();
+                var sameStops = stops
+                    .Where(p => p.Name == vertex.Stop.Name &&
+                        p.Id != vertex.Stop.Id);
+                foreach (var sameStop in sameStops)
+                {
+                    var similarVertex = graph.Vertices
+                        .FirstOrDefault(p => p.Stop.Id == sameStop.Id);
+                    if (similarVertex != null)
+                    {
+                        similarVertices.Add(similarVertex);
+                    }
+                }
+                vertex.SimilarVertices = similarVertices;
+            }
         }
 
         private IEnumerable<Vertex> CreateEmptyVertices(IEnumerable<Stop> stops)
@@ -64,29 +85,6 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
                 vertex.Connections = stopConnections;
             }
             return allVertices;
-        }
-
-        private IEnumerable<Vertex> FillVerticesWithSimilarVertices(
-            IEnumerable<Vertex> allVertices, IEnumerable<Stop> stops)
-        {
-            foreach(var vertex in allVertices)
-            {
-                var similarVertices = new List<Vertex>();
-                var sameStops = stops
-                    .Where(p => p.Name == vertex.Stop.Name &&
-                        p.Id != vertex.Stop.Id);
-                foreach (var sameStop in sameStops)
-                {
-                    var similarVertex = allVertices
-                        .FirstOrDefault(p => p.Stop.Id == sameStop.Id);
-                    if (similarVertex != null)
-                    {
-                        similarVertices.Add(similarVertex);
-                    }
-                }
-                vertex.SimilarVertices = similarVertices;
-            }
-            return allVertices;
-        }
+        }        
     }
 }

@@ -16,7 +16,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
     public class SearchManager
     {
         readonly IConnectionSearchEngine connectionSearchEngine;
-        readonly IGraphFactory<Graph> graphGenerator;
+        readonly IGraphFactory<Graph> graphFactory;
         readonly FastestPathResolver fastestPathResolver;
         readonly SearchValidator searchValidator;
         readonly SearchInputManualMapper searchInputManualMapper;
@@ -26,7 +26,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
 
         public SearchManager(
             IConnectionSearchEngine connectionSearchEngine,
-            IGraphFactory<Graph> graphGenerator,
+            IGraphFactory<Graph> graphFactory,
             FastestPathResolver fastestPathResolver,
             SearchValidator searchValidator,
             SearchInputManualMapper searchInputManualMapper,
@@ -35,7 +35,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             IUnitOfWork unitOfWork)
         {
             this.connectionSearchEngine = connectionSearchEngine;
-            this.graphGenerator = graphGenerator;
+            this.graphFactory = graphFactory;
             this.searchValidator = searchValidator;
             this.searchInputManualMapper = searchInputManualMapper;
             this.stopRepository = stopRepository;
@@ -57,8 +57,11 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
         public async Task CreateGraph()
         {
             var stops = await stopRepository.GetAllAsync();
-            var graph = graphGenerator.CreateGraph(stops, TimeSpan.Zero);
+            var graph = graphFactory.CreateGraph(stops, TimeSpan.Zero);
             await graphRepository.AddAsync(graph);
+            await unitOfWork.SaveAsync();
+            graph = await graphRepository.GetWholeGraph();
+            graphFactory.FillVerticesWithSimilarVertices(graph, stops);
             await unitOfWork.SaveAsync();
         }
     }

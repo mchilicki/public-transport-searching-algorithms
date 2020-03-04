@@ -16,9 +16,15 @@ namespace Chilicki.Ptsa.Data.Repositories
 
         public async Task<Graph> GetGraph(TimeSpan startTime)
         {
+            var graph = await GetWholeGraph();
+            ReduceGraph(graph, startTime);
+            return graph;
+        }
+
+        public async Task<Graph> GetWholeGraph()
+        {
             var graph = await entities.FirstOrDefaultAsync();
             ValidateGraph(graph);
-            ReduceGraph(graph, startTime);
             return graph;
         }
 
