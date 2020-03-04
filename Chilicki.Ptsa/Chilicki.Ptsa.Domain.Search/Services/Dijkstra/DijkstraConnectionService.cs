@@ -17,19 +17,23 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
 
         public Connection GetConnectionFromPreviousVertex(
             IEnumerable<Connection> vertexFastestConnections,
-            Connection onnection)
+            Connection connection)
         {
-            if (onnection.StartVertex == null)
+            if (connection.StartVertex == null)
                 return null;
             return vertexFastestConnections
                 .FirstOrDefault(p => p.EndVertex != null &&
-                    p.EndVertex.Stop.Id == onnection.StartVertex.Stop.Id);
+                    p.EndVertex.Stop.Id == connection.StartVertex.Stop.Id);
         }
 
         public bool IsConnectionEmpty(Connection stopConnection)
         {
             return stopConnection == null ||
-                stopConnection.StartVertex == null;
+                stopConnection.StartVertex == null ||
+                stopConnection.EndVertex == null ||
+                stopConnection.StartStopTime == null ||
+                stopConnection.EndStopTime == null;
+
         }
     }
 }

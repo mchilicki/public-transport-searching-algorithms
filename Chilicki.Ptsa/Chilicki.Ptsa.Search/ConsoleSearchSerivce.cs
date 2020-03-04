@@ -27,9 +27,9 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
         public async Task Run()
         {
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            if (environmentName == "GtfsImport")
+            if (environmentName == "GtfsImport" || environmentName == "GtfsImportPC")
                 await ImportGtfs();
-            if (environmentName == "DijkstraSearch")
+            if (environmentName == "DijkstraSearch" || environmentName == "DijkstraSearchPC")
                 await SearchWithDijkstra();
             if (environmentName == "CreateGraph")
                 await CreateGraph();

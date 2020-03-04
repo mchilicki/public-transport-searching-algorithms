@@ -37,10 +37,11 @@ namespace Chilicki.Ptsa.Domain.Search.Services
             var currentVertex = dijkstraNextVertexResolver.GetFirstVertex(graph, search.StartStop);
             vertexFastestConnections = dijkstraGraphService.SetTransferConnectionsToSimilarVertices(
                 vertexFastestConnections, currentVertex, currentVertex.SimilarVertices);
+            var interationCount = 1;
             while (ShouldSearchingContinue(search, currentVertex))
             {
                 var allConnections = dijkstraGraphService.GetConnectionsFromSimilarVertices
-                    (currentVertex, currentVertex.SimilarVertices);
+                    (currentVertex);
                 foreach (var connection in allConnections)
                 {
                     var destinationStopFastestConnection = dijkstraConnectionsService
@@ -60,7 +61,8 @@ namespace Chilicki.Ptsa.Domain.Search.Services
                 if (currentVertex == null)
                     throw new DijkstraNoFastestPathExistsException();
                 vertexFastestConnections = dijkstraGraphService.SetTransferConnectionsToSimilarVertices(
-                    vertexFastestConnections, currentVertex, currentVertex.SimilarVertices);                
+                    vertexFastestConnections, currentVertex, currentVertex.SimilarVertices);
+                interationCount++;
             }            
             return vertexFastestConnections;
         }

@@ -25,6 +25,13 @@ namespace Chilicki.Ptsa.Data.Repositories
         {
             var graph = await entities.FirstOrDefaultAsync();
             ValidateGraph(graph);
+            throw new NotImplementedException();
+            foreach (var vertex in graph.Vertices)
+            {
+                vertex.Connections = vertex.Connections
+                    .OrderBy(p => p.Trip.Id)
+                    .ToList();
+            }
             return graph;
         }
 
@@ -33,7 +40,8 @@ namespace Chilicki.Ptsa.Data.Repositories
             foreach (var vertex in graph.Vertices)
             {
                 vertex.Connections = vertex.Connections
-                    .Where(p => p.StartStopTime.DepartureTime >= startTime);
+                    .Where(p => p.StartStopTime.DepartureTime >= startTime)
+                    .ToList();
             }
         }
 

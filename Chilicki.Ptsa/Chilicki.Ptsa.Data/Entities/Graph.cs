@@ -5,6 +5,7 @@ namespace Chilicki.Ptsa.Data.Entities
 {
     public class Graph : BaseEntity
     {
-        public virtual IEnumerable<Vertex> Vertices { get; set; }
+        public virtual ICollection<Vertex> Vertices { get; set; }
+        public virtual ICollection<Connection> Connections { get; set; }
     }
 }

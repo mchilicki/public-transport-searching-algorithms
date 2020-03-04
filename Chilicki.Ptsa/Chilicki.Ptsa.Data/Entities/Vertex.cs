@@ -8,7 +8,7 @@ namespace Chilicki.Ptsa.Data.Entities
         public bool IsVisited { get; set; }
         public virtual Graph Graph { get; set; }
         public virtual Stop Stop { get; set; }
-        public virtual IEnumerable<Connection> Connections { get; set; }        
-        public virtual IEnumerable<Vertex> SimilarVertices { get; set; }
+        public virtual ICollection<Connection> Connections { get; set; }        
+        public virtual ICollection<Vertex> SimilarVertices { get; set; }
     }
 }

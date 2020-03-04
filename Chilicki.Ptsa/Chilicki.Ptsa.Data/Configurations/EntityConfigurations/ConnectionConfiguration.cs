@@ -8,6 +8,11 @@ namespace Chilicki.Ptsa.Data.Configurations.EntityConfigurations
     {
         public override void ConfigureEntity(EntityTypeBuilder<Connection> builder)
         {
+            builder.HasOne(p => p.Graph)
+                .WithMany(p => p.Connections)
+                .HasForeignKey("GraphId")
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.Trip)
                 .WithMany()
                 .HasForeignKey("TripId")

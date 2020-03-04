@@ -8,7 +8,7 @@ namespace Chilicki.Ptsa.Search
         public static void Main(string[] args)
         {
             Task task = new StartupService().Run();
-            task.Wait();
+             task.Wait();
         }
     }
 }

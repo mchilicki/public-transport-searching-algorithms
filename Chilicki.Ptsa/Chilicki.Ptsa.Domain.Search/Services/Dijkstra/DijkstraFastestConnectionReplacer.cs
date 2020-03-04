@@ -29,7 +29,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
                 searchInput.StartTime <= maybeNewFastestConnection.StartStopTime.DepartureTime &&
                     (isPreviousVertexFastestConnectionEmpty ||
                     connectionFromPreviousVertex.EndStopTime.DepartureTime <= maybeNewFastestConnection.StartStopTime.DepartureTime);
-            bool isMaybeNewFastestConnectionFaster =
+            bool isMaybeNewFastestConnectionFaster = !isCurrentFastestConnectionEmpty &&
                 maybeNewFastestConnection.EndStopTime.DepartureTime < destinationStopCurrentFastestConnection.EndStopTime.DepartureTime;
             if (isDestinationVertexMarkedAsVisited)
                 return false;
@@ -46,6 +46,6 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
             currentFastestConnection.StartStopTime = newFastestConnection.StartStopTime;
             currentFastestConnection.StartVertex = newFastestConnection.StartVertex;
             currentFastestConnection.EndStopTime = newFastestConnection.EndStopTime;
-        }
+        } 
     }
 }

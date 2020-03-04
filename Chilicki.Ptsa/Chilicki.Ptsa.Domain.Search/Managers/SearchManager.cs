@@ -48,7 +48,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
         {
             await searchValidator.Validate(searchInputDto);
             var searchInput = await searchInputManualMapper.ToDomain(searchInputDto);
-            var graph = await graphRepository.GetGraph(searchInput.StartTime);
+            var graph = await graphRepository.GetWholeGraph();
             var fastestConnections = connectionSearchEngine.SearchConnections(searchInput, graph);
             var fastestPath = fastestPathResolver.ResolveFastestPath(searchInput, fastestConnections);
             return fastestPath;

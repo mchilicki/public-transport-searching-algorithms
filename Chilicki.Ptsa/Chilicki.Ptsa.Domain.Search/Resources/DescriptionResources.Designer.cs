@@ -19,10 +19,10 @@ namespace Chilicki.Ptsa.Domain.Search.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class DescriptionResources {
+    public class DescriptionResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,10 +36,10 @@ namespace Chilicki.Ptsa.Domain.Search.Resources {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Chilicki.Commline.Domain.Search.Resources.DescriptionResources", typeof(DescriptionResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Chilicki.Ptsa.Domain.Search.Resources.DescriptionResources", typeof(DescriptionResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace Chilicki.Ptsa.Domain.Search.Resources {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace Chilicki.Ptsa.Domain.Search.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Direction.
         /// </summary>
-        internal static string Direction {
+        public static string Direction {
             get {
                 return ResourceManager.GetString("Direction", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace Chilicki.Ptsa.Domain.Search.Resources {
         /// <summary>
         ///   Looks up a localized string similar to From.
         /// </summary>
-        internal static string From {
+        public static string From {
             get {
                 return ResourceManager.GetString("From", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace Chilicki.Ptsa.Domain.Search.Resources {
         /// <summary>
         ///   Looks up a localized string similar to minute.
         /// </summary>
-        internal static string Minute {
+        public static string Minute {
             get {
                 return ResourceManager.GetString("Minute", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace Chilicki.Ptsa.Domain.Search.Resources {
         /// <summary>
         ///   Looks up a localized string similar to minutes.
         /// </summary>
-        internal static string Minutes {
+        public static string Minutes {
             get {
                 return ResourceManager.GetString("Minutes", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace Chilicki.Ptsa.Domain.Search.Resources {
         /// <summary>
         ///   Looks up a localized string similar to By foot :).
         /// </summary>
-        internal static string SameStops {
+        public static string SameStops {
             get {
                 return ResourceManager.GetString("SameStops", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace Chilicki.Ptsa.Domain.Search.Resources {
         /// <summary>
         ///   Looks up a localized string similar to To.
         /// </summary>
-        internal static string To {
+        public static string To {
             get {
                 return ResourceManager.GetString("To", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace Chilicki.Ptsa.Domain.Search.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Transfer.
         /// </summary>
-        internal static string Transfer {
+        public static string Transfer {
             get {
                 return ResourceManager.GetString("Transfer", resourceCulture);
             }

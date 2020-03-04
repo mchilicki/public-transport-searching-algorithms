@@ -9,16 +9,29 @@
     <ApplicationIcon />
     <StartupObject>Chilicki.Ptsa.Search.Program</StartupObject>
     <SignAssembly>false</SignAssembly>
+    <TieredCompilation>false</TieredCompilation>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="appsettings.CreateGraph.json" />
+    <None Remove="appsettings.DijkstraSearch.json" />
+    <None Remove="appsettings.DijkstraSearchPC.json" />
     <None Remove="appsettings.GtfsImport.json" />
+    <None Remove="appsettings.GtfsImportPC.json" />
     <None Remove="appsettings.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="appsettings.GtfsImportPC.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="appsettings.DijkstraSearchPC.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="appsettings.CreateGraph.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="appsettings.DijkstraSearch.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="appsettings.GtfsImport.json">

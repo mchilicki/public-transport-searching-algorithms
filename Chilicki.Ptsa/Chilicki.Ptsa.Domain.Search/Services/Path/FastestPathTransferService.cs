@@ -28,6 +28,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
             Connection sourceConnection, Connection nextConnection)
         {
             return stopConnectionFactory.Create(
+                graph: null,
                 currentVertex: sourceConnection.EndVertex,
                 startStopTime: sourceConnection.StartStopTime,
                 nextVertex: sourceConnection.EndVertex,

@@ -43,7 +43,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
             return vertexFastestConnections;
         }
 
-        public IEnumerable<Connection> GetConnectionsFromSimilarVertices(Vertex stopVertex, IEnumerable<Vertex> similarStopVertices)
+        public IEnumerable<Connection> GetConnectionsFromSimilarVertices(Vertex stopVertex)
         {
             var allStopConnections = new List<Connection>();
             allStopConnections.AddRange(stopVertex.Connections);

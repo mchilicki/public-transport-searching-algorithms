@@ -18,12 +18,10 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
 
         public Graph CreateGraph(IEnumerable<Stop> stops, TimeSpan timeSpan)
         {
-            var stopVertices = CreateEmptyVertices(stops);
-            stopVertices = FillVerticesWithConnections(stopVertices);
-            return new Graph()
-            {
-                Vertices = stopVertices,
-            };
+            var graph = new Graph();
+            var stopVertices = CreateEmptyVertices(graph, stops);
+            FillVerticesWithConnections(graph, stopVertices);
+            return graph;
         }
 
         public void FillVerticesWithSimilarVertices(
@@ -48,13 +46,15 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
             }
         }
 
-        private IEnumerable<Vertex> CreateEmptyVertices(IEnumerable<Stop> stops)
+        private ICollection<Vertex> CreateEmptyVertices(
+            Graph graph, IEnumerable<Stop> stops)
         {
             var stopVertices = new List<Vertex>();
             foreach (var stop in stops)
             {
                 stopVertices.Add(new Vertex()
                 {
+                    Graph = graph,
                     Stop = stop,
                     Connections = new List<Connection>(),
                     IsVisited = false,
@@ -63,8 +63,8 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
             return stopVertices;
         }
 
-        private IEnumerable<Vertex> FillVerticesWithConnections(
-            IEnumerable<Vertex> allVertices)
+        private ICollection<Vertex> FillVerticesWithConnections(
+            Graph graph, ICollection<Vertex> allVertices)
         {
             foreach (var vertex in allVertices)
             {
@@ -78,7 +78,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
                             .Where(p => p.Stop.Id == departureStopTime.Stop.Id)
                             .First();
                         var stopConnection = connectionFactory
-                            .Create(vertex, stopTime, departureVertex, departureStopTime);
+                            .Create(graph, vertex, stopTime, departureVertex, departureStopTime);
                         stopConnections.Add(stopConnection);
                     }
                 }

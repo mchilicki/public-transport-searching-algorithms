@@ -23,6 +23,18 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "CreateGraph"
       }
+    },
+    "DijkstraSearchPC": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "DijkstraSearchPC"
+      }
+    },
+    "GtfsImportPC": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "GtfsImportPC"
+      }
     }
   }
 }

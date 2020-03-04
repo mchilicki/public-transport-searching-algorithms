@@ -23,14 +23,14 @@ namespace Chilicki.Ptsa.Domain.Search.Factories.Dijkstra
                 .Vertices
                 .First(p => p.Stop.Id == search.StartStop.Id);
             var startingConnection = connectionFactory
-                .Create(startingVertex, null, startingVertex, null);
+                .Create(graph, startingVertex, null, startingVertex, null);
             vertexFastestConnections.Add(startingConnection);
             foreach (var vertex in graph.Vertices)
             {
                 if (vertex.Stop.Id != search.StartStop.Id)
                 {
                     var connection = connectionFactory
-                        .Create(null, null, vertex, null);
+                        .Create(graph, null, null, vertex, null);
                     vertexFastestConnections.Add(connection);
                 }                
             }
