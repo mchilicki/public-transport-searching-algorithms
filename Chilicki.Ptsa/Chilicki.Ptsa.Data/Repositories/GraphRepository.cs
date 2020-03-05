@@ -14,28 +14,11 @@ namespace Chilicki.Ptsa.Data.Repositories
         {
         }
 
-        public async Task<Graph> GetGraph(TimeSpan startTime)
-        {
-            var graph = await GetWholeGraph();
-            ReduceGraph(graph, startTime);
-            return graph;
-        }
-
-        public async Task<Graph> GetWholeGraph()
+        public async Task<Graph> GetGraph()
         {
             var graph = await entities.FirstOrDefaultAsync();
             ValidateGraph(graph);       
             return graph;
-        }
-
-        private void ReduceGraph(Graph graph, TimeSpan startTime)
-        {
-            foreach (var vertex in graph.Vertices)
-            {
-                vertex.Connections = vertex.Connections
-                    .Where(p => p.StartStopTime.DepartureTime >= startTime)
-                    .ToList();
-            }
         }
 
         private void ValidateGraph(Graph graph)

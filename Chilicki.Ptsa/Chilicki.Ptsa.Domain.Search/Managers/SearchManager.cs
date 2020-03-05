@@ -44,11 +44,16 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             this.unitOfWork = unitOfWork;
         }
 
+        // TODO
+        // SimilarVertices as ManyToMany entity
+        // Stop and Vertex should be the same entity
+        // StopTime.DepartureTime should be in Connection AND StopTime
+
         public async Task<FastestPath> SearchFastestConnections(SearchInputDto searchInputDto)
         {
             await searchValidator.Validate(searchInputDto);
             var searchInput = await searchInputManualMapper.ToDomain(searchInputDto);
-            var graph = await graphRepository.GetWholeGraph();
+            var graph = await graphRepository.GetGraph();
             var fastestConnections = connectionSearchEngine.SearchConnections(searchInput, graph);
             var fastestPath = fastestPathResolver.ResolveFastestPath(searchInput, fastestConnections);
             return fastestPath;
@@ -60,7 +65,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             var graph = await graphFactory.CreateGraph(stops);
             await graphRepository.AddAsync(graph);
             await unitOfWork.SaveAsync();
-            graph = await graphRepository.GetWholeGraph();
+            graph = await graphRepository.GetGraph();
             graphFactory.FillVerticesWithSimilarVertices(graph, stops);
             await unitOfWork.SaveAsync();
         }
