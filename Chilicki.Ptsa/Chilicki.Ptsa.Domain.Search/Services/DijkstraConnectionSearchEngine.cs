@@ -70,12 +70,12 @@ namespace Chilicki.Ptsa.Domain.Search.Services
         private bool ShouldSearchingContinue(SearchInput search, Vertex currentVertex)
         {
             bool isCurrentVertexDestinationStop = currentVertex != null &&
-                currentVertex.Stop.Id == search.DestinationStop.Id;
+                currentVertex.StopId == search.DestinationStop.Id;
             if (isCurrentVertexDestinationStop == true)
                 return false;
             foreach (var similarVertex in currentVertex.SimilarVertices)
             {
-                if (similarVertex.Stop.Id == search.DestinationStop.Id)
+                if (similarVertex.Similar.StopId == search.DestinationStop.Id)
                     return false;
             }
             return true;

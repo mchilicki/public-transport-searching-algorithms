@@ -8,6 +8,7 @@ namespace Chilicki.Ptsa.Data.Configurations.EntityConfigurations
     {
         public override void ConfigureEntity(EntityTypeBuilder<Trip> builder)
         {
+            builder.ToTable("Trips");
             builder.Property(p => p.HeadSign)
                 .IsRequired();
             builder.HasOne(p => p.Route)

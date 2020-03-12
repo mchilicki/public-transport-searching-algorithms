@@ -24,14 +24,14 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
         {
             var fastestPath = new List<Connection>();
             var currentConnection = vertexFastestConnection
-                .First(p => p.EndVertex.Stop.Id == search.DestinationStop.Id);            
+                .First(p => p.EndVertex.StopId == search.DestinationStop.Id);            
             fastestPath.Add(currentConnection);
-            while (currentConnection.StartVertex.Stop.Id != search.StartStop.Id)
+            while (currentConnection.StartVertex.StopId != search.StartStop.Id)
             {
                 var nextConnection = currentConnection;
                 var sourceVertex = currentConnection.StartVertex;
                 currentConnection = vertexFastestConnection
-                    .First(p => p.EndVertex.Stop.Id == sourceVertex.Stop.Id);
+                    .First(p => p.EndVertex.StopId == sourceVertex.StopId);
                 if (!fastestPathTransferService.IsAlreadyTransfer(currentConnection) &&
                     !fastestPathTransferService.IsAlreadyTransfer(nextConnection) &&
                     fastestPathTransferService.ShouldBeTransfer(currentConnection, nextConnection))

@@ -11,8 +11,8 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
             Connection connection)
         {
             return vertexFastestConnections
-                .First(p => p.EndVertex.Stop.Id == 
-                    connection.EndVertex.Stop.Id);
+                .First(p => p.EndVertex.StopId == 
+                    connection.EndVertex.StopId);
         }
 
         public Connection GetConnectionFromPreviousVertex(
@@ -23,7 +23,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
                 return null;
             return vertexFastestConnections
                 .FirstOrDefault(p => p.EndVertex != null &&
-                    p.EndVertex.Stop.Id == connection.StartVertex.Stop.Id);
+                    p.EndVertex.StopId == connection.StartVertex.StopId);
         }
 
         public bool IsConnectionEmpty(Connection stopConnection)

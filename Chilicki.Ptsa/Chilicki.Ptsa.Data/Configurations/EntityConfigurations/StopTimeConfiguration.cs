@@ -9,6 +9,7 @@ namespace Chilicki.Ptsa.Data.Configurations.EntityConfigurations
     {
         public override void ConfigureEntity(EntityTypeBuilder<StopTime> builder)
         {
+            builder.ToTable("StopTimes");
             builder.HasOne(p => p.Trip)
                 .WithMany(p => p.StopTimes)
                 .HasForeignKey("TripId")
@@ -16,7 +17,7 @@ namespace Chilicki.Ptsa.Data.Configurations.EntityConfigurations
                 .OnDelete(DeleteBehavior.Cascade);
             builder.HasOne(p => p.Stop)
                 .WithMany(p => p.StopTimes)
-                .HasForeignKey("StopId")
+                .HasForeignKey(p => p.StopId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
             builder.Property(p => p.DepartureTime)

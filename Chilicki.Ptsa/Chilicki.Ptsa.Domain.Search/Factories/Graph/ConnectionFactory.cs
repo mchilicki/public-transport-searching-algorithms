@@ -22,7 +22,9 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
                 StartVertex = currentVertex,
                 EndVertex = nextVertex,
                 StartStopTime = startStopTime,
+                DepartureTime = startStopTime.DepartureTime,
                 EndStopTime = endStopTime,
+                ArrivalTime = endStopTime.DepartureTime,
                 IsTransfer = isTransfer,
             };
         }

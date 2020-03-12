@@ -8,6 +8,7 @@ namespace Chilicki.Ptsa.Data.Configurations.EntityConfigurations
     {
         public override void ConfigureEntity(EntityTypeBuilder<Vertex> builder)
         {
+            builder.ToTable("Vertices");
             builder.Ignore(p => p.IsVisited);
             builder.HasOne(p => p.Graph)
                 .WithMany(p => p.Vertices)
@@ -16,7 +17,7 @@ namespace Chilicki.Ptsa.Data.Configurations.EntityConfigurations
                 .OnDelete(DeleteBehavior.Cascade);
             builder.HasOne(p => p.Stop)
                 .WithMany()
-                .HasForeignKey("StopId")
+                .HasForeignKey(p => p.StopId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(p => p.SimilarVertices)

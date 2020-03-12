@@ -1,5 +1,6 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Data.Repositories;
+using Chilicki.Ptsa.Domain.Search.Factories.SimilarVertices;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories.Base;
 using System;
 using System.Collections.Generic;
@@ -13,48 +14,36 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
         readonly ConnectionFactory connectionFactory;
         readonly IBaseRepository<Connection> connectionRepository;
         readonly IBaseRepository<Vertex> vertexRepository;
+        readonly SimilarVertexFactory similarVertexFactory;
+        readonly ISimilarVertexRepository similarVertexRepository;
 
         public GraphFactory(
             ConnectionFactory connectionFactory,
             IBaseRepository<Connection> connectionRepository,
-            IBaseRepository<Vertex> vertexRepository)
+            IBaseRepository<Vertex> vertexRepository,
+            SimilarVertexFactory similarVertexFactory,
+            ISimilarVertexRepository similarVertexRepository)
         {
             this.connectionFactory = connectionFactory;
             this.connectionRepository = connectionRepository;
             this.vertexRepository = vertexRepository;
+            this.similarVertexFactory = similarVertexFactory;
+            this.similarVertexRepository = similarVertexRepository;
         }
+
+        // TODO
+        // Correct SimilarVertices saving to database
 
         public async Task<Graph> CreateGraph(IEnumerable<Stop> stops)
         {
             var graph = new Graph();
             var vertices = CreateEmptyVertices(graph, stops);
             vertices = await FillVerticesWithConnections(graph, vertices);
+            await FillVerticesWithSimilarVertices(graph);
             await vertexRepository.AddRangeAsync(vertices);
             return graph;
         }
-
-        public void FillVerticesWithSimilarVertices(
-            Graph graph, IEnumerable<Stop> stops)
-        {
-            foreach (var vertex in graph.Vertices)
-            {
-                var similarVertices = new List<Vertex>();
-                var sameStops = stops
-                    .Where(p => p.Name == vertex.Stop.Name &&
-                        p.Id != vertex.Stop.Id);
-                foreach (var sameStop in sameStops)
-                {
-                    var similarVertex = graph.Vertices
-                        .FirstOrDefault(p => p.Stop.Id == sameStop.Id);
-                    if (similarVertex != null)
-                    {
-                        similarVertices.Add(similarVertex);
-                    }
-                }
-                vertex.SimilarVertices = similarVertices;
-            }
-        }
-
+        
         private ICollection<Vertex> CreateEmptyVertices(
             Graph graph, IEnumerable<Stop> stops)
         {
@@ -65,6 +54,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
                 {
                     Graph = graph,
                     Stop = stop,
+                    StopName = stop.Name,
                     Connections = new List<Connection>(),
                     IsVisited = false,
                 });
@@ -77,15 +67,14 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
         {
             foreach (var vertex in allVertices)
             {
-                var connections = vertex.Connections.ToList();
+                var connections = new List<Connection>();
                 foreach (var stopTime in vertex.Stop.StopTimes)
                 {
                     var departureStopTime = stopTime.GetTripNextStopTime();
                     if (departureStopTime != null)
                     {
                         var departureVertex = allVertices
-                            .Where(p => p.Stop.Id == departureStopTime.Stop.Id)
-                            .First();
+                            .SingleOrDefault(p => p.Stop.Id == departureStopTime.Stop.Id);
                         var connection = connectionFactory
                             .Create(graph, vertex, stopTime, departureVertex, departureStopTime);
                         connections.Add(connection);
@@ -95,6 +84,30 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
                 await connectionRepository.AddRangeAsync(connections);
             }
             return allVertices;
-        }        
+        }
+
+        private async Task FillVerticesWithSimilarVertices(Graph graph)
+        {
+            foreach (var vertex in graph.Vertices)
+            {
+                var readySimilarVertices = new List<SimilarVertex>();
+                var similarVertices = FindSimilarVerticesByName(graph.Vertices, vertex);
+                foreach (var similarVertex in similarVertices)
+                {
+                    var similar = similarVertexFactory.Create(vertex, similarVertex);
+                    readySimilarVertices.Add(similar);
+                }
+                vertex.SimilarVertices = readySimilarVertices;
+                await similarVertexRepository.AddRangeAsync(readySimilarVertices);
+            }
+        }
+
+        private IEnumerable<Vertex> FindSimilarVerticesByName(
+            IEnumerable<Vertex> vertices, Vertex vertex)
+        {
+            return vertices
+                .Where(p => p.StopName == vertex.StopName &&
+                    p.Id != vertex.Id);
+        }
     }
 }

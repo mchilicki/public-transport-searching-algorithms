@@ -21,6 +21,7 @@ namespace Chilicki.Ptsa.Data.Configurations.DependencyInjection
             services.AddTransient(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             services.AddTransient<StopRepository>();
             services.AddTransient<GraphRepository>();
+            services.AddTransient<ISimilarVertexRepository, SimilarVertexRepository>();
         }
 
         private void ConfigureServices(IServiceCollection services)

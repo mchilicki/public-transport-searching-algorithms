@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chilicki.Ptsa.Data.Migrations
 {
     [DbContext(typeof(PtsaDbContext))]
-    [Migration("20200304211417_AddTimetablesAndGraphs")]
+    [Migration("20200311210454_AddTimetablesAndGraphs")]
     partial class AddTimetablesAndGraphs
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,7 +34,7 @@ namespace Chilicki.Ptsa.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Agency");
+                    b.ToTable("Agencies");
                 });
 
             modelBuilder.Entity("Chilicki.Ptsa.Data.Entities.Connection", b =>
@@ -43,6 +43,12 @@ namespace Chilicki.Ptsa.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("newid()");
+
+                    b.Property<long>("ArrivalTime")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("DepartureTime")
+                        .HasColumnType("bigint");
 
                     b.Property<Guid?>("EndStopTimeId")
                         .IsRequired()
@@ -84,7 +90,7 @@ namespace Chilicki.Ptsa.Data.Migrations
 
                     b.HasIndex("TripId");
 
-                    b.ToTable("Connection");
+                    b.ToTable("Connections");
                 });
 
             modelBuilder.Entity("Chilicki.Ptsa.Data.Entities.Graph", b =>
@@ -96,7 +102,7 @@ namespace Chilicki.Ptsa.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Graph");
+                    b.ToTable("Graphs");
                 });
 
             modelBuilder.Entity("Chilicki.Ptsa.Data.Entities.Route", b =>
@@ -125,7 +131,25 @@ namespace Chilicki.Ptsa.Data.Migrations
 
                     b.HasIndex("AgencyId");
 
-                    b.ToTable("Route");
+                    b.ToTable("Routes");
+                });
+
+            modelBuilder.Entity("Chilicki.Ptsa.Data.Entities.SimilarVertex", b =>
+                {
+                    b.Property<Guid>("VertexId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SimilarId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SimilarVertexId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("VertexId", "SimilarId");
+
+                    b.HasIndex("SimilarId");
+
+                    b.ToTable("SimilarVertices");
                 });
 
             modelBuilder.Entity("Chilicki.Ptsa.Data.Entities.Stop", b =>
@@ -150,7 +174,7 @@ namespace Chilicki.Ptsa.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Stop");
+                    b.ToTable("Stops");
                 });
 
             modelBuilder.Entity("Chilicki.Ptsa.Data.Entities.StopTime", b =>
@@ -163,8 +187,7 @@ namespace Chilicki.Ptsa.Data.Migrations
                     b.Property<long>("DepartureTime")
                         .HasColumnType("bigint");
 
-                    b.Property<Guid?>("StopId")
-                        .IsRequired()
+                    b.Property<Guid>("StopId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("StopSequence")
@@ -180,7 +203,7 @@ namespace Chilicki.Ptsa.Data.Migrations
 
                     b.HasIndex("TripId");
 
-                    b.ToTable("StopTime");
+                    b.ToTable("StopTimes");
                 });
 
             modelBuilder.Entity("Chilicki.Ptsa.Data.Entities.Trip", b =>
@@ -205,7 +228,7 @@ namespace Chilicki.Ptsa.Data.Migrations
 
                     b.HasIndex("RouteId");
 
-                    b.ToTable("Trip");
+                    b.ToTable("Trips");
                 });
 
             modelBuilder.Entity("Chilicki.Ptsa.Data.Entities.Vertex", b =>
@@ -219,22 +242,19 @@ namespace Chilicki.Ptsa.Data.Migrations
                         .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("SimilarVertexId")
+                    b.Property<Guid>("StopId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("StopId")
-                        .IsRequired()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("StopName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("GraphId");
 
-                    b.HasIndex("SimilarVertexId");
-
                     b.HasIndex("StopId");
 
-                    b.ToTable("Vertex");
+                    b.ToTable("Vertices");
                 });
 
             modelBuilder.Entity("Chilicki.Ptsa.Data.Entities.Connection", b =>
@@ -284,6 +304,21 @@ namespace Chilicki.Ptsa.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Chilicki.Ptsa.Data.Entities.SimilarVertex", b =>
+                {
+                    b.HasOne("Chilicki.Ptsa.Data.Entities.Vertex", "Similar")
+                        .WithMany("SimilarVertices")
+                        .HasForeignKey("SimilarId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Chilicki.Ptsa.Data.Entities.Vertex", "Vertex")
+                        .WithMany("OfSimilarVertices")
+                        .HasForeignKey("VertexId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Chilicki.Ptsa.Data.Entities.StopTime", b =>
                 {
                     b.HasOne("Chilicki.Ptsa.Data.Entities.Stop", "Stop")
@@ -315,11 +350,6 @@ namespace Chilicki.Ptsa.Data.Migrations
                         .HasForeignKey("GraphId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Chilicki.Ptsa.Data.Entities.Vertex", null)
-                        .WithMany("SimilarVertices")
-                        .HasForeignKey("SimilarVertexId")
-                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Chilicki.Ptsa.Data.Entities.Stop", "Stop")
                         .WithMany()

@@ -32,8 +32,8 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
                     if (!maybeNewFastestConnection.EndVertex.IsVisited)
                     {
                         if (fastestConnection == null || 
-                            fastestConnection.StartStopTime.DepartureTime > 
-                                maybeNewFastestConnection.EndStopTime.DepartureTime)
+                            fastestConnection.DepartureTime > 
+                                maybeNewFastestConnection.ArrivalTime)
                         {
                             fastestConnection = maybeNewFastestConnection;
                         }                            

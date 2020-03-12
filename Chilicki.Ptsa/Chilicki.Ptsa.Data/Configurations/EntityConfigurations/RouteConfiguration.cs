@@ -8,6 +8,7 @@ namespace Chilicki.Ptsa.Data.Configurations.EntityConfigurations
     {
         public override void ConfigureEntity(EntityTypeBuilder<Route> builder)
         {
+            builder.ToTable("Routes");
             builder.Property(p => p.Name)
                 .IsRequired();
             builder.Property(p => p.ShortName)

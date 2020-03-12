@@ -7,6 +7,7 @@ namespace Chilicki.Ptsa.Data.Entities
     public class StopTime : BaseEntity
     {
         public virtual Trip Trip { get; set; }
+        public Guid StopId { get; set; }
         public virtual Stop Stop { get; set; }
         public TimeSpan DepartureTime { get; set; }
         public int StopSequence { get; set; }

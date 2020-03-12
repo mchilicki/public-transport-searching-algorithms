@@ -1,5 +1,6 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Domain.Search.Factories.Dijkstra;
+using Chilicki.Ptsa.Domain.Search.Factories.SimilarVertices;
 using Chilicki.Ptsa.Domain.Search.Factories.StopConnections;
 using Chilicki.Ptsa.Domain.Search.Managers;
 using Chilicki.Ptsa.Domain.Search.ManualMappers;
@@ -43,6 +44,7 @@ namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
             services.AddTransient<ConnectionFactory>();
             services.AddTransient<IGraphFactory<Graph>, GraphFactory>();
             services.AddTransient<ConnectionCloner>();
+            services.AddTransient<SimilarVertexFactory>();
         }
 
         private void ConfigureValidators(IServiceCollection services)

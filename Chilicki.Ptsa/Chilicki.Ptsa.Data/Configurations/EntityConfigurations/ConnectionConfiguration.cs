@@ -1,6 +1,7 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Chilicki.Ptsa.Data.Configurations.EntityConfigurations
 {
@@ -8,6 +9,11 @@ namespace Chilicki.Ptsa.Data.Configurations.EntityConfigurations
     {
         public override void ConfigureEntity(EntityTypeBuilder<Connection> builder)
         {
+            builder.ToTable("Connections");
+            builder.Property(p => p.DepartureTime)
+                .HasConversion(new TimeSpanToTicksConverter());
+            builder.Property(p => p.ArrivalTime)
+                .HasConversion(new TimeSpanToTicksConverter());
             builder.HasOne(p => p.Graph)
                 .WithMany(p => p.Connections)
                 .HasForeignKey("GraphId")

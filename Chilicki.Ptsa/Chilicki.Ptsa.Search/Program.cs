@@ -5,10 +5,10 @@ namespace Chilicki.Ptsa.Search
 {
     public static class Program
     {
-        public static void Main(string[] args)
+        public static void Main()
         {
             Task task = new StartupService().Run();
-             task.Wait();
+            task.Wait();
         }
     }
 }

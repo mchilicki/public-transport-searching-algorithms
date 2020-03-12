@@ -20,6 +20,7 @@ namespace Chilicki.Ptsa.Data.Databases
             builder.ApplyConfiguration(new ConnectionConfiguration());
             builder.ApplyConfiguration(new GraphConfiguration());
             builder.ApplyConfiguration(new VertexConfiguration());
+            builder.ApplyConfiguration(new SimilarVertexConfiguration());
         }
     }
 }

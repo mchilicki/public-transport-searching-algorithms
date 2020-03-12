@@ -8,7 +8,5 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories.Base
     public interface IGraphFactory<TGraph>
     {
         Task<TGraph> CreateGraph(IEnumerable<Stop> stops);
-        void FillVerticesWithSimilarVertices(
-            Graph graph, IEnumerable<Stop> stops);
     }
 }

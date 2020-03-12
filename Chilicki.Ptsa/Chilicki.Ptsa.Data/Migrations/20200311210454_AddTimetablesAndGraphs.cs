@@ -8,7 +8,7 @@ namespace Chilicki.Ptsa.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Agency",
+                name: "Agencies",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false, defaultValueSql: "newid()"),
@@ -16,22 +16,22 @@ namespace Chilicki.Ptsa.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Agency", x => x.Id);
+                    table.PrimaryKey("PK_Agencies", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Graph",
+                name: "Graphs",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false, defaultValueSql: "newid()")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Graph", x => x.Id);
+                    table.PrimaryKey("PK_Graphs", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Stop",
+                name: "Stops",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false, defaultValueSql: "newid()"),
@@ -42,11 +42,11 @@ namespace Chilicki.Ptsa.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Stop", x => x.Id);
+                    table.PrimaryKey("PK_Stops", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Route",
+                name: "Routes",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false, defaultValueSql: "newid()"),
@@ -57,48 +57,43 @@ namespace Chilicki.Ptsa.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Route", x => x.Id);
+                    table.PrimaryKey("PK_Routes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Route_Agency_AgencyId",
+                        name: "FK_Routes_Agencies_AgencyId",
                         column: x => x.AgencyId,
-                        principalTable: "Agency",
+                        principalTable: "Agencies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Vertex",
+                name: "Vertices",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false, defaultValueSql: "newid()"),
                     GraphId = table.Column<Guid>(nullable: false),
                     StopId = table.Column<Guid>(nullable: false),
-                    SimilarVertexId = table.Column<Guid>(nullable: true)
+                    StopName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Vertex", x => x.Id);
+                    table.PrimaryKey("PK_Vertices", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Vertex_Graph_GraphId",
+                        name: "FK_Vertices_Graphs_GraphId",
                         column: x => x.GraphId,
-                        principalTable: "Graph",
+                        principalTable: "Graphs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Vertex_Vertex_SimilarVertexId",
-                        column: x => x.SimilarVertexId,
-                        principalTable: "Vertex",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Vertex_Stop_StopId",
+                        name: "FK_Vertices_Stops_StopId",
                         column: x => x.StopId,
-                        principalTable: "Stop",
+                        principalTable: "Stops",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Trip",
+                name: "Trips",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false, defaultValueSql: "newid()"),
@@ -108,17 +103,40 @@ namespace Chilicki.Ptsa.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Trip", x => x.Id);
+                    table.PrimaryKey("PK_Trips", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Trip_Route_RouteId",
+                        name: "FK_Trips_Routes_RouteId",
                         column: x => x.RouteId,
-                        principalTable: "Route",
+                        principalTable: "Routes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "StopTime",
+                name: "SimilarVertices",
+                columns: table => new
+                {
+                    VertexId = table.Column<Guid>(nullable: false),
+                    SimilarId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SimilarVertices", x => new { x.VertexId, x.SimilarId });
+                    table.ForeignKey(
+                        name: "FK_SimilarVertices_Vertices_SimilarId",
+                        column: x => x.SimilarId,
+                        principalTable: "Vertices",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_SimilarVertices_Vertices_VertexId",
+                        column: x => x.VertexId,
+                        principalTable: "Vertices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StopTimes",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false, defaultValueSql: "newid()"),
@@ -129,23 +147,23 @@ namespace Chilicki.Ptsa.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StopTime", x => x.Id);
+                    table.PrimaryKey("PK_StopTimes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_StopTime_Stop_StopId",
+                        name: "FK_StopTimes_Stops_StopId",
                         column: x => x.StopId,
-                        principalTable: "Stop",
+                        principalTable: "Stops",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_StopTime_Trip_TripId",
+                        name: "FK_StopTimes_Trips_TripId",
                         column: x => x.TripId,
-                        principalTable: "Trip",
+                        principalTable: "Trips",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Connection",
+                name: "Connections",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false, defaultValueSql: "newid()"),
@@ -154,141 +172,146 @@ namespace Chilicki.Ptsa.Data.Migrations
                     StartVertexId = table.Column<Guid>(nullable: false),
                     EndVertexId = table.Column<Guid>(nullable: false),
                     StartStopTimeId = table.Column<Guid>(nullable: false),
+                    DepartureTime = table.Column<long>(nullable: false),
                     EndStopTimeId = table.Column<Guid>(nullable: false),
+                    ArrivalTime = table.Column<long>(nullable: false),
                     IsTransfer = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Connection", x => x.Id);
+                    table.PrimaryKey("PK_Connections", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Connection_StopTime_EndStopTimeId",
+                        name: "FK_Connections_StopTimes_EndStopTimeId",
                         column: x => x.EndStopTimeId,
-                        principalTable: "StopTime",
+                        principalTable: "StopTimes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Connection_Vertex_EndVertexId",
+                        name: "FK_Connections_Vertices_EndVertexId",
                         column: x => x.EndVertexId,
-                        principalTable: "Vertex",
+                        principalTable: "Vertices",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Connection_Graph_GraphId",
+                        name: "FK_Connections_Graphs_GraphId",
                         column: x => x.GraphId,
-                        principalTable: "Graph",
+                        principalTable: "Graphs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Connection_StopTime_StartStopTimeId",
+                        name: "FK_Connections_StopTimes_StartStopTimeId",
                         column: x => x.StartStopTimeId,
-                        principalTable: "StopTime",
+                        principalTable: "StopTimes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Connection_Vertex_StartVertexId",
+                        name: "FK_Connections_Vertices_StartVertexId",
                         column: x => x.StartVertexId,
-                        principalTable: "Vertex",
+                        principalTable: "Vertices",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Connection_Trip_TripId",
+                        name: "FK_Connections_Trips_TripId",
                         column: x => x.TripId,
-                        principalTable: "Trip",
+                        principalTable: "Trips",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Connection_EndStopTimeId",
-                table: "Connection",
+                name: "IX_Connections_EndStopTimeId",
+                table: "Connections",
                 column: "EndStopTimeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Connection_EndVertexId",
-                table: "Connection",
+                name: "IX_Connections_EndVertexId",
+                table: "Connections",
                 column: "EndVertexId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Connection_GraphId",
-                table: "Connection",
+                name: "IX_Connections_GraphId",
+                table: "Connections",
                 column: "GraphId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Connection_StartStopTimeId",
-                table: "Connection",
+                name: "IX_Connections_StartStopTimeId",
+                table: "Connections",
                 column: "StartStopTimeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Connection_StartVertexId",
-                table: "Connection",
+                name: "IX_Connections_StartVertexId",
+                table: "Connections",
                 column: "StartVertexId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Connection_TripId",
-                table: "Connection",
+                name: "IX_Connections_TripId",
+                table: "Connections",
                 column: "TripId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Route_AgencyId",
-                table: "Route",
+                name: "IX_Routes_AgencyId",
+                table: "Routes",
                 column: "AgencyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StopTime_StopId",
-                table: "StopTime",
+                name: "IX_SimilarVertices_SimilarId",
+                table: "SimilarVertices",
+                column: "SimilarId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StopTimes_StopId",
+                table: "StopTimes",
                 column: "StopId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StopTime_TripId",
-                table: "StopTime",
+                name: "IX_StopTimes_TripId",
+                table: "StopTimes",
                 column: "TripId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Trip_RouteId",
-                table: "Trip",
+                name: "IX_Trips_RouteId",
+                table: "Trips",
                 column: "RouteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Vertex_GraphId",
-                table: "Vertex",
+                name: "IX_Vertices_GraphId",
+                table: "Vertices",
                 column: "GraphId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Vertex_SimilarVertexId",
-                table: "Vertex",
-                column: "SimilarVertexId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Vertex_StopId",
-                table: "Vertex",
+                name: "IX_Vertices_StopId",
+                table: "Vertices",
                 column: "StopId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Connection");
+                name: "Connections");
 
             migrationBuilder.DropTable(
-                name: "StopTime");
+                name: "SimilarVertices");
 
             migrationBuilder.DropTable(
-                name: "Vertex");
+                name: "StopTimes");
 
             migrationBuilder.DropTable(
-                name: "Trip");
+                name: "Vertices");
 
             migrationBuilder.DropTable(
-                name: "Graph");
+                name: "Trips");
 
             migrationBuilder.DropTable(
-                name: "Stop");
+                name: "Graphs");
 
             migrationBuilder.DropTable(
-                name: "Route");
+                name: "Stops");
 
             migrationBuilder.DropTable(
-                name: "Agency");
+                name: "Routes");
+
+            migrationBuilder.DropTable(
+                name: "Agencies");
         }
     }
 }

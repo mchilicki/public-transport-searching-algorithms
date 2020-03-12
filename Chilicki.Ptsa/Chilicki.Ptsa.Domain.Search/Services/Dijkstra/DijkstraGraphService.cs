@@ -10,7 +10,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
         {
             return graph
                 .Vertices
-                .First(p => p.Stop.Id == stop.Id);
+                .First(p => p.StopId == stop.Id);
         }
 
         public Vertex MarkVertexAsVisited(Vertex stopVertex)
@@ -18,7 +18,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
             stopVertex.IsVisited = true;
             foreach (var similarStopVertex in stopVertex.SimilarVertices)
             {
-                similarStopVertex.IsVisited = true;
+                similarStopVertex.Similar.IsVisited = true;
             }
             return stopVertex;
         }
@@ -26,17 +26,19 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
         public IEnumerable<Connection> SetTransferConnectionsToSimilarVertices (
             IEnumerable<Connection> vertexFastestConnections, 
             Vertex stopVertex, 
-            IEnumerable<Vertex> similarStopVertices)
+            IEnumerable<SimilarVertex> similarStopVertices)
         {
             var connectionToStopVertex = vertexFastestConnections
-                    .FirstOrDefault(p => p.EndVertex.Stop.Id == stopVertex.Stop.Id);
+                    .FirstOrDefault(p => p.EndVertex.StopId == stopVertex.StopId);
             foreach (var similarVertex in similarStopVertices)
             {
                 var similarVertexFastestConnection = vertexFastestConnections
-                    .FirstOrDefault(p => p.EndVertex.Stop.Id == similarVertex.Stop.Id);
+                    .FirstOrDefault(p => p.EndVertex.StopId == similarVertex.Similar.StopId);
                 similarVertexFastestConnection.StartVertex = stopVertex;
                 similarVertexFastestConnection.StartStopTime = connectionToStopVertex.EndStopTime;
                 similarVertexFastestConnection.EndStopTime = connectionToStopVertex.EndStopTime;
+                similarVertexFastestConnection.DepartureTime = similarVertexFastestConnection.EndStopTime.DepartureTime;
+                similarVertexFastestConnection.ArrivalTime = similarVertexFastestConnection.EndStopTime.DepartureTime;
                 similarVertexFastestConnection.Trip = null;
                 similarVertexFastestConnection.IsTransfer = true;
             }
@@ -49,7 +51,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
             allStopConnections.AddRange(stopVertex.Connections);
             foreach (var similarVertex in stopVertex.SimilarVertices)
             {
-                allStopConnections.AddRange(similarVertex.Connections);
+                allStopConnections.AddRange(similarVertex.Similar.Connections);
             }
             return allStopConnections;
         }

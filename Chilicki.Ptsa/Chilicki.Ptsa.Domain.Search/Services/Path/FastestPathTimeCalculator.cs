@@ -9,20 +9,20 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
     {
         public int CalculateTravelTime(FastestPath fastestPath)
         {
-            var travelStartTime = fastestPath.Path
+            var departureTime = fastestPath.Path
                 .First(p => p.IsTransfer == false)
-                .StartStopTime.DepartureTime;
-            var travelEndTime = fastestPath.Path
+                .DepartureTime;
+            var arrivalTime = fastestPath.Path
                 .Last(p => p.IsTransfer == false)
-                .EndStopTime.DepartureTime;
-            return (int)Math.Abs((travelEndTime - travelStartTime).TotalMinutes);
+                .ArrivalTime;
+            return (int)Math.Abs((arrivalTime - departureTime).TotalMinutes);
         }
 
         public int CalculateConnectionTime(Connection waitingConnection)
         {
-            var travelStartTime = waitingConnection.StartStopTime.DepartureTime;
-            var travelEndTime = waitingConnection.EndStopTime.DepartureTime;
-            return (int)Math.Abs((travelEndTime - travelStartTime).TotalMinutes);
+            var departureTime = waitingConnection.DepartureTime;
+            var arrivalTime = waitingConnection.ArrivalTime;
+            return (int)Math.Abs((arrivalTime - departureTime).TotalMinutes);
         }
     }
 }

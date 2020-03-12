@@ -23,6 +23,22 @@
     <Compile Remove="Migrations\20200303185227_AddGraphsVerticesAndConnections.Designer.cs" />
     <Compile Remove="Migrations\20200304205556_AddGraphConnectionReference.cs" />
     <Compile Remove="Migrations\20200304205556_AddGraphConnectionReference.Designer.cs" />
+    <Compile Remove="Migrations\20200304211417_AddTimetablesAndGraphs.cs" />
+    <Compile Remove="Migrations\20200304211417_AddTimetablesAndGraphs.Designer.cs" />
+    <Compile Remove="Migrations\20200311193435_AddTimetablesAndGraphs.cs" />
+    <Compile Remove="Migrations\20200311193435_AddTimetablesAndGraphs.Designer.cs" />
+    <Compile Remove="Migrations\20200311194007_AddTimetablesAndGraphs.cs" />
+    <Compile Remove="Migrations\20200311194007_AddTimetablesAndGraphs.Designer.cs" />
+    <Compile Remove="Migrations\20200311194404_AddTimetablesAndGraphs.cs" />
+    <Compile Remove="Migrations\20200311194404_AddTimetablesAndGraphs.Designer.cs" />
+    <Compile Remove="Migrations\20200311194543_AddTimetablesAndGraphs.cs" />
+    <Compile Remove="Migrations\20200311194543_AddTimetablesAndGraphs.Designer.cs" />
+    <Compile Remove="Migrations\20200311201819_AddTimetablesAndGraphs.cs" />
+    <Compile Remove="Migrations\20200311201819_AddTimetablesAndGraphs.Designer.cs" />
+    <Compile Remove="Migrations\20200311222218_AddNullableVerticesToConnection.cs" />
+    <Compile Remove="Migrations\20200311222218_AddNullableVerticesToConnection.Designer.cs" />
+    <Compile Remove="Migrations\20200311225940_A.cs" />
+    <Compile Remove="Migrations\20200311225940_A.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
