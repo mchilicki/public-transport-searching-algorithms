@@ -31,16 +31,13 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
             this.similarVertexRepository = similarVertexRepository;
         }
 
-        // TODO
-        // Correct SimilarVertices saving to database
-
         public async Task<Graph> CreateGraph(IEnumerable<Stop> stops)
         {
             var graph = new Graph();
             var vertices = CreateEmptyVertices(graph, stops);
-            await vertexRepository.AddRangeAsync(vertices);
+            await vertexRepository.AddRangeAsync(vertices);            
+            await FillVerticesWithConnections(graph, vertices);
             await FillVerticesWithSimilarVertices(vertices);
-            //await FillVerticesWithConnections(graph, vertices);                                 
             return graph;
         }
         
