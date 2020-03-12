@@ -1,4 +1,5 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -29,16 +30,20 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
             IEnumerable<SimilarVertex> similarStopVertices)
         {
             var connectionToStopVertex = vertexFastestConnections
-                    .FirstOrDefault(p => p.EndVertex.StopId == stopVertex.StopId);
+                    .FirstOrDefault(p => p.EndVertexId == stopVertex.Id);
             foreach (var similarVertex in similarStopVertices)
             {
                 var similarVertexFastestConnection = vertexFastestConnections
-                    .FirstOrDefault(p => p.EndVertex.StopId == similarVertex.Similar.StopId);
+                    .FirstOrDefault(p => p.EndVertexId == similarVertex.SimilarId);
                 similarVertexFastestConnection.StartVertex = stopVertex;
+                similarVertexFastestConnection.StartVertexId = stopVertex?.Id;
                 similarVertexFastestConnection.StartStopTime = connectionToStopVertex.EndStopTime;
+                similarVertexFastestConnection.EndVertex = similarVertex.Similar;
+                similarVertexFastestConnection.EndVertexId = similarVertex.SimilarId;
                 similarVertexFastestConnection.EndStopTime = connectionToStopVertex.EndStopTime;
-                similarVertexFastestConnection.DepartureTime = similarVertexFastestConnection.EndStopTime.DepartureTime;
-                similarVertexFastestConnection.ArrivalTime = similarVertexFastestConnection.EndStopTime.DepartureTime;
+                var endTime = similarVertexFastestConnection.EndStopTime != null ? similarVertexFastestConnection.EndStopTime.DepartureTime : TimeSpan.Zero;
+                similarVertexFastestConnection.DepartureTime = endTime;
+                similarVertexFastestConnection.ArrivalTime = endTime;
                 similarVertexFastestConnection.Trip = null;
                 similarVertexFastestConnection.IsTransfer = true;
             }

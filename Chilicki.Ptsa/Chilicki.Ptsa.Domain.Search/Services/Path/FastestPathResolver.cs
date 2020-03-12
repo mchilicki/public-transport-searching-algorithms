@@ -8,35 +8,39 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
 {
     public class FastestPathResolver
     {
-        readonly FastestPathTransferService fastestPathTransferService;
+        readonly FastestPathTransferService transferService;
         readonly ConnectionCloner cloner;
 
         public FastestPathResolver(
-            FastestPathTransferService fastestPathTransferService,
+            FastestPathTransferService trasferService,
             ConnectionCloner cloner)
         {
-            this.fastestPathTransferService = fastestPathTransferService;
+            this.transferService = trasferService;
             this.cloner = cloner;
         }
 
-        public FastestPath ResolveFastestPath
-            (SearchInput search, IEnumerable<Connection> vertexFastestConnection)
+        public FastestPath ResolveFastestPath(
+            SearchInput search, IEnumerable<Connection> vertexFastestConnections)
         {
             var fastestPath = new List<Connection>();
-            var currentConnection = vertexFastestConnection
+            var currentConnection = vertexFastestConnections
                 .First(p => p.EndVertex.StopId == search.DestinationStop.Id);            
             fastestPath.Add(currentConnection);
             while (currentConnection.StartVertex.StopId != search.StartStop.Id)
             {
                 var nextConnection = currentConnection;
-                var sourceVertex = currentConnection.StartVertex;
-                currentConnection = vertexFastestConnection
-                    .First(p => p.EndVertex.StopId == sourceVertex.StopId);
-                if (!fastestPathTransferService.IsAlreadyTransfer(currentConnection) &&
-                    !fastestPathTransferService.IsAlreadyTransfer(nextConnection) &&
-                    fastestPathTransferService.ShouldBeTransfer(currentConnection, nextConnection))
+                var sourceVertexId = currentConnection.StartVertexId;
+
+                // Here is long time
+                currentConnection = vertexFastestConnections
+                    .First(p => p.EndVertexId == sourceVertexId);
+
+
+                if (!transferService.IsAlreadyTransfer(currentConnection) &&
+                    !transferService.IsAlreadyTransfer(nextConnection) &&
+                    transferService.ShouldBeTransfer(currentConnection, nextConnection))
                 {
-                    var transferBeetweenVertices = fastestPathTransferService
+                    var transferBeetweenVertices = transferService
                         .GenerateTransferAsStopConnection(currentConnection, nextConnection);
                     fastestPath.Add(transferBeetweenVertices);
                 }

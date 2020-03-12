@@ -26,12 +26,12 @@ namespace Chilicki.Ptsa.Data.Configurations.EntityConfigurations
                 .OnDelete(DeleteBehavior.Cascade);
             builder.HasOne(p => p.StartVertex)
                 .WithMany(p => p.Connections)
-                .HasForeignKey("StartVertexId")
+                .HasForeignKey(p => p.StartVertexId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.EndVertex)
                 .WithMany()
-                .HasForeignKey("EndVertexId")
+                .HasForeignKey(p => p.EndVertexId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.StartStopTime)

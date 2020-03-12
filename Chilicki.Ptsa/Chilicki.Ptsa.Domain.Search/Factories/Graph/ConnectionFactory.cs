@@ -1,4 +1,5 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
+using System;
 
 namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
 {
@@ -13,18 +14,26 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
             bool isTransfer = false)
         {
             Trip trip = null;
+            TimeSpan departureTime = TimeSpan.Zero;
+            TimeSpan arrivalTime = TimeSpan.Zero;
             if (startStopTime != null)
+            {
                 trip = startStopTime.Trip;
+                departureTime = startStopTime.DepartureTime;
+                arrivalTime = startStopTime.DepartureTime;
+            }
             return new Connection()
             {
                 Graph = graph,
                 Trip = trip,
                 StartVertex = currentVertex,
+                StartVertexId = currentVertex?.Id,
                 EndVertex = nextVertex,
+                EndVertexId = nextVertex?.Id,
                 StartStopTime = startStopTime,
-                DepartureTime = startStopTime.DepartureTime,
+                DepartureTime = departureTime,
                 EndStopTime = endStopTime,
-                ArrivalTime = endStopTime.DepartureTime,
+                ArrivalTime = arrivalTime,
                 IsTransfer = isTransfer,
             };
         }

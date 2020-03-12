@@ -44,10 +44,13 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
         {
             currentFastestConnection.Trip = newFastestConnection.Trip;
             currentFastestConnection.StartStopTime = newFastestConnection.StartStopTime;
+            currentFastestConnection.EndStopTime = newFastestConnection.EndStopTime;
             currentFastestConnection.ArrivalTime = newFastestConnection.ArrivalTime;
             currentFastestConnection.DepartureTime = newFastestConnection.DepartureTime;            
             currentFastestConnection.StartVertex = newFastestConnection.StartVertex;
-            currentFastestConnection.EndStopTime = newFastestConnection.EndStopTime;
+            currentFastestConnection.StartVertexId = newFastestConnection.StartVertexId;
+            currentFastestConnection.EndVertex = newFastestConnection.EndVertex;
+            currentFastestConnection.EndVertexId = newFastestConnection.EndVertexId;
             currentFastestConnection.Graph = newFastestConnection.Graph;
         } 
     }

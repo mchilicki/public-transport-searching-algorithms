@@ -47,6 +47,8 @@
     <Compile Remove="Migrations\20200312202127_AddMissingSimilarVertexId.Designer.cs" />
     <Compile Remove="Migrations\20200312202405_AddHouses.cs" />
     <Compile Remove="Migrations\20200312202405_AddHouses.Designer.cs" />
+    <Compile Remove="Migrations\20200312215513_AddExplicitConnectionForeignKeys.cs" />
+    <Compile Remove="Migrations\20200312215513_AddExplicitConnectionForeignKeys.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
