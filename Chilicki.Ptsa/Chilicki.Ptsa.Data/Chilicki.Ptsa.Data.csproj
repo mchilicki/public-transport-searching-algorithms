@@ -39,6 +39,8 @@
     <Compile Remove="Migrations\20200311222218_AddNullableVerticesToConnection.Designer.cs" />
     <Compile Remove="Migrations\20200311225940_A.cs" />
     <Compile Remove="Migrations\20200311225940_A.Designer.cs" />
+    <Compile Remove="Migrations\20200312201114_AddMissingWrongId.cs" />
+    <Compile Remove="Migrations\20200312201114_AddMissingWrongId.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

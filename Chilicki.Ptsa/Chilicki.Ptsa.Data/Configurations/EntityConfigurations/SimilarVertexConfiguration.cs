@@ -14,7 +14,7 @@ namespace Chilicki.Ptsa.Data.Configurations.EntityConfigurations
             builder.ToTable("SimilarVertices");
             builder.HasKey(p => new { p.VertexId, p.SimilarId });
             builder.HasOne(p => p.Vertex)
-                .WithMany(p => p.OfSimilarVertices)
+                .WithMany()
                 .HasForeignKey(p => p.VertexId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);

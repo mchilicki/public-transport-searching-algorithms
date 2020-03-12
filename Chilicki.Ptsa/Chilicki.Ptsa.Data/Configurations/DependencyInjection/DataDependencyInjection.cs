@@ -31,14 +31,16 @@ namespace Chilicki.Ptsa.Data.Configurations.DependencyInjection
 
         private void ConfigureDatabases(IServiceCollection services, ConnectionStrings connectionStrings)
         {
-            var databaseConnectionString = connectionStrings.PtsaDatabase;
-            services.AddDbContext<DbContext, PtsaDbContext>(options => options
-                .UseSqlServer(
-                    databaseConnectionString,
-                    b => b.MigrationsAssembly(typeof(PtsaDbContext).Assembly.GetName().Name
-                ))
-                .UseLazyLoadingProxies()
-            );
+            var databaseConnectionString = connectionStrings.PtsaDatabase;            
+            services.AddDbContext<DbContext, PtsaDbContext>(optionsBuilder =>
+            {
+                optionsBuilder.UseSqlServer(
+                        databaseConnectionString,
+                        b => b.MigrationsAssembly(typeof(PtsaDbContext).Assembly.GetName().Name)
+                    )
+                    .UseLazyLoadingProxies();
+                optionsBuilder.EnableSensitiveDataLogging(true);
+            });            
         }        
     }
 }

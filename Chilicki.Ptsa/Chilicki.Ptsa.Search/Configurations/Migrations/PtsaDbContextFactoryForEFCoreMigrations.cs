@@ -18,6 +18,7 @@ namespace Chilicki.Ptsa.Search.Configurations.Migrations
                 databaseConnectionString,
                 b => b.MigrationsAssembly(typeof(PtsaDbContext).Assembly.GetName().Name)
             );
+            optionsBuilder.EnableSensitiveDataLogging(true);
             return new PtsaDbContext(optionsBuilder.Options);
         }
 

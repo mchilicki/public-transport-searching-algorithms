@@ -13,6 +13,5 @@ namespace Chilicki.Ptsa.Data.Entities
         public virtual Stop Stop { get; set; }
         public virtual ICollection<Connection> Connections { get; set; }        
         public virtual ICollection<SimilarVertex> SimilarVertices { get; set; }
-        public virtual ICollection<SimilarVertex> OfSimilarVertices { get; set; }
     }
 }

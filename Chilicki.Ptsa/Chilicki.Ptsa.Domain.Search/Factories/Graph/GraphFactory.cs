@@ -38,9 +38,9 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
         {
             var graph = new Graph();
             var vertices = CreateEmptyVertices(graph, stops);
-            vertices = await FillVerticesWithConnections(graph, vertices);
-            await FillVerticesWithSimilarVertices(graph);
             await vertexRepository.AddRangeAsync(vertices);
+            await FillVerticesWithSimilarVertices(vertices);
+            //await FillVerticesWithConnections(graph, vertices);                                 
             return graph;
         }
         
@@ -86,19 +86,18 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
             return allVertices;
         }
 
-        private async Task FillVerticesWithSimilarVertices(Graph graph)
+        private async Task FillVerticesWithSimilarVertices(ICollection<Vertex> vertices)
         {
-            foreach (var vertex in graph.Vertices)
+            foreach (var vertex in vertices)
             {
-                var readySimilarVertices = new List<SimilarVertex>();
-                var similarVertices = FindSimilarVerticesByName(graph.Vertices, vertex);
+                var similarVertices = FindSimilarVerticesByName(vertices, vertex);
+                if (vertex.SimilarVertices == null)
+                    vertex.SimilarVertices = new List<SimilarVertex>();
                 foreach (var similarVertex in similarVertices)
                 {
                     var similar = similarVertexFactory.Create(vertex, similarVertex);
-                    readySimilarVertices.Add(similar);
+                    await similarVertexRepository.AddAsync(similar);
                 }
-                vertex.SimilarVertices = readySimilarVertices;
-                await similarVertexRepository.AddRangeAsync(readySimilarVertices);
             }
         }
 
@@ -107,7 +106,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
         {
             return vertices
                 .Where(p => p.StopName == vertex.StopName &&
-                    p.Id != vertex.Id);
+                    p.Stop.Id != vertex.Stop.Id);
         }
     }
 }

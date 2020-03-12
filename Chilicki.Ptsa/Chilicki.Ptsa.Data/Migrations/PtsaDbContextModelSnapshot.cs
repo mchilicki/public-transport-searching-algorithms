@@ -140,9 +140,6 @@ namespace Chilicki.Ptsa.Data.Migrations
                     b.Property<Guid>("SimilarId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("SimilarVertexId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("VertexId", "SimilarId");
 
                     b.HasIndex("SimilarId");
