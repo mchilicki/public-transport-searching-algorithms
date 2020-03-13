@@ -1,6 +1,7 @@
 ﻿using Chilicki.Ptsa.Data.Configurations.ProjectConfiguration;
 using Chilicki.Ptsa.Data.Databases;
 using Chilicki.Ptsa.Data.Repositories;
+using Chilicki.Ptsa.Data.Repositories.Base;
 using Chilicki.Ptsa.Data.UnitsOfWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,7 @@ namespace Chilicki.Ptsa.Data.Configurations.DependencyInjection
             services.AddTransient(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             services.AddTransient<StopRepository>();
             services.AddTransient<GraphRepository>();
+            services.AddTransient<VertexRepository>();
             services.AddTransient<ISimilarVertexRepository, SimilarVertexRepository>();
         }
 

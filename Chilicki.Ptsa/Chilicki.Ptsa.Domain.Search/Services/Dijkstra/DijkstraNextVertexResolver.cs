@@ -1,4 +1,5 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
+using Chilicki.Ptsa.Domain.Search.Aggregates;
 using System.Collections.Generic;
 
 namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
@@ -22,10 +23,10 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
                 .GetStopVertexByStop(graph, startingStop);         
         }
 
-        public Vertex GetNextVertex(IEnumerable<Connection> vertexFastestConnections)
+        public Vertex GetNextVertex(VertexFastestConnections vertexFastestConnections)
         {
             Connection fastestConnection = null;
-            foreach (var maybeNewFastestConnection in vertexFastestConnections)
+            foreach (var (vertexId, maybeNewFastestConnection) in vertexFastestConnections.Dictionary)
             {
                 if (!dijkstraConnectionsService.IsConnectionEmpty(maybeNewFastestConnection))
                 {

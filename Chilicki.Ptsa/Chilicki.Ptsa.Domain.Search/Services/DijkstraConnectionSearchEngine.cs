@@ -30,14 +30,13 @@ namespace Chilicki.Ptsa.Domain.Search.Services
             this.dijkstraGraphService = dijkstraGraphService;
         }
 
-        public IEnumerable<Connection> SearchConnections(SearchInput search, Graph graph)
+        public VertexFastestConnections SearchConnections(SearchInput search, Graph graph)
         {
             var vertexFastestConnections = dijkstraEmptyFastestConnectionsFactory
                 .Create(graph, search);
             var currentVertex = dijkstraNextVertexResolver.GetFirstVertex(graph, search.StartStop);
             vertexFastestConnections = dijkstraGraphService.SetTransferConnectionsToSimilarVertices(
                 vertexFastestConnections, currentVertex, currentVertex.SimilarVertices);
-            var interationCount = 1;
             while (ShouldSearchingContinue(search, currentVertex))
             {
                 var allConnections = dijkstraGraphService.GetConnectionsFromSimilarVertices
@@ -62,7 +61,6 @@ namespace Chilicki.Ptsa.Domain.Search.Services
                     throw new DijkstraNoFastestPathExistsException();
                 vertexFastestConnections = dijkstraGraphService.SetTransferConnectionsToSimilarVertices(
                     vertexFastestConnections, currentVertex, currentVertex.SimilarVertices);
-                interationCount++;
             }            
             return vertexFastestConnections;
         }

@@ -1,5 +1,6 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Data.Repositories;
+using Chilicki.Ptsa.Data.Repositories.Base;
 using Chilicki.Ptsa.Data.UnitsOfWork;
 using System;
 using System.Collections.Generic;

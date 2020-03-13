@@ -20,11 +20,13 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
         }
 
         public FastestPath ResolveFastestPath(
-            SearchInput search, IEnumerable<Connection> vertexFastestConnections)
+            SearchInput search, VertexFastestConnections vertexFastestConnections)
         {
             var fastestPath = new List<Connection>();
             var currentConnection = vertexFastestConnections
-                .First(p => p.EndVertex.StopId == search.DestinationStop.Id);            
+                .Dictionary
+                .First(p => p.Value.EndVertex.StopId == search.DestinationStop.Id)
+                .Value;            
             fastestPath.Add(currentConnection);
             while (currentConnection.StartVertex.StopId != search.StartStop.Id)
             {
@@ -32,9 +34,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
                 var sourceVertexId = currentConnection.StartVertexId;
 
                 // Here is long time
-                currentConnection = vertexFastestConnections
-                    .First(p => p.EndVertexId == sourceVertexId);
-
+                vertexFastestConnections.Dictionary.TryGetValue(sourceVertexId.Value, out currentConnection);
 
                 if (!transferService.IsAlreadyTransfer(currentConnection) &&
                     !transferService.IsAlreadyTransfer(nextConnection) &&

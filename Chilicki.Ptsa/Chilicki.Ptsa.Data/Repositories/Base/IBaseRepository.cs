@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Chilicki.Ptsa.Data.Repositories
+namespace Chilicki.Ptsa.Data.Repositories.Base
 {
     public interface IBaseRepository<TEntity> where TEntity : BaseEntity
     {

@@ -1,4 +1,5 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
+using Chilicki.Ptsa.Domain.Search.Aggregates;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,28 +25,27 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
             return stopVertex;
         }
 
-        public IEnumerable<Connection> SetTransferConnectionsToSimilarVertices (
-            IEnumerable<Connection> vertexFastestConnections, 
+        public VertexFastestConnections SetTransferConnectionsToSimilarVertices (
+            VertexFastestConnections vertexFastestConnections, 
             Vertex stopVertex, 
             IEnumerable<SimilarVertex> similarStopVertices)
         {
-            var connectionToStopVertex = vertexFastestConnections
-                    .FirstOrDefault(p => p.EndVertexId == stopVertex.Id);
+            var connectionToStopVertex = vertexFastestConnections.Find(stopVertex.Id);
             foreach (var similarVertex in similarStopVertices)
             {
-                var similarVertexFastestConnection = vertexFastestConnections
-                    .FirstOrDefault(p => p.EndVertexId == similarVertex.SimilarId);
-                similarVertexFastestConnection.StartVertex = stopVertex;
-                similarVertexFastestConnection.StartVertexId = stopVertex?.Id;
-                similarVertexFastestConnection.StartStopTime = connectionToStopVertex.EndStopTime;
-                similarVertexFastestConnection.EndVertex = similarVertex.Similar;
-                similarVertexFastestConnection.EndVertexId = similarVertex.SimilarId;
-                similarVertexFastestConnection.EndStopTime = connectionToStopVertex.EndStopTime;
-                var endTime = similarVertexFastestConnection.EndStopTime != null ? similarVertexFastestConnection.EndStopTime.DepartureTime : TimeSpan.Zero;
-                similarVertexFastestConnection.DepartureTime = endTime;
-                similarVertexFastestConnection.ArrivalTime = endTime;
-                similarVertexFastestConnection.Trip = null;
-                similarVertexFastestConnection.IsTransfer = true;
+                var similar = vertexFastestConnections.Find(similarVertex.SimilarId);
+                similar.StartVertex = stopVertex;
+                similar.StartVertexId = stopVertex?.Id;
+                similar.StartStopTime = connectionToStopVertex.EndStopTime;
+                similar.EndVertex = similarVertex.Similar;
+                similar.EndVertexId = similarVertex.SimilarId;
+                similar.EndStopTime = connectionToStopVertex.EndStopTime;
+                var endTime = similar.EndStopTime != null ? 
+                    similar.EndStopTime.DepartureTime : TimeSpan.Zero;
+                similar.DepartureTime = endTime;
+                similar.ArrivalTime = endTime;
+                similar.Trip = null;
+                similar.IsTransfer = true;
             }
             return vertexFastestConnections;
         }

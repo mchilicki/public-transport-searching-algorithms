@@ -16,22 +16,22 @@ namespace Chilicki.Ptsa.Domain.Search.Factories.Dijkstra
             this.connectionFactory = connectionFactory;
         }
 
-        public IEnumerable<Connection> Create(Graph graph, SearchInput search)
+        public VertexFastestConnections Create(Graph graph, SearchInput search)
         {
-            var vertexFastestConnections = new List<Connection>();
+            var vertexFastestConnections = new VertexFastestConnections();
             var startingVertex = graph
                 .Vertices
                 .First(p => p.StopId == search.StartStop.Id);
             var startingConnection = connectionFactory
                 .Create(graph, startingVertex, null, startingVertex, null);
-            vertexFastestConnections.Add(startingConnection);
+            vertexFastestConnections.Add(startingVertex.Id, startingConnection);
             foreach (var vertex in graph.Vertices)
             {
                 if (vertex.StopId != search.StartStop.Id)
                 {
                     var connection = connectionFactory
                         .Create(graph, null, null, vertex, null);
-                    vertexFastestConnections.Add(connection);
+                    vertexFastestConnections.Add(vertex.Id, connection);
                 }                
             }
             return vertexFastestConnections;

@@ -1,4 +1,5 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
+using Chilicki.Ptsa.Domain.Search.Aggregates;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,23 +8,19 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
     public class DijkstraConnectionService
     {
         public Connection GetDestinationStopFastestConnection(
-            IEnumerable<Connection> vertexFastestConnections,
+            VertexFastestConnections vertexFastestConnections,
             Connection connection)
         {
-            return vertexFastestConnections
-                .First(p => p.EndVertexId == 
-                    connection.EndVertexId);
+            return vertexFastestConnections.Find(connection.EndVertexId);
         }
 
         public Connection GetConnectionFromPreviousVertex(
-            IEnumerable<Connection> vertexFastestConnections,
+            VertexFastestConnections vertexFastestConnections,
             Connection connection)
         {
             if (connection.StartVertex == null)
                 return null;
-            return vertexFastestConnections
-                .FirstOrDefault(p => p.EndVertex != null &&
-                    p.EndVertexId == connection.StartVertexId);
+            return vertexFastestConnections.Find(connection.StartVertexId);
         }
 
         public bool IsConnectionEmpty(Connection stopConnection)

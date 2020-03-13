@@ -1,4 +1,5 @@
 ﻿using Chilicki.Ptsa.Data.Entities.Base;
+using Chilicki.Ptsa.Data.Repositories.Base;
 using Chilicki.Ptsa.Data.Repositories.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -20,12 +21,12 @@ namespace Chilicki.Ptsa.Data.Repositories
 
         public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
-            return await entities.IncludeAll().ToListAsync();
+            return await entities.ToListAsync();
         }
 
         public async Task<TEntity> FindAsync(Guid id)
         {
-            return await entities.IncludeAll().SingleOrDefaultAsync(p => p.Id == id);
+            return await entities.SingleOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<TEntity> AddAsync(TEntity entity)

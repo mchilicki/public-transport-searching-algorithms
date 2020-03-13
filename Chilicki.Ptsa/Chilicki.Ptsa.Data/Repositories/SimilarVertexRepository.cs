@@ -1,4 +1,5 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
+using Chilicki.Ptsa.Data.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -20,12 +21,12 @@ namespace Chilicki.Ptsa.Data.Repositories
 
         public async Task<IEnumerable<SimilarVertex>> GetAllAsync()
         {
-            return await entities.Include(p => new { p.Vertex, p.Similar }).ToListAsync();
+            return await entities.ToListAsync();
         }
 
         public async Task<SimilarVertex> FindAsync(Guid vertexId, Guid similarId)
         {
-            return await entities.Include(p => new { p.Vertex, p.Similar })
+            return await entities
                 .SingleOrDefaultAsync(p => p.VertexId == vertexId && p.SimilarId == similarId);
         }
 
