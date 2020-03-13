@@ -55,6 +55,8 @@ namespace Chilicki.Ptsa.Domain.Search.Services
                         .ShouldConnectionBeReplaced(search, connectionFromPreviousVertex, 
                             destinationStopFastestConnection, connection))
                     {
+
+                        // TODO This place is slow, because it gets StartStopTime and EndStopTime
                         fastestConnectionReplacer
                             .ReplaceWithNewFastestConnection(destinationStopFastestConnection, connection);
                     }

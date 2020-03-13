@@ -69,8 +69,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
         private IEnumerable<Connection> GetValidConnections(ICollection<Connection> connections, SearchInput search)
         {
             return connections
-                .Where(p => p.DepartureTime >= search.StartTime)
-                .OrderBy(p => p.DepartureTime);
+                .Where(p => p.DepartureTime >= search.StartTime);
         }
     }
 }
