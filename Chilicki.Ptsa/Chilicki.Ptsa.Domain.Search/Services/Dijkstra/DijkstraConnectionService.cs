@@ -11,7 +11,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
             VertexFastestConnections vertexFastestConnections,
             Connection connection)
         {
-            return vertexFastestConnections.Find(connection.EndVertexId);
+            return vertexFastestConnections.Get(connection.EndVertexId);
         }
 
         public Connection GetConnectionFromPreviousVertex(
@@ -20,7 +20,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
         {
             if (connection.StartVertex == null)
                 return null;
-            return vertexFastestConnections.Find(connection.StartVertexId);
+            return vertexFastestConnections.Get(connection.StartVertexId);
         }
 
         public bool IsConnectionEmpty(Connection stopConnection)

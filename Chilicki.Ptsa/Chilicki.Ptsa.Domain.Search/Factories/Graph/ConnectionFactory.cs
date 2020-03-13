@@ -7,10 +7,25 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
     {
         public Connection Create(
             Graph graph,
-            Vertex currentVertex,
+            Vertex startVertex,
             StopTime startStopTime,
-            Vertex nextVertex,
+            Vertex endVertex,
             StopTime endStopTime,
+            bool isTransfer = false)
+        {
+            var conn = new Connection();
+            return FillIn(
+                conn, graph, startVertex, startStopTime, 
+                endVertex, endStopTime, isTransfer);
+        }
+
+        public Connection FillIn(
+            Connection conn, 
+            Graph graph, 
+            Vertex startVertex, 
+            StopTime startStopTime, 
+            Vertex endVertex, 
+            StopTime endStopTime, 
             bool isTransfer = false)
         {
             Trip trip = null;
@@ -18,24 +33,23 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
             TimeSpan arrivalTime = TimeSpan.Zero;
             if (startStopTime != null)
             {
-                trip = startStopTime.Trip;
+                if (!isTransfer)
+                    trip = startStopTime.Trip;
                 departureTime = startStopTime.DepartureTime;
                 arrivalTime = startStopTime.DepartureTime;
             }
-            return new Connection()
-            {
-                Graph = graph,
-                Trip = trip,
-                StartVertex = currentVertex,
-                StartVertexId = currentVertex?.Id,
-                EndVertex = nextVertex,
-                EndVertexId = nextVertex?.Id,
-                StartStopTime = startStopTime,
-                DepartureTime = departureTime,
-                EndStopTime = endStopTime,
-                ArrivalTime = arrivalTime,
-                IsTransfer = isTransfer,
-            };
+            conn.Graph = graph;
+            conn.Trip = trip;
+            conn.StartVertex = startVertex;
+            conn.StartVertexId = startVertex?.Id;
+            conn.EndVertex = endVertex;
+            conn.EndVertexId = endVertex?.Id;
+            conn.StartStopTime = startStopTime;
+            conn.DepartureTime = departureTime;
+            conn.EndStopTime = endStopTime;
+            conn.ArrivalTime = arrivalTime;
+            conn.IsTransfer = isTransfer;
+            return conn;
         }
     }
 }

@@ -10,11 +10,11 @@ namespace Chilicki.Ptsa.Domain.Search.Factories.StopConnections
             {
                 Trip = connection.Trip,
                 StartVertex = connection.StartVertex,
-                StartVertexId = connection.StartVertexId,
+                StartVertexId = connection.StartVertex?.Id,
                 DepartureTime = connection.DepartureTime,
                 StartStopTime = connection.StartStopTime,
                 EndVertex = connection.EndVertex,
-                EndVertexId = connection.EndVertexId,
+                EndVertexId = connection.EndVertex?.Id,
                 ArrivalTime = connection.ArrivalTime,
                 EndStopTime = connection.EndStopTime,
                 IsTransfer = connection.IsTransfer,

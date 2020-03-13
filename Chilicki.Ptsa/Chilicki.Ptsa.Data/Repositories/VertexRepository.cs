@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Chilicki.Ptsa.Data.Repositories
 {
@@ -13,6 +14,10 @@ namespace Chilicki.Ptsa.Data.Repositories
         {
         }
 
-
+        public async Task<Vertex> GetByStopId(Guid stopId)
+        {
+            return await entities
+                .FirstOrDefaultAsync(p => p.StopId == stopId);
+        }
     }
 }

@@ -1,16 +1,20 @@
 ﻿using Chilicki.Ptsa.Domain.Search.Aggregates;
 using Chilicki.Ptsa.Data.Entities;
+using Chilicki.Ptsa.Domain.Search.Services.GraphFactories;
 
 namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
 {
     public class DijkstraFastestConnectionReplacer
     {
         readonly DijkstraConnectionService dijkstraConnectionsService;
+        readonly ConnectionFactory connectionFactory;
 
         public DijkstraFastestConnectionReplacer(
-            DijkstraConnectionService dijkstraConnectionsService)
+            DijkstraConnectionService dijkstraConnectionsService,
+            ConnectionFactory connectionFactory)
         {
             this.dijkstraConnectionsService = dijkstraConnectionsService;
+            this.connectionFactory = connectionFactory;
         }
 
         public bool ShouldConnectionBeReplaced(
@@ -42,16 +46,13 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
             Connection currentFastestConnection, 
             Connection newFastestConnection)
         {
-            currentFastestConnection.Trip = newFastestConnection.Trip;
-            currentFastestConnection.StartStopTime = newFastestConnection.StartStopTime;
-            currentFastestConnection.EndStopTime = newFastestConnection.EndStopTime;
-            currentFastestConnection.ArrivalTime = newFastestConnection.ArrivalTime;
-            currentFastestConnection.DepartureTime = newFastestConnection.DepartureTime;            
-            currentFastestConnection.StartVertex = newFastestConnection.StartVertex;
-            currentFastestConnection.StartVertexId = newFastestConnection.StartVertexId;
-            currentFastestConnection.EndVertex = newFastestConnection.EndVertex;
-            currentFastestConnection.EndVertexId = newFastestConnection.EndVertexId;
-            currentFastestConnection.Graph = newFastestConnection.Graph;
+            connectionFactory.FillIn(
+                currentFastestConnection,
+                newFastestConnection.Graph,
+                newFastestConnection.StartVertex,
+                newFastestConnection.StartStopTime,
+                newFastestConnection.EndVertex,
+                newFastestConnection.EndStopTime);
         } 
     }
 }

@@ -29,9 +29,9 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
         {
             return stopConnectionFactory.Create(
                 graph: null,
-                currentVertex: sourceConnection.EndVertex,
+                startVertex: sourceConnection.EndVertex,
                 startStopTime: sourceConnection.StartStopTime,
-                nextVertex: sourceConnection.EndVertex,
+                endVertex: sourceConnection.EndVertex,
                 endStopTime: nextConnection.EndStopTime,
                 isTransfer: true);
         }

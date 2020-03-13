@@ -33,9 +33,10 @@ namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
             services.AddTransient<DijkstraNextVertexResolver>();
             services.AddTransient<DijkstraConnectionService>();
             services.AddTransient<DijkstraGraphService>();
+            services.AddTransient<DijkstraContinueChecker>();
             services.AddTransient<FastestPathResolver>();
             services.AddTransient<FastestPathTimeCalculator>();
-            services.AddTransient<FastestPathTransferService>();
+            services.AddTransient<FastestPathTransferService>();            
         }
 
         private void ConfigureFactories(IServiceCollection services)

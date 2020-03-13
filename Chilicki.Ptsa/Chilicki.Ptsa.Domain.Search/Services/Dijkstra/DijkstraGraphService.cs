@@ -1,5 +1,6 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Domain.Search.Aggregates;
+using Chilicki.Ptsa.Domain.Search.Services.GraphFactories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,14 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
 {
     public class DijkstraGraphService
     {
+        readonly ConnectionFactory connectionFactory;
+
+        public DijkstraGraphService(
+            ConnectionFactory connectionFactory)
+        {
+            this.connectionFactory = connectionFactory;
+        }
+
         public Vertex GetStopVertexByStop(Graph graph, Stop stop)
         {
             return graph
@@ -27,38 +36,41 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
 
         public VertexFastestConnections SetTransferConnectionsToSimilarVertices (
             VertexFastestConnections vertexFastestConnections, 
-            Vertex stopVertex, 
+            Vertex startVertex, 
             IEnumerable<SimilarVertex> similarStopVertices)
         {
-            var connectionToStopVertex = vertexFastestConnections.Find(stopVertex.Id);
+            var connectionToStopVertex = vertexFastestConnections.Find(startVertex.Id);
             foreach (var similarVertex in similarStopVertices)
             {
                 var similar = vertexFastestConnections.Find(similarVertex.SimilarId);
-                similar.StartVertex = stopVertex;
-                similar.StartVertexId = stopVertex?.Id;
-                similar.StartStopTime = connectionToStopVertex.EndStopTime;
-                similar.EndVertex = similarVertex.Similar;
-                similar.EndVertexId = similarVertex.SimilarId;
-                similar.EndStopTime = connectionToStopVertex.EndStopTime;
-                var endTime = similar.EndStopTime != null ? 
-                    similar.EndStopTime.DepartureTime : TimeSpan.Zero;
-                similar.DepartureTime = endTime;
-                similar.ArrivalTime = endTime;
-                similar.Trip = null;
-                similar.IsTransfer = true;
+                connectionFactory.FillIn(
+                    similar, graph: null, startVertex,
+                    connectionToStopVertex.EndStopTime,
+                    similarVertex.Similar,
+                    connectionToStopVertex.EndStopTime,
+                    isTransfer: true);
             }
             return vertexFastestConnections;
         }
 
-        public IEnumerable<Connection> GetConnectionsFromSimilarVertices(Vertex stopVertex)
+        public IEnumerable<Connection> GetConnectionsFromSimilarVertices(Vertex stopVertex, SearchInput search)
         {
             var allStopConnections = new List<Connection>();
-            allStopConnections.AddRange(stopVertex.Connections);
+            allStopConnections.AddRange(
+                GetValidConnections(stopVertex.Connections, search));
             foreach (var similarVertex in stopVertex.SimilarVertices)
             {
-                allStopConnections.AddRange(similarVertex.Similar.Connections);
+                allStopConnections.AddRange(
+                    GetValidConnections(similarVertex.Similar.Connections, search));
             }
             return allStopConnections;
+        }
+
+        private IEnumerable<Connection> GetValidConnections(ICollection<Connection> connections, SearchInput search)
+        {
+            return connections
+                .Where(p => p.DepartureTime >= search.StartTime)
+                .OrderBy(p => p.DepartureTime);
         }
     }
 }

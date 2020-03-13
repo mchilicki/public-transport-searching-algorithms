@@ -20,7 +20,7 @@ namespace Chilicki.Ptsa.Domain.Search.Aggregates
             return connection;
         }
 
-        public Connection Find(Guid? vertexId)
+        public Connection Get(Guid? vertexId)
         {
             if (!vertexId.HasValue)
             {

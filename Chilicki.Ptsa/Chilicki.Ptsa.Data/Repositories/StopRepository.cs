@@ -1,6 +1,7 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Chilicki.Ptsa.Data.Repositories

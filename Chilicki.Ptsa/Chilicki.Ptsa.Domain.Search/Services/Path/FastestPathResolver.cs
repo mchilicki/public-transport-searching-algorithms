@@ -3,6 +3,7 @@ using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Domain.Search.Factories.StopConnections;
 using System.Collections.Generic;
 using System.Linq;
+using Chilicki.Ptsa.Domain.Search.Services.Dijkstra;
 
 namespace Chilicki.Ptsa.Domain.Search.Services.Path
 {
@@ -10,13 +11,16 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
     {
         readonly FastestPathTransferService transferService;
         readonly ConnectionCloner cloner;
+        readonly DijkstraContinueChecker continueChecker;
 
         public FastestPathResolver(
-            FastestPathTransferService trasferService,
-            ConnectionCloner cloner)
+            FastestPathTransferService transferService,
+            ConnectionCloner cloner,
+            DijkstraContinueChecker continueChecker)
         {
-            this.transferService = trasferService;
+            this.transferService = transferService;
             this.cloner = cloner;
+            this.continueChecker = continueChecker;
         }
 
         public FastestPath ResolveFastestPath(
@@ -28,13 +32,13 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
                 .First(p => p.Value.EndVertex.StopId == search.DestinationStop.Id)
                 .Value;            
             fastestPath.Add(currentConnection);
-            while (currentConnection.StartVertex.StopId != search.StartStop.Id)
+            int iteration = 0;
+            while (continueChecker.ShouldContinue(search.StartStop.Id, currentConnection.StartVertex))
             {
                 var nextConnection = currentConnection;
                 var sourceVertexId = currentConnection.StartVertexId;
 
-                // Here is long time
-                vertexFastestConnections.Dictionary.TryGetValue(sourceVertexId.Value, out currentConnection);
+                currentConnection = vertexFastestConnections.Get(sourceVertexId);
 
                 if (!transferService.IsAlreadyTransfer(currentConnection) &&
                     !transferService.IsAlreadyTransfer(nextConnection) &&
@@ -45,6 +49,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
                     fastestPath.Add(transferBeetweenVertices);
                 }
                 fastestPath.Add(currentConnection);
+                iteration++;
             }
             fastestPath.Reverse();
             return new FastestPath()
@@ -52,7 +57,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
                 Path = fastestPath,
                 FlattenPath = FlattenFastestPath(fastestPath),
             };
-        } 
+        }
 
         private IEnumerable<Connection> FlattenFastestPath
             (IList<Connection> fastestPath)

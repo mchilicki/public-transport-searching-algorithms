@@ -2,6 +2,7 @@
 using Chilicki.Ptsa.Data.Repositories;
 using Chilicki.Ptsa.Data.Repositories.Base;
 using Chilicki.Ptsa.Data.UnitsOfWork;
+using Chilicki.Ptsa.Domain.Gtfs.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -68,7 +69,7 @@ namespace Chilicki.Ptsa.Domain.Gtfs.Services
                 var splittedLine = line.Split(",");
                 agency = new Agency()
                 {
-                    Name = splittedLine[1].Replace("\"", string.Empty),
+                    Name = splittedLine[1].Clean(),
                 };
             }
             return agency;
@@ -95,8 +96,8 @@ namespace Chilicki.Ptsa.Domain.Gtfs.Services
                     {
                         GtfsId = splittedLine[0],
                         Agency = agency,
-                        ShortName = splittedLine[2].Replace("\"", string.Empty),
-                        Name = splittedLine[3].Replace("\"", string.Empty),
+                        ShortName = splittedLine[2].Clean(),
+                        Name = splittedLine[3].Clean(),
                     };
                     routes.Add(route);
                 }
@@ -124,7 +125,7 @@ namespace Chilicki.Ptsa.Domain.Gtfs.Services
                     var stop = new Stop()
                     {
                         GtfsId = splittedLine[0],
-                        Name = splittedLine[2].Replace("\"", string.Empty),
+                        Name = splittedLine[2].Clean(),
                         Latitude = double.Parse(splittedLine[3]),
                         Longitude = double.Parse(splittedLine[4]),
                     };
@@ -163,8 +164,8 @@ namespace Chilicki.Ptsa.Domain.Gtfs.Services
                         {
                             var trip = new Trip()
                             {
-                                GtfsId = splittedLine[2].Replace("\"", string.Empty),
-                                HeadSign = splittedLine[3].Replace("\"", string.Empty),
+                                GtfsId = splittedLine[2].Clean(),
+                                HeadSign = splittedLine[3].Clean(),
                                 Route = route,
                             };                            
                             trips.Add(trip);                            
@@ -203,10 +204,10 @@ namespace Chilicki.Ptsa.Domain.Gtfs.Services
                     if (!isHourOk || !isMinuteOk || !isSecondOk)
                         throw new InvalidOperationException(splittedLine[0] + "," + splittedLine[1] + "," + splittedLine[2]);
                     var timespan = new TimeSpan(hour, minute, second);
-                    var trip = trips.FirstOrDefault(p => p.GtfsId == splittedLine[0].Replace("\"", string.Empty));
+                    var trip = trips.FirstOrDefault(p => p.GtfsId == splittedLine[0].Clean());
                     if (trip != null)
                     {
-                        var stop = stops.FirstOrDefault(p => p.GtfsId == splittedLine[3].Replace("\"", string.Empty));
+                        var stop = stops.FirstOrDefault(p => p.GtfsId == splittedLine[3].Clean());
                         if (stop != null)
                         {
                             var stopTime = new StopTime()
