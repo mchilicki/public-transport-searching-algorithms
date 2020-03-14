@@ -1,52 +1,101 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
+using Chilicki.Ptsa.Domain.Search.Aggregates;
 using System;
 
 namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
 {
     public class ConnectionFactory
     {
-        public Connection Create(
+        public Connection CreateConnection(
             Graph graph,
+            Guid? tripId,
             Vertex startVertex,
-            StopTime startStopTime,
+            TimeSpan departureTime,
             Vertex endVertex,
-            StopTime endStopTime,
-            bool isTransfer = false)
+            TimeSpan arrivalTime)
+        {
+            var conn = new Connection();
+            var isTransfer = false;
+            return FillIn(
+                conn, graph, tripId, startVertex, departureTime, 
+                endVertex, arrivalTime, isTransfer);
+        }
+
+        public Connection CreateZeroCostTransfer(
+            Vertex startVertex, Vertex endVertex, TimeSpan time)
+        {
+            var conn = new Connection();
+            return FillInZeroCostTransfer(
+                conn, startVertex, endVertex, time);
+        }
+
+        public Connection FillInZeroCostTransfer(
+            Connection conn, Vertex startVertex, Vertex endVertex, TimeSpan time)
+        {
+            Graph graph = null;
+            Guid? tripId = null;           
+            var isTransfer = true;
+            var departureTime = time;
+            var arrivalTime = time;
+            return FillIn(
+                conn, graph, tripId, startVertex, departureTime,
+                endVertex, arrivalTime, isTransfer);
+        }
+
+        public Connection CreateStartingConnection(
+            Graph graph, Vertex startVertex, SearchInput search)
+        {
+            var conn = new Connection();
+            Guid? tripId = null;
+            var isTransfer = false;
+            var endVertex = startVertex;
+            var departureTime = search.StartTime;
+            var arrivalTime = search.StartTime;
+            return FillIn(
+                conn, graph, tripId, startVertex, departureTime,
+                endVertex, arrivalTime, isTransfer);
+        }
+
+        public Connection CloneFrom(Connection c)
         {
             var conn = new Connection();
             return FillIn(
-                conn, graph, startVertex, startStopTime, 
-                endVertex, endStopTime, isTransfer);
+                conn, c.Graph, c.TripId, c.StartVertex,
+                c.DepartureTime, c.EndVertex, c.ArrivalTime, 
+                c.IsTransfer);
+        }
+
+        public Connection CreateEmptyConnection(
+            Graph graph, Vertex endVertex)
+        {
+            var conn = new Connection();
+            Guid? tripId = null;
+            var isTransfer = false;
+            var startVertex = endVertex;
+            var departureTime = TimeSpan.Zero;
+            var arrivalTime = TimeSpan.Zero;
+            return FillIn(
+                conn, graph, tripId, startVertex, departureTime,
+                endVertex, arrivalTime, isTransfer);
         }
 
         public Connection FillIn(
-            Connection conn, 
-            Graph graph, 
-            Vertex startVertex, 
-            StopTime startStopTime, 
-            Vertex endVertex, 
-            StopTime endStopTime, 
+            Connection conn,
+            Graph graph,
+            Guid? tripId,
+            Vertex startVertex,
+            TimeSpan departureTime,
+            Vertex endVertex,
+            TimeSpan arrivalTime,
             bool isTransfer = false)
         {
-            Trip trip = null;
-            TimeSpan departureTime = TimeSpan.Zero;
-            TimeSpan arrivalTime = TimeSpan.Zero;
-            if (startStopTime != null)
-            {
-                if (!isTransfer)
-                    trip = startStopTime.Trip;
-                departureTime = startStopTime.DepartureTime;
-                arrivalTime = startStopTime.DepartureTime;
-            }
             conn.Graph = graph;
-            conn.Trip = trip;
+            conn.TripId = tripId;
             conn.StartVertex = startVertex;
             conn.StartVertexId = startVertex?.Id;
             conn.EndVertex = endVertex;
             conn.EndVertexId = endVertex?.Id;
-            conn.StartStopTime = startStopTime;
             conn.DepartureTime = departureTime;
-            conn.EndStopTime = endStopTime;
             conn.ArrivalTime = arrivalTime;
             conn.IsTransfer = isTransfer;
             return conn;

@@ -66,15 +66,17 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
             foreach (var vertex in allVertices)
             {
                 var connections = new List<Connection>();
-                foreach (var stopTime in vertex.Stop.StopTimes)
+                foreach (var departureStopTime in vertex.Stop.StopTimes)
                 {
-                    var departureStopTime = stopTime.GetTripNextStopTime();
-                    if (departureStopTime != null)
+                    var arrivalStopTime = departureStopTime.GetTripNextStopTime();
+                    if (arrivalStopTime != null)
                     {
                         var departureVertex = allVertices
-                            .SingleOrDefault(p => p.Stop.Id == departureStopTime.Stop.Id);
+                            .SingleOrDefault(p => p.Stop.Id == arrivalStopTime.Stop.Id);
                         var connection = connectionFactory
-                            .Create(graph, vertex, stopTime, departureVertex, departureStopTime);
+                            .CreateConnection(graph, departureStopTime.Trip.Id, vertex, 
+                                departureStopTime.DepartureTime, departureVertex, 
+                                arrivalStopTime.DepartureTime);
                         connections.Add(connection);
                     }
                 }

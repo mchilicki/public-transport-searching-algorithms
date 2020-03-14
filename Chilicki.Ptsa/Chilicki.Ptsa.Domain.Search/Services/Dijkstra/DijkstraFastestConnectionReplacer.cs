@@ -49,10 +49,11 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
             connectionFactory.FillIn(
                 currentFastestConnection,
                 newFastestConnection.Graph,
+                newFastestConnection.TripId,
                 newFastestConnection.StartVertex,
-                newFastestConnection.StartStopTime,
+                newFastestConnection.ArrivalTime,
                 newFastestConnection.EndVertex,
-                newFastestConnection.EndStopTime);
+                newFastestConnection.DepartureTime);
         } 
     }
 }

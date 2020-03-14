@@ -1,26 +1,26 @@
 ﻿using Chilicki.Ptsa.Domain.Search.Aggregates;
 using Chilicki.Ptsa.Data.Entities;
-using Chilicki.Ptsa.Domain.Search.Factories.StopConnections;
 using System.Collections.Generic;
 using System.Linq;
 using Chilicki.Ptsa.Domain.Search.Services.Dijkstra;
+using Chilicki.Ptsa.Domain.Search.Services.GraphFactories;
 
 namespace Chilicki.Ptsa.Domain.Search.Services.Path
 {
     public class FastestPathResolver
     {
         readonly FastestPathTransferService transferService;
-        readonly ConnectionCloner cloner;
         readonly DijkstraContinueChecker continueChecker;
+        readonly ConnectionFactory connectionFactory;
 
         public FastestPathResolver(
             FastestPathTransferService transferService,
-            ConnectionCloner cloner,
-            DijkstraContinueChecker continueChecker)
+            DijkstraContinueChecker continueChecker,
+            ConnectionFactory connectionFactory)
         {
             this.transferService = transferService;
-            this.cloner = cloner;
             this.continueChecker = continueChecker;
+            this.connectionFactory = connectionFactory;
         }
 
         public FastestPath ResolveFastestPath(
@@ -65,32 +65,24 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
             var flattenPath = new List<Connection>();
             foreach (var currentConnection  in fastestPath)
             {
-                if (flattenPath.Count() > 0)
+                if (flattenPath.Any() && 
+                    !currentConnection.IsTransfer && !flattenPath.Last().IsTransfer)
                 {
-                    if (!currentConnection.IsTransfer && !flattenPath.Last().IsTransfer)
+                    var currentTripId = currentConnection.TripId;
+                    var lastAddedTripId = flattenPath.Last().TripId;
+                    if (currentTripId == lastAddedTripId)
                     {
-                        var currentLine = currentConnection.Trip;
-                        var lastAddedLine = flattenPath.Last().Trip;
-                        if (currentLine.Id == lastAddedLine.Id &&
-                            currentLine.HeadSign == lastAddedLine.HeadSign)
-                        {
-                            var lastAddedConnection = flattenPath.Last();
-                            lastAddedConnection.EndVertex = currentConnection.EndVertex;
-                            lastAddedConnection.EndStopTime = currentConnection.EndStopTime;
-                        }
-                        else
-                        {
-                            flattenPath.Add(cloner.CloneFrom(currentConnection));
-                        }                        
+                        var lastAddedConnection = flattenPath.Last();
+                        lastAddedConnection.EndVertex = currentConnection.EndVertex;
                     }
                     else
                     {
-                        flattenPath.Add(cloner.CloneFrom(currentConnection));
+                        flattenPath.Add(connectionFactory.CloneFrom(currentConnection));
                     }
                 }
                 else
                 {
-                    flattenPath.Add(cloner.CloneFrom(currentConnection));
+                    flattenPath.Add(connectionFactory.CloneFrom(currentConnection));
                 }
             }
             return flattenPath;

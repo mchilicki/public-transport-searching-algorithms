@@ -19,9 +19,9 @@ namespace Chilicki.Ptsa.Data.Configurations.EntityConfigurations
                 .HasForeignKey("GraphId")
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
-            builder.HasOne(p => p.Trip)
+            builder.HasOne<Trip>()
                 .WithMany()
-                .HasForeignKey("TripId")
+                .HasForeignKey(p => p.TripId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Cascade);
             builder.HasOne(p => p.StartVertex)
@@ -32,16 +32,6 @@ namespace Chilicki.Ptsa.Data.Configurations.EntityConfigurations
             builder.HasOne(p => p.EndVertex)
                 .WithMany()
                 .HasForeignKey(p => p.EndVertexId)
-                .IsRequired()
-                .OnDelete(DeleteBehavior.Restrict);
-            builder.HasOne(p => p.StartStopTime)
-                .WithMany()
-                .HasForeignKey("StartStopTimeId")
-                .IsRequired()
-                .OnDelete(DeleteBehavior.Restrict);
-            builder.HasOne(p => p.EndStopTime)
-                .WithMany()
-                .HasForeignKey("EndStopTimeId")
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
         }

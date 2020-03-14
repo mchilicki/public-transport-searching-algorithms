@@ -1,5 +1,6 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Domain.Search.Aggregates;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -23,13 +24,13 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
             return vertexFastestConnections.Get(connection.StartVertexId);
         }
 
-        public bool IsConnectionEmpty(Connection stopConnection)
+        public bool IsConnectionEmpty(Connection conn)
         {
-            return stopConnection == null ||
-                stopConnection.StartVertex == null ||
-                stopConnection.EndVertex == null ||
-                stopConnection.StartStopTime == null ||
-                stopConnection.EndStopTime == null;
+            return conn == null ||
+                conn.StartVertex == null ||
+                conn.EndVertex == null ||
+                conn.DepartureTime == TimeSpan.Zero ||
+                conn.ArrivalTime == TimeSpan.Zero;
 
         }
     }

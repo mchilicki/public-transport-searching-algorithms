@@ -17,7 +17,12 @@ namespace Chilicki.Ptsa.Data.Repositories
 
         public async Task<Graph> GetGraph()
         {
-            var graph = await entities.FirstOrDefaultAsync();
+            var graph = await entities
+                .Include(p => p.Vertices)
+                    .ThenInclude(v => v.Connections)
+                .Include(v => v.Vertices)
+                    .ThenInclude(v => v.SimilarVertices)
+                .FirstOrDefaultAsync();
             ValidateGraph(graph);       
             return graph;
         }

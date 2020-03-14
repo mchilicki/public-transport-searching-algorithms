@@ -1,4 +1,6 @@
-﻿using Chilicki.Ptsa.Search.Configurations.Startup;
+﻿using Chilicki.Ptsa.Domain.Search.Exceptions;
+using Chilicki.Ptsa.Search.Configurations.Startup;
+using System;
 using System.Threading.Tasks;
 
 namespace Chilicki.Ptsa.Search
@@ -7,8 +9,17 @@ namespace Chilicki.Ptsa.Search
     {
         public static void Main()
         {
-            Task task = new StartupService().Run();
-            task.Wait();
+            try
+            {
+                var task = new StartupService().Run();
+                task.Wait();
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() != typeof(DijkstraNoFastestPathExistsException))
+                    Console.WriteLine("There was unhandled exception");
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }

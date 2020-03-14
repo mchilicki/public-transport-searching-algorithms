@@ -49,6 +49,8 @@
     <Compile Remove="Migrations\20200312202405_AddHouses.Designer.cs" />
     <Compile Remove="Migrations\20200312215513_AddExplicitConnectionForeignKeys.cs" />
     <Compile Remove="Migrations\20200312215513_AddExplicitConnectionForeignKeys.Designer.cs" />
+    <Compile Remove="Migrations\20200314131907_Bla.cs" />
+    <Compile Remove="Migrations\20200314131907_Bla.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
