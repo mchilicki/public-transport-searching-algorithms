@@ -23,9 +23,8 @@ namespace Chilicki.Ptsa.Search.Configurations.Migrations
 
         private IConfigurationRoot GetConfiguration()
         {
-
             var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath($"{Directory.GetCurrentDirectory()}//Settings//")
                 .AddJsonFile($"appsettings.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables();
             var configuration = builder.Build();

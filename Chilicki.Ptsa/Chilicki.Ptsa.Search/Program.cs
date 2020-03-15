@@ -15,8 +15,7 @@ namespace Chilicki.Ptsa.Search
             }
             catch (Exception ex)
             {
-                if (ex.GetType() != typeof(DijkstraNoFastestPathExistsException))
-                    Console.WriteLine("There was unhandled exception");
+                Console.WriteLine("There was unhandled exception");
                 Console.WriteLine(ex.Message);
             }
         }

@@ -23,25 +23,25 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="appsettings.DijkstraBenchmark.json">
+    <Content Include="Settings\appsettings.DijkstraBenchmark.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="appsettings.GtfsImportPC.json">
+    <Content Include="Settings\appsettings.GtfsImportPC.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="appsettings.DijkstraSearchPC.json">
+    <Content Include="Settings\appsettings.DijkstraSearchPC.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="appsettings.CreateGraph.json">
+    <Content Include="Settings\appsettings.CreateGraph.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="appsettings.DijkstraSearch.json">
+    <Content Include="Settings\appsettings.DijkstraSearch.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="appsettings.GtfsImport.json">
+    <Content Include="Settings\appsettings.GtfsImport.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="appsettings.json">
+    <Content Include="Settings\appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

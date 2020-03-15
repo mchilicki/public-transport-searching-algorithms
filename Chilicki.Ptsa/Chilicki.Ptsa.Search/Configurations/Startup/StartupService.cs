@@ -44,7 +44,7 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
         {
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath($"{Directory.GetCurrentDirectory()}//Settings//")
                 .AddJsonFile($"appsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{environmentName}.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables();
