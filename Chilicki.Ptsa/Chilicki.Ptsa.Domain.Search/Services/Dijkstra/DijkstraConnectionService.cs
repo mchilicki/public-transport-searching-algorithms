@@ -24,11 +24,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
 
         public bool IsConnectionEmpty(Connection conn)
         {
-            return conn == null ||
-                conn.StartVertex == null ||
-                conn.EndVertex == null ||
-                conn.DepartureTime == TimeSpan.Zero ||
-                conn.ArrivalTime == TimeSpan.Zero;
+            return conn == null || conn.StartVertex == null;
         }
     }
 }

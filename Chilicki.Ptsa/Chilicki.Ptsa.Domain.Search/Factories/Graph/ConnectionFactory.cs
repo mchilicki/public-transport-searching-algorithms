@@ -70,8 +70,8 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
         {
             var conn = new Connection();
             Guid? tripId = null;
+            Vertex startVertex = null;
             var isTransfer = false;
-            var startVertex = endVertex;
             var departureTime = TimeSpan.Zero;
             var arrivalTime = TimeSpan.Zero;
             return FillIn(

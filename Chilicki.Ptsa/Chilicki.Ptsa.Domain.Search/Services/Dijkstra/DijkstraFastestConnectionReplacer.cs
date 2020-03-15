@@ -30,7 +30,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
             var isPreviousVertexConnEmpty = service.IsConnectionEmpty(previousVertexConn);
             var canPossibleConnExist = CanPossibleConnExist(search, previousVertexConn,
                 possibleConn, isPreviousVertexConnEmpty);
-            var isPossibleConnFaster = IsPossibleConnFaster(currentConn, possibleConn, isCurrentConnEmpty);
+            var isPossibleConnFaster = IsPossibleConnFaster(currentConn, possibleConn);
             return ShouldConnBeReplaced(isCurrentConnEmpty, canPossibleConnExist, isPossibleConnFaster);
         }
 
@@ -48,10 +48,9 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
         }
 
         private bool IsPossibleConnFaster(
-            Connection currentConn, Connection possibleConn, bool isCurrentConnEmpty)
+            Connection currentConn, Connection possibleConn)
         {
-            var isPossibleConnFaster = possibleConn.ArrivalTime < currentConn.ArrivalTime;
-            return isCurrentConnEmpty || isPossibleConnFaster;
+            return possibleConn.ArrivalTime < currentConn.ArrivalTime;
         }
 
         private bool ShouldConnBeReplaced(
