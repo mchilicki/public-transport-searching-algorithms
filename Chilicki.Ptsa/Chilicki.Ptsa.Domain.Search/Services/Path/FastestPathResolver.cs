@@ -11,44 +11,39 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
     {
         readonly FastestPathTransferService transferService;
         readonly DijkstraContinueChecker continueChecker;
-        readonly ConnectionFactory connectionFactory;
+        readonly ConnectionFactory factory;
 
         public FastestPathResolver(
             FastestPathTransferService transferService,
             DijkstraContinueChecker continueChecker,
-            ConnectionFactory connectionFactory)
+            ConnectionFactory factory)
         {
             this.transferService = transferService;
             this.continueChecker = continueChecker;
-            this.connectionFactory = connectionFactory;
+            this.factory = factory;
         }
 
         public FastestPath ResolveFastestPath(
-            SearchInput search, VertexFastestConnections vertexFastestConnections)
+            SearchInput search, FastestConnections fastestConnections)
         {
             var fastestPath = new List<Connection>();
-            var currentConnection = vertexFastestConnections
-                .Dictionary
+            var currentConn = fastestConnections.Dictionary
                 .First(p => p.Value.EndVertex.StopId == search.DestinationStop.Id)
                 .Value;            
-            fastestPath.Add(currentConnection);
+            fastestPath.Add(currentConn);
             int iteration = 0;
-            while (continueChecker.ShouldContinue(search.StartStop.Id, currentConnection.StartVertex))
+            while (continueChecker.ShouldContinue(search.StartStop.Id, currentConn.StartVertex))
             {
-                var nextConnection = currentConnection;
-                var sourceVertexId = currentConnection.StartVertexId;
+                var nextConn = currentConn;
+                currentConn = fastestConnections.Get(currentConn.StartVertexId);
 
-                currentConnection = vertexFastestConnections.Get(sourceVertexId);
-
-                if (!transferService.IsAlreadyTransfer(currentConnection) &&
-                    !transferService.IsAlreadyTransfer(nextConnection) &&
-                    transferService.ShouldBeTransfer(currentConnection, nextConnection))
+                if (transferService.ShouldBeTransfer(currentConn, nextConn))
                 {
-                    var transferBeetweenVertices = transferService
-                        .GenerateTransferAsStopConnection(currentConnection, nextConnection);
-                    fastestPath.Add(transferBeetweenVertices);
+                    var transfer = transferService
+                        .GenerateTransferAsStopConnection(currentConn, nextConn);
+                    fastestPath.Add(transfer);
                 }
-                fastestPath.Add(currentConnection);
+                fastestPath.Add(currentConn);
                 iteration++;
             }
             fastestPath.Reverse();
@@ -65,26 +60,26 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
             (IList<Connection> fastestPath)
         {
             var flattenPath = new List<Connection>();
-            foreach (var currentConnection  in fastestPath)
+            foreach (var currentConn  in fastestPath)
             {
                 if (flattenPath.Any() && 
-                    !currentConnection.IsTransfer && !flattenPath.Last().IsTransfer)
+                    !currentConn.IsTransfer && !flattenPath.Last().IsTransfer)
                 {
-                    var currentTripId = currentConnection.TripId;
+                    var currentTripId = currentConn.TripId;
                     var lastAddedTripId = flattenPath.Last().TripId;
                     if (currentTripId == lastAddedTripId)
                     {
                         var lastAddedConnection = flattenPath.Last();
-                        lastAddedConnection.EndVertex = currentConnection.EndVertex;
+                        lastAddedConnection.EndVertex = currentConn.EndVertex;
                     }
                     else
                     {
-                        flattenPath.Add(connectionFactory.CloneFrom(currentConnection));
+                        flattenPath.Add(factory.CloneFrom(currentConn));
                     }
                 }
                 else
                 {
-                    flattenPath.Add(connectionFactory.CloneFrom(currentConnection));
+                    flattenPath.Add(factory.CloneFrom(currentConn));
                 }
             }
             return flattenPath;

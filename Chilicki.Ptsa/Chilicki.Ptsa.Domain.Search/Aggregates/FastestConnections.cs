@@ -1,10 +1,11 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
+using Chilicki.Ptsa.Domain.Search.Helpers.Exceptions;
 using System;
 using System.Collections.Generic;
 
 namespace Chilicki.Ptsa.Domain.Search.Aggregates
 {
-    public class VertexFastestConnections
+    public class FastestConnections
     {
         public IDictionary<Guid, Connection> Dictionary { get; } = new Dictionary<Guid, Connection>();
 
@@ -23,16 +24,9 @@ namespace Chilicki.Ptsa.Domain.Search.Aggregates
         {
             if (!vertexId.HasValue)
             {
-                throw new VertexFastestConnectionsException("Null vertexId in dictionary Find");
+                throw new FastestConnectionsException("Null vertexId in dictionary Find");
             }
             return Find(vertexId.Value);
         }
-    }
-
-    public class VertexFastestConnectionsException : Exception
-    {
-        public VertexFastestConnectionsException(string message) : base(message)
-        {
-        }
-    }
+    }    
 }

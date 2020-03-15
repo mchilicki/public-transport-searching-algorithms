@@ -26,6 +26,12 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Measures
         readonly string fileExtension = ".txt";
         readonly string title = "Dijkstra measurements report";
 
+        public async Task Log(PerformanceMeasure measure)
+        {
+            var measures = new List<PerformanceMeasure>() { measure };
+            await Log(measures);
+        }
+
         public async Task Log(IEnumerable<PerformanceMeasure> measures)
         {
             if (measures == null)
@@ -162,7 +168,8 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Measures
             var trip = await tripRepository.FindWithRouteAsync(conn.TripId.Value);
             var routeName = trip.Route.ShortName;
             var headSign = trip.HeadSign;
-            sb.AppendLine($"{routeName} - {conn.StartVertex.StopName} -> {headSign}");
+            sb.AppendLine($"({routeName}) - ({conn.StartVertex.StopName} - " +
+                $"{conn.EndVertex.StopName}) -> {headSign}");
             sb.AppendLine($"Time {conn.DepartureTime} -> {conn.ArrivalTime}");
         }
 

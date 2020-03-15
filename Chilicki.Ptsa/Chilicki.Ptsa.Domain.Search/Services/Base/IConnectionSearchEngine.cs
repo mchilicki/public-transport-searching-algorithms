@@ -5,6 +5,6 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Base
 {
     public interface IConnectionSearchEngine
     {
-        VertexFastestConnections SearchConnections(SearchInput search, Graph graph);
+        FastestConnections SearchConnections(SearchInput search, Graph graph);
     }
 }

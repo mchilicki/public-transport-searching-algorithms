@@ -8,18 +8,17 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
 {
     public class DijkstraGraphService
     {
-        readonly ConnectionFactory connectionFactory;
+        readonly ConnectionFactory factory;
 
         public DijkstraGraphService(
-            ConnectionFactory connectionFactory)
+            ConnectionFactory factory)
         {
-            this.connectionFactory = connectionFactory;
+            this.factory = factory;
         }
 
         public Vertex GetStopVertexByStop(Graph graph, Stop stop)
         {
-            return graph
-                .Vertices
+            return graph.Vertices
                 .First(p => p.StopId == stop.Id);
         }
 
@@ -33,36 +32,36 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
             return stopVertex;
         }
 
-        public VertexFastestConnections SetTransferConnectionsToSimilarVertices (
-            VertexFastestConnections vertexFastestConnections, 
+        public FastestConnections SetTransferConnectionsToSimilarVertices (
+            FastestConnections fastestConnections, 
             Vertex startVertex, 
-            IEnumerable<SimilarVertex> similarStopVertices)
+            IEnumerable<SimilarVertex> similarVertices)
         {
-            var connectionToStopVertex = vertexFastestConnections.Find(startVertex.Id);
-            foreach (var similarVertex in similarStopVertices)
+            var connectionToVertex = fastestConnections.Find(startVertex.Id);
+            foreach (var similarVertex in similarVertices)
             {
-                var similar = vertexFastestConnections.Find(similarVertex.SimilarId);
-                connectionFactory.FillInZeroCostTransfer(
+                var similar = fastestConnections.Find(similarVertex.SimilarId);
+                factory.FillInZeroCostTransfer(
                     similar, startVertex, similarVertex.Similar, 
-                    connectionToStopVertex.DepartureTime);
+                    connectionToVertex.DepartureTime);
             }
-            return vertexFastestConnections;
+            return fastestConnections;
         }
 
-        public IEnumerable<Connection> GetConnectionsFromSimilarVertices(Vertex stopVertex, SearchInput search)
+        public IEnumerable<Connection> GetPossibleConnections(Vertex vertex, SearchInput search)
         {
-            var allStopConnections = new List<Connection>();
-            allStopConnections.AddRange(
-                GetValidConnections(stopVertex.Connections, search));
-            foreach (var similarVertex in stopVertex.SimilarVertices)
+            var connections = new List<Connection>();
+            connections.AddRange(
+                GetValidConnections(vertex.Connections, search));
+            foreach (var similar in vertex.SimilarVertices)
             {
-                allStopConnections.AddRange(
-                    GetValidConnections(similarVertex.Similar.Connections, search));
+                connections.AddRange(GetValidConnections(similar.Similar.Connections, search));
             }
-            return allStopConnections;
+            return connections;
         }
 
-        private IEnumerable<Connection> GetValidConnections(ICollection<Connection> connections, SearchInput search)
+        private IEnumerable<Connection> GetValidConnections(
+            ICollection<Connection> connections, SearchInput search)
         {
             return connections
                 .Where(p => p.DepartureTime >= search.StartTime);

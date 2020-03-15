@@ -5,37 +5,37 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
 {
     public class DijkstraNextVertexResolver
     {
-        readonly DijkstraConnectionService dijkstraConnectionsService;
-        readonly DijkstraGraphService dijkstraGraphService; 
+        readonly DijkstraConnectionService connService;
+        readonly DijkstraGraphService graphService; 
 
         public DijkstraNextVertexResolver(
-            DijkstraConnectionService dijkstraConnectionsService,
-            DijkstraGraphService dijkstraGraphService)
+            DijkstraConnectionService connService,
+            DijkstraGraphService graphService)
         {
-            this.dijkstraConnectionsService = dijkstraConnectionsService;
-            this.dijkstraGraphService = dijkstraGraphService;
+            this.connService = connService;
+            this.graphService = graphService;
         }
 
-        public Vertex GetFirstVertex(Graph graph, Stop startingStop)
+        public Vertex GetFirstVertex(Graph graph, Stop startStop)
         {
-            return dijkstraGraphService
-                .GetStopVertexByStop(graph, startingStop);         
+            return graphService
+                .GetStopVertexByStop(graph, startStop);         
         }
 
-        public Vertex GetNextVertex(VertexFastestConnections vertexFastestConnections)
+        public Vertex GetNextVertex(FastestConnections fastestConnections)
         {
             Connection fastestConnection = null;
-            foreach (var (vertexId, maybeNewFastestConnection) in vertexFastestConnections.Dictionary)
+            foreach (var (vertexId, possibleConn) in fastestConnections.Dictionary)
             {
-                if (!dijkstraConnectionsService.IsConnectionEmpty(maybeNewFastestConnection))
+                if (!connService.IsConnectionEmpty(possibleConn))
                 {
-                    if (!maybeNewFastestConnection.EndVertex.IsVisited)
+                    if (!possibleConn.EndVertex.IsVisited)
                     {
                         if (fastestConnection == null || 
                             fastestConnection.DepartureTime > 
-                                maybeNewFastestConnection.ArrivalTime)
+                                possibleConn.ArrivalTime)
                         {
-                            fastestConnection = maybeNewFastestConnection;
+                            fastestConnection = possibleConn;
                         }                            
                     }
                 }

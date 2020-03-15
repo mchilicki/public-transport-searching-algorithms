@@ -7,33 +7,31 @@ namespace Chilicki.Ptsa.Domain.Search.Factories.Dijkstra
 {
     public class DijkstraEmptyFastestConnectionsFactory
     {
-        private readonly ConnectionFactory connectionFactory;
+        private readonly ConnectionFactory factory;
 
         public DijkstraEmptyFastestConnectionsFactory(
-            ConnectionFactory connectionFactory)
+            ConnectionFactory factory)
         {
-            this.connectionFactory = connectionFactory;
+            this.factory = factory;
         }
 
-        public VertexFastestConnections Create(Graph graph, SearchInput search)
+        public FastestConnections Create(Graph graph, SearchInput search)
         {
-            var vertexFastestConnections = new VertexFastestConnections();
-            var startingVertex = graph
-                .Vertices
+            var fastestConnections = new FastestConnections();
+            var startVertex = graph.Vertices
                 .First(p => p.StopId == search.StartStop.Id);
-            var startingConnection = connectionFactory
-                .CreateStartingConnection(graph, startingVertex, search);
-            vertexFastestConnections.Add(startingVertex.Id, startingConnection);
+            var startConnection = factory
+                .CreateStartingConnection(graph, startVertex, search);
+            fastestConnections.Add(startVertex.Id, startConnection);
             foreach (var vertex in graph.Vertices)
             {
                 if (vertex.StopId != search.StartStop.Id)
                 {
-                    var connection = connectionFactory
-                        .CreateEmptyConnection(graph, vertex);
-                    vertexFastestConnections.Add(vertex.Id, connection);
+                    var connection = factory.CreateEmptyConnection(graph, vertex);
+                    fastestConnections.Add(vertex.Id, connection);
                 }                
             }
-            return vertexFastestConnections;
+            return fastestConnections;
         }
     }
 }

@@ -6,54 +6,68 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
 {
     public class DijkstraFastestConnectionReplacer
     {
-        readonly DijkstraConnectionService dijkstraConnectionsService;
-        readonly ConnectionFactory connectionFactory;
+        readonly DijkstraConnectionService service;
+        readonly ConnectionFactory factory;
 
         public DijkstraFastestConnectionReplacer(
-            DijkstraConnectionService dijkstraConnectionsService,
-            ConnectionFactory connectionFactory)
+            DijkstraConnectionService service,
+            ConnectionFactory factory)
         {
-            this.dijkstraConnectionsService = dijkstraConnectionsService;
-            this.connectionFactory = connectionFactory;
+            this.service = service;
+            this.factory = factory;
         }
 
         public bool ShouldConnectionBeReplaced(
-            SearchInput searchInput,
-            Connection connectionFromPreviousVertex,
-            Connection destinationStopCurrentFastestConnection,
-            Connection maybeNewFastestConnection)
+            SearchInput search,
+            Connection previousVertexConn,
+            Connection currentConn,
+            Connection possibleConn)
         {
-            bool isDestinationVertexMarkedAsVisited = destinationStopCurrentFastestConnection
-                .EndVertex.IsVisited;
-            bool isCurrentFastestConnectionEmpty = dijkstraConnectionsService
-                    .IsConnectionEmpty(destinationStopCurrentFastestConnection);
-            bool isPreviousVertexFastestConnectionEmpty = dijkstraConnectionsService
-                    .IsConnectionEmpty(connectionFromPreviousVertex);
-            bool canMaybeNewFastestConnectionExist =
-                searchInput.StartTime <= maybeNewFastestConnection.DepartureTime &&
-                    (isPreviousVertexFastestConnectionEmpty ||
-                    connectionFromPreviousVertex.ArrivalTime <= maybeNewFastestConnection.DepartureTime);
-            bool isMaybeNewFastestConnectionFaster = !isCurrentFastestConnectionEmpty &&
-                maybeNewFastestConnection.ArrivalTime < destinationStopCurrentFastestConnection.ArrivalTime;
-            if (isDestinationVertexMarkedAsVisited)
+            var isVertexVisited = currentConn.EndVertex.IsVisited;
+            if (isVertexVisited)
                 return false;
-            return canMaybeNewFastestConnectionExist &&
-                (isCurrentFastestConnectionEmpty ||
-                isMaybeNewFastestConnectionFaster);
+            var isCurrentConnEmpty = service.IsConnectionEmpty(currentConn);
+            var isPreviousVertexConnEmpty = service.IsConnectionEmpty(previousVertexConn);
+            var canPossibleConnExist = CanPossibleConnExist(search, previousVertexConn,
+                possibleConn, isPreviousVertexConnEmpty);
+            var isPossibleConnFaster = IsPossibleConnFaster(currentConn, possibleConn, isCurrentConnEmpty);
+            return ShouldConnBeReplaced(isCurrentConnEmpty, canPossibleConnExist, isPossibleConnFaster);
+        }
+
+        private bool CanPossibleConnExist(
+            SearchInput search,
+            Connection previousVertexConn,
+            Connection possibleConn,
+            bool isPreviousVertexConnEmpty)
+        {
+            var isPossibleConnAfterInput = search.StartTime <= possibleConn.DepartureTime;
+            if (!isPossibleConnAfterInput)
+                return false;
+            var isPossibleConnAfterPrevConn = previousVertexConn.ArrivalTime <= possibleConn.DepartureTime;
+            return isPossibleConnAfterPrevConn || isPreviousVertexConnEmpty;
+        }
+
+        private bool IsPossibleConnFaster(
+            Connection currentConn, Connection possibleConn, bool isCurrentConnEmpty)
+        {
+            var isPossibleConnFaster = possibleConn.ArrivalTime < currentConn.ArrivalTime;
+            return isCurrentConnEmpty || isPossibleConnFaster;
+        }
+
+        private bool ShouldConnBeReplaced(
+            bool isCurrentConnEmpty, bool canPossibleConnExist, bool isPossibleConnFaster)
+        {
+            if (!canPossibleConnExist)
+                return false;
+            return isCurrentConnEmpty || isPossibleConnFaster;
         }
 
         public void ReplaceWithNewFastestConnection(
-            Connection currentFastestConnection, 
-            Connection newFastestConnection)
+            Connection currentConn, 
+            Connection newConn)
         {
-            connectionFactory.FillIn(
-                currentFastestConnection,
-                newFastestConnection.Graph,
-                newFastestConnection.TripId,
-                newFastestConnection.StartVertex,
-                newFastestConnection.ArrivalTime,
-                newFastestConnection.EndVertex,
-                newFastestConnection.DepartureTime);
+            factory.FillIn(currentConn, newConn.Graph, newConn.TripId,
+                newConn.StartVertex, newConn.DepartureTime, newConn.EndVertex, newConn.ArrivalTime);
         } 
     }
 }

@@ -6,20 +6,20 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
 {
     public class DijkstraConnectionService
     {
-        public Connection GetDestinationStopFastestConnection(
-            VertexFastestConnections vertexFastestConnections,
-            Connection connection)
+        public Connection GetCurrentConnection(
+            FastestConnections fastestConnections,
+            Connection conn)
         {
-            return vertexFastestConnections.Get(connection.EndVertexId);
+            return fastestConnections.Get(conn.EndVertexId);
         }
 
-        public Connection GetConnectionFromPreviousVertex(
-            VertexFastestConnections vertexFastestConnections,
-            Connection connection)
+        public Connection GetPreviousVertexConnection(
+            FastestConnections fastestConnections,
+            Connection conn)
         {
-            if (connection.StartVertex == null)
+            if (conn.StartVertex == null)
                 return null;
-            return vertexFastestConnections.Get(connection.StartVertexId);
+            return fastestConnections.Get(conn.StartVertexId);
         }
 
         public bool IsConnectionEmpty(Connection conn)
@@ -29,7 +29,6 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
                 conn.EndVertex == null ||
                 conn.DepartureTime == TimeSpan.Zero ||
                 conn.ArrivalTime == TimeSpan.Zero;
-
         }
     }
 }

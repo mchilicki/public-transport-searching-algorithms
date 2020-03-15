@@ -5,30 +5,34 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
 {
     public class FastestPathTransferService
     {
-        private readonly ConnectionFactory connectionFactory;
+        private readonly ConnectionFactory factory;
 
         public FastestPathTransferService(
-            ConnectionFactory connectionFactory)
+            ConnectionFactory factory)
         {
-            this.connectionFactory = connectionFactory;
+            this.factory = factory;
         }
         
-        public bool IsAlreadyTransfer(Connection currentConnection)
+        public bool IsAlreadyTransfer(Connection currentConn)
         {
-            return currentConnection.IsTransfer;
+            return currentConn.IsTransfer;
         }
 
         public bool ShouldBeTransfer(
-            Connection sourceConnection, Connection nextConnection)
+            Connection sourceConn, Connection nextConn)
         {
-            return sourceConnection.TripId != nextConnection.TripId;
+            if (IsAlreadyTransfer(sourceConn))
+                return false;
+            if (IsAlreadyTransfer(nextConn))
+                return false;
+            return sourceConn.TripId != nextConn.TripId;
         }
 
         public Connection GenerateTransferAsStopConnection(
             Connection sourceConnection, Connection nextConnection)
         {
             // TODO Check if second parameter should be sourceConnection.EndVertex or nextConnection.EndVertex
-            return connectionFactory.CreateZeroCostTransfer(
+            return factory.CreateZeroCostTransfer(
                 sourceConnection.EndVertex,
                 nextConnection.EndVertex, 
                 sourceConnection.ArrivalTime);

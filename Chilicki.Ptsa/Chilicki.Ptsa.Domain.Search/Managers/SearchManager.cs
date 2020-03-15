@@ -43,37 +43,46 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             this.measureLogger = measureLogger;
         }
 
-        public async Task<FastestPath> SearchFastestConnections(SearchInputDto searchInputDto)
+        public async Task SearchFastestConnections(SearchInputDto searchInputDto)
         {
             await searchValidator.Validate(searchInputDto);
-            var searchInput = await mapper.ToDomain(searchInputDto);
+            var search = await mapper.ToDomain(searchInputDto);
             var graph = await graphRepository.GetGraph();
-            return PerformSearch(searchInput, graph);
+            await PerformSearchWithLog(search, graph);
         }
 
-        private FastestPath PerformSearch(SearchInput searchInput, Graph graph)
+        private async Task PerformSearchWithLog(SearchInput search, Graph graph)
+        {
+            var stopwatch = Stopwatch.StartNew();
+            var path = PerformSearch(search, graph);
+            stopwatch.Stop();
+            var measure = PerformanceMeasure.Create(path, stopwatch.Elapsed);
+            await measureLogger.Log(measure);
+        }
+
+        private FastestPath PerformSearch(SearchInput search, Graph graph)
         {
             try
             {
-                var fastestConnections = connectionSearchEngine.SearchConnections(searchInput, graph);
-                return fastestPathResolver.ResolveFastestPath(searchInput, fastestConnections);
+                var fastestConnections = connectionSearchEngine.SearchConnections(search, graph);
+                return fastestPathResolver.ResolveFastestPath(search, fastestConnections);
             }
             catch (DijkstraNoFastestPathExistsException)
             {
-                return fastestPathResolver.CreateNotFoundPath(searchInput);
+                return fastestPathResolver.CreateNotFoundPath(search);
             }            
         }
 
         public async Task PerformDijkstraBenchmark(int searchInputCount)
         {
             var searchInputDtos = await searchInputGenerator.Generate(searchInputCount);
-            var searchInputs = await mapper.ToDomain(searchInputDtos);
+            var searches = await mapper.ToDomain(searchInputDtos);
             var graph = await graphRepository.GetGraph();
             var measures = new List<PerformanceMeasure>();
-            foreach (var searchInput in searchInputs)
+            foreach (var search in searches)
             {
                 var stopwatch = Stopwatch.StartNew();
-                var path = PerformSearch(searchInput, graph);
+                var path = PerformSearch(search, graph);
                 stopwatch.Stop();
                 measures.Add(PerformanceMeasure.Create(path, stopwatch.Elapsed));
                 ClearVisitedVertices(graph);
