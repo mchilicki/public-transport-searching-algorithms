@@ -10,6 +10,7 @@ using Chilicki.Ptsa.Domain.Search.Services.SearchInputs;
 using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Domain.Search.Helpers.Exceptions;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Chilicki.Ptsa.Domain.Search.Managers
 {
@@ -66,11 +67,13 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             var searchInputDtos = await searchInputGenerator.Generate(searchInputCount);
             var searchInputs = await mapper.ToDomain(searchInputDtos);
             var graph = await graphRepository.GetGraph();
-            var fastestPaths = new List<FastestPath>();
+            var measures = new List<PerformanceMeasure>();
             foreach (var searchInput in searchInputs)
             {
+                var stopwatch = Stopwatch.StartNew();
                 var path = PerformSearch(searchInput, graph);
-                fastestPaths.Add(path);
+                stopwatch.Stop();
+                measures.Add(PerformanceMeasure.Create(path, stopwatch.Elapsed));
                 ClearVisitedVertices(graph);
             }
         }

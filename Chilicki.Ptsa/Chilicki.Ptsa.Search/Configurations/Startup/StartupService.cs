@@ -16,14 +16,18 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
 
         public async Task Run()
         {
-            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile($"appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{environmentName}.json", optional: false, reloadOnChange: true)
-                .AddEnvironmentVariables();
-            Configuration = builder.Build();
+            Configure();
+            await RunService();
+        }
 
+        private void Configure()
+        {
+            ConfigureAppSettings();
+            ConfigureDependencyInjection();
+        }
+
+        private void ConfigureDependencyInjection()
+        {
             var serviceCollection = new ServiceCollection();
             serviceCollection.Configure<AppSettings>
                 (Configuration.GetSection(nameof(AppSettings)));
@@ -34,6 +38,21 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
             var connectionStrings = ServiceProvider.GetService<IOptions<ConnectionStrings>>().Value;
             searchDependencyInjection.Configure(serviceCollection, connectionStrings);
             ServiceProvider = serviceCollection.BuildServiceProvider();
+        }
+
+        private void ConfigureAppSettings()
+        {
+            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile($"appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{environmentName}.json", optional: false, reloadOnChange: true)
+                .AddEnvironmentVariables();
+            Configuration = builder.Build();
+        }
+
+        private async Task RunService()
+        {
             var service = ServiceProvider.GetRequiredService<ConsoleSearchService>();
             await service.Run();
         }
