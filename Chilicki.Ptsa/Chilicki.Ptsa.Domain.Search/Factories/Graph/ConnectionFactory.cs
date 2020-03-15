@@ -21,12 +21,14 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
                 endVertex, arrivalTime, isTransfer);
         }
 
-        public Connection CreateZeroCostTransfer(
-            Vertex startVertex, Vertex endVertex, TimeSpan time)
+        public Connection CreateTransfer(
+            Vertex startVertex, Vertex endVertex, TimeSpan startTime, TimeSpan endTime)
         {
             var conn = new Connection();
-            return FillInZeroCostTransfer(
-                conn, startVertex, endVertex, time);
+            Graph graph = null;
+            Guid? tripId = null;
+            return FillIn(
+                conn, graph, tripId, startVertex, startTime, endVertex, endTime);
         }
 
         public Connection FillInZeroCostTransfer(

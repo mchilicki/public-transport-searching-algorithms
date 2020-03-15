@@ -60,26 +60,37 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
             (IList<Connection> fastestPath)
         {
             var flattenPath = new List<Connection>();
+
+            // Rewrite it pls, there are errors in this code
             foreach (var currentConn  in fastestPath)
-            {
-                if (flattenPath.Any() && 
-                    !currentConn.IsTransfer && !flattenPath.Last().IsTransfer)
+            {              
+                if (flattenPath.Any() && !currentConn.IsTransfer && !flattenPath.Last().IsTransfer)
                 {
+                    var previousConn = flattenPath.Last();
                     var currentTripId = currentConn.TripId;
-                    var lastAddedTripId = flattenPath.Last().TripId;
+                    var lastAddedTripId = previousConn.TripId;
                     if (currentTripId == lastAddedTripId)
                     {
-                        var lastAddedConnection = flattenPath.Last();
-                        lastAddedConnection.EndVertex = currentConn.EndVertex;
+                        previousConn.EndVertex = currentConn.EndVertex;
+                        previousConn.ArrivalTime = currentConn.ArrivalTime;
                     }
                     else
                     {
                         flattenPath.Add(factory.CloneFrom(currentConn));
+                        if (previousConn.IsTransfer)
+                            previousConn.ArrivalTime = currentConn.DepartureTime;
                     }
+                }
+                else if (!flattenPath.Any())
+                {
+                    var firstConn = factory.CloneFrom(currentConn);
+                    flattenPath.Add(firstConn);
                 }
                 else
                 {
-                    flattenPath.Add(factory.CloneFrom(currentConn));
+                    var transferConn = factory.CloneFrom(currentConn);
+                    transferConn.DepartureTime = flattenPath.Last().ArrivalTime;
+                    flattenPath.Add(transferConn);
                 }
             }
             return flattenPath;

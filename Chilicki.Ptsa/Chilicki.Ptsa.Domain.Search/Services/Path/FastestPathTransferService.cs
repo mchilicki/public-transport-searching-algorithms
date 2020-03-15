@@ -32,10 +32,11 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
             Connection sourceConnection, Connection nextConnection)
         {
             // TODO Check if second parameter should be sourceConnection.EndVertex or nextConnection.EndVertex
-            return factory.CreateZeroCostTransfer(
+            return factory.CreateTransfer(
                 sourceConnection.EndVertex,
-                nextConnection.EndVertex, 
-                sourceConnection.ArrivalTime);
+                nextConnection.StartVertex, 
+                sourceConnection.DepartureTime,
+                nextConnection.DepartureTime);
         }
     }
 }

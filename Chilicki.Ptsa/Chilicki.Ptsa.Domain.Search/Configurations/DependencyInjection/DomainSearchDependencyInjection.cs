@@ -42,7 +42,6 @@ namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
             services.AddTransient<DijkstraGraphService>();
             services.AddTransient<DijkstraContinueChecker>();
             services.AddTransient<FastestPathResolver>();
-            services.AddTransient<FastestPathTimeCalculator>();
             services.AddTransient<FastestPathTransferService>();
             services.AddTransient<RandomSearchInputGenerator>();
             services.AddTransient<MeasureLogger>();

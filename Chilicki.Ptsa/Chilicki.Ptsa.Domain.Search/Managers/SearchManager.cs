@@ -12,6 +12,7 @@ using Chilicki.Ptsa.Domain.Search.Helpers.Exceptions;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Chilicki.Ptsa.Domain.Search.Services.Measures;
+using System;
 
 namespace Chilicki.Ptsa.Domain.Search.Managers
 {
@@ -69,8 +70,24 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             }
             catch (DijkstraNoFastestPathExistsException)
             {
-                return fastestPathResolver.CreateNotFoundPath(search);
+                var previousDayStartTime = search.StartTime;
+                search.StartTime = TimeSpan.FromMinutes(1);
+                return PerformSearchNextDay(search, graph, previousDayStartTime);
             }            
+        }
+
+        private FastestPath PerformSearchNextDay(SearchInput search, Graph graph, TimeSpan previousDayStartTime)
+        {
+            try
+            {
+                var fastestConnections = connectionSearchEngine.SearchConnections(search, graph);
+                search.StartTime = previousDayStartTime;
+                return fastestPathResolver.ResolveFastestPath(search, fastestConnections);
+            }
+            catch (DijkstraNoFastestPathExistsException)
+            {                
+                return fastestPathResolver.CreateNotFoundPath(search);
+            }
         }
 
         public async Task PerformDijkstraBenchmark(int searchInputCount)
