@@ -52,11 +52,13 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
                 iteration++;
             }
             fastestPath.Reverse();
-            return new FastestPath()
-            {
-                Path = fastestPath,
-                FlattenPath = FlattenFastestPath(fastestPath),
-            };
+            var flattenPath = FlattenFastestPath(fastestPath);
+            return FastestPath.Create(search, fastestPath, flattenPath);
+        }
+
+        public FastestPath CreateNotFoundPath(SearchInput search)
+        {
+            return FastestPath.Create(search);
         }
 
         private IEnumerable<Connection> FlattenFastestPath

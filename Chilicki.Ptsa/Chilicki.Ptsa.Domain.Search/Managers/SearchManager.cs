@@ -11,6 +11,7 @@ using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Domain.Search.Helpers.Exceptions;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Chilicki.Ptsa.Domain.Search.Services.Measures;
 
 namespace Chilicki.Ptsa.Domain.Search.Managers
 {
@@ -22,6 +23,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
         readonly SearchInputMapper mapper;
         readonly GraphRepository graphRepository;
         readonly RandomSearchInputGenerator searchInputGenerator;
+        readonly MeasureLogger measureLogger;
 
         public SearchManager(
             IConnectionSearchEngine connectionSearchEngine,
@@ -29,7 +31,8 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             SearchValidator searchValidator,
             SearchInputMapper mapper,
             GraphRepository graphRepository,
-            RandomSearchInputGenerator searchInputGenerator)
+            RandomSearchInputGenerator searchInputGenerator,
+            MeasureLogger measureLogger)
         {
             this.connectionSearchEngine = connectionSearchEngine;
             this.searchValidator = searchValidator;
@@ -37,6 +40,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             this.fastestPathResolver = fastestPathResolver;
             this.graphRepository = graphRepository;
             this.searchInputGenerator = searchInputGenerator;
+            this.measureLogger = measureLogger;
         }
 
         public async Task<FastestPath> SearchFastestConnections(SearchInputDto searchInputDto)
@@ -49,17 +53,15 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
 
         private FastestPath PerformSearch(SearchInput searchInput, Graph graph)
         {
-            FastestPath fastestPath;
             try
             {
                 var fastestConnections = connectionSearchEngine.SearchConnections(searchInput, graph);
-                fastestPath = fastestPathResolver.ResolveFastestPath(searchInput, fastestConnections);
+                return fastestPathResolver.ResolveFastestPath(searchInput, fastestConnections);
             }
             catch (DijkstraNoFastestPathExistsException)
             {
-                return null;
+                return fastestPathResolver.CreateNotFoundPath(searchInput);
             }            
-            return fastestPath;
         }
 
         public async Task PerformDijkstraBenchmark(int searchInputCount)
@@ -76,6 +78,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
                 measures.Add(PerformanceMeasure.Create(path, stopwatch.Elapsed));
                 ClearVisitedVertices(graph);
             }
+            await measureLogger.Log(measures);
         }
 
         private void ClearVisitedVertices(Graph graph)

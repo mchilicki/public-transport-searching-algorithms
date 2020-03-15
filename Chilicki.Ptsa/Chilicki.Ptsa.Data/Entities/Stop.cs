@@ -9,5 +9,10 @@ namespace Chilicki.Ptsa.Data.Entities
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public virtual ICollection<StopTime> StopTimes { get; set; }
+
+        public override string ToString()
+        {
+            return $"Id: {Id} Name: {Name} Latitude: {Latitude} Longitude: {Longitude}";
+        }
     }
 }

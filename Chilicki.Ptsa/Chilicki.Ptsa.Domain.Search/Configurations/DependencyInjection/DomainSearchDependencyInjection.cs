@@ -8,6 +8,7 @@ using Chilicki.Ptsa.Domain.Search.Services.Base;
 using Chilicki.Ptsa.Domain.Search.Services.Dijkstra;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories.Base;
+using Chilicki.Ptsa.Domain.Search.Services.Measures;
 using Chilicki.Ptsa.Domain.Search.Services.Path;
 using Chilicki.Ptsa.Domain.Search.Services.SearchInputs;
 using Chilicki.Ptsa.Domain.Search.Validators;
@@ -44,6 +45,7 @@ namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
             services.AddTransient<FastestPathTimeCalculator>();
             services.AddTransient<FastestPathTransferService>();
             services.AddTransient<RandomSearchInputGenerator>();
+            services.AddTransient<MeasureLogger>();
         }
 
         private void ConfigureFactories(IServiceCollection services)

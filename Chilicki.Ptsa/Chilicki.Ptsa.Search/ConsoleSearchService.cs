@@ -29,15 +29,23 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
 
         public async Task Run()
         {
-            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            if (environmentName == "GtfsImport" || environmentName == "GtfsImportPC")
-                await ImportGtfs();
-            if (environmentName == "DijkstraSearch" || environmentName == "DijkstraSearchPC")
-                await SearchWithDijkstra();
-            if (environmentName == "CreateGraph")
-                await CreateGraph();
-            if (environmentName == "DijkstraBenchmark")
-                await PerformDijkstraBenchmark();
+            try
+            {
+                var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                if (environmentName == "GtfsImport" || environmentName == "GtfsImportPC")
+                    await ImportGtfs();
+                if (environmentName == "DijkstraSearch" || environmentName == "DijkstraSearchPC")
+                    await SearchWithDijkstra();
+                if (environmentName == "CreateGraph")
+                    await CreateGraph();
+                if (environmentName == "DijkstraBenchmark")
+                    await PerformDijkstraBenchmark();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                Console.ReadKey();
+            }            
         }
 
         private async Task PerformDijkstraBenchmark()
