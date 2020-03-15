@@ -8,20 +8,23 @@ using System.Threading.Tasks;
 
 namespace Chilicki.Ptsa.Search.Configurations.Startup
 {
-    public class ConsoleSearchSerivce
+    public class ConsoleSearchService
     {
-        private readonly AppSettings appSettings;
-        private readonly GtfsImportService importService;
-        private readonly SearchManager searchManager;
+        readonly AppSettings appSettings;
+        readonly GtfsImportService importService;
+        readonly SearchManager searchManager;
+        readonly GraphManager graphManager;
 
-        public ConsoleSearchSerivce(
+        public ConsoleSearchService(
             IOptions<AppSettings> appSettings,
             GtfsImportService importService,
-            SearchManager searchManager)
+            SearchManager searchManager,
+            GraphManager graphManager)
         {
             this.appSettings = appSettings.Value;
             this.importService = importService;
             this.searchManager = searchManager;
+            this.graphManager = graphManager;
         }
 
         public async Task Run()
@@ -48,7 +51,7 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
 
         private async Task CreateGraph()
         {
-            await searchManager.CreateGraph();
+            await graphManager.CreateGraph();
         }
 
         private async Task ImportGtfs()

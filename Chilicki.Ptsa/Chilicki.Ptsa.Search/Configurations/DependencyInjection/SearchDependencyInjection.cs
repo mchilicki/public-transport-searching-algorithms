@@ -19,7 +19,7 @@ namespace Chilicki.Ptsa.Search.Configurations.DependencyInjection
 
         private static void ConfigureConsoleServices(IServiceCollection services)
         {
-            services.AddTransient<ConsoleSearchSerivce>();
+            services.AddTransient<ConsoleSearchService>();
         }
     }
 }

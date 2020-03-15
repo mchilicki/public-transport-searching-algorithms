@@ -16,32 +16,26 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
     public class SearchManager
     {
         readonly IConnectionSearchEngine connectionSearchEngine;
-        readonly IGraphFactory<Graph> graphFactory;
         readonly FastestPathResolver fastestPathResolver;
         readonly SearchValidator searchValidator;
         readonly SearchInputManualMapper searchInputManualMapper;
         readonly StopRepository stopRepository;
         readonly GraphRepository graphRepository;
-        readonly IUnitOfWork unitOfWork;
 
         public SearchManager(
             IConnectionSearchEngine connectionSearchEngine,
-            IGraphFactory<Graph> graphFactory,
             FastestPathResolver fastestPathResolver,
             SearchValidator searchValidator,
             SearchInputManualMapper searchInputManualMapper,
             StopRepository stopRepository,
-            GraphRepository graphRepository,
-            IUnitOfWork unitOfWork)
+            GraphRepository graphRepository)
         {
             this.connectionSearchEngine = connectionSearchEngine;
-            this.graphFactory = graphFactory;
             this.searchValidator = searchValidator;
             this.searchInputManualMapper = searchInputManualMapper;
             this.stopRepository = stopRepository;
             this.fastestPathResolver = fastestPathResolver;
             this.graphRepository = graphRepository;
-            this.unitOfWork = unitOfWork;
         }
 
         public async Task<FastestPath> SearchFastestConnections(SearchInputDto searchInputDto)
@@ -52,14 +46,6 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             var fastestConnections = connectionSearchEngine.SearchConnections(searchInput, graph);
             var fastestPath = fastestPathResolver.ResolveFastestPath(searchInput, fastestConnections);
             return fastestPath;
-        }
-
-        public async Task CreateGraph()
-        {
-            var stops = await stopRepository.GetAllAsync();
-            var graph = await graphFactory.CreateGraph(stops);
-            await graphRepository.AddAsync(graph);            
-            await unitOfWork.SaveAsync();
-        }
+        }        
     }
 }

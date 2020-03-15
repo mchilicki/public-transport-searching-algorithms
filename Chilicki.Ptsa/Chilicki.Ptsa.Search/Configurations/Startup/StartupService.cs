@@ -34,7 +34,7 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
             var connectionStrings = ServiceProvider.GetService<IOptions<ConnectionStrings>>().Value;
             searchDependencyInjection.Configure(serviceCollection, connectionStrings);
             ServiceProvider = serviceCollection.BuildServiceProvider();
-            var service = ServiceProvider.GetRequiredService<ConsoleSearchSerivce>();
+            var service = ServiceProvider.GetRequiredService<ConsoleSearchService>();
             await service.Run();
         }
     }

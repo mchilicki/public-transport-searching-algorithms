@@ -11,6 +11,7 @@ using Chilicki.Ptsa.Domain.Search.Services.GraphFactories.Base;
 using Chilicki.Ptsa.Domain.Search.Services.Path;
 using Chilicki.Ptsa.Domain.Search.Validators;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
 {
@@ -18,15 +19,21 @@ namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
     {
         public void Configure(IServiceCollection services)
         {
+            ConfigureManagers(services);
             ConfigureServices(services);
             ConfigureValidators(services);
             ConfigureMappers(services);
             ConfigureFactories(services);
         }
 
-        private void ConfigureServices(IServiceCollection services)
+        private void ConfigureManagers(IServiceCollection services)
         {
             services.AddTransient<SearchManager>();
+            services.AddTransient<GraphManager>();
+        }
+
+        private void ConfigureServices(IServiceCollection services)
+        {            
             services.AddTransient<IConnectionSearchEngine, DijkstraConnectionSearchEngine>();
             services.AddTransient<DijkstraFastestConnectionReplacer>();
             services.AddTransient<DijkstraNextVertexResolver>();
