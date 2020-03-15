@@ -2,14 +2,10 @@
 using Chilicki.Ptsa.Domain.Search.Validators;
 using Chilicki.Ptsa.Domain.Search.Dtos;
 using Chilicki.Ptsa.Domain.Search.ManualMappers;
-using Chilicki.Ptsa.Domain.Search.Services.GraphFactories.Base;
-using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Data.Repositories;
 using Chilicki.Ptsa.Domain.Search.Services.Path;
 using Chilicki.Ptsa.Domain.Search.Aggregates;
 using System.Threading.Tasks;
-using System;
-using Chilicki.Ptsa.Data.UnitsOfWork;
 
 namespace Chilicki.Ptsa.Domain.Search.Managers
 {

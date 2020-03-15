@@ -1,7 +1,6 @@
 ﻿using Chilicki.Ptsa.Domain.Search.Exceptions;
 using Chilicki.Ptsa.Search.Configurations.Startup;
 using System;
-using System.Threading.Tasks;
 
 namespace Chilicki.Ptsa.Search
 {

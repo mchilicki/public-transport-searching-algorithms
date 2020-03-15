@@ -1,9 +1,7 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
-using Chilicki.Ptsa.Data.Repositories;
 using Chilicki.Ptsa.Data.Repositories.Base;
 using Chilicki.Ptsa.Domain.Search.Factories.SimilarVertices;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories.Base;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

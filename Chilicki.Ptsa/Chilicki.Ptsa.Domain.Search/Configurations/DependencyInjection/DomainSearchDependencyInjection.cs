@@ -11,7 +11,6 @@ using Chilicki.Ptsa.Domain.Search.Services.GraphFactories.Base;
 using Chilicki.Ptsa.Domain.Search.Services.Path;
 using Chilicki.Ptsa.Domain.Search.Validators;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
 {

@@ -2,10 +2,6 @@
 using Chilicki.Ptsa.Data.Repositories;
 using Chilicki.Ptsa.Data.UnitsOfWork;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories.Base;
-using Chilicki.Ptsa.Domain.Search.Services.Path;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Chilicki.Ptsa.Domain.Search.Managers

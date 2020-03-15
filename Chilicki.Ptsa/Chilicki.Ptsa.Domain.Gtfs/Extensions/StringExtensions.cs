@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Chilicki.Ptsa.Domain.Gtfs.Extensions
+﻿namespace Chilicki.Ptsa.Domain.Gtfs.Extensions
 {
     public static class StringExtensions
     {

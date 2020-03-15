@@ -4,7 +4,6 @@ using Chilicki.Ptsa.Domain.Search.Exceptions;
 using Chilicki.Ptsa.Domain.Search.Factories.Dijkstra;
 using Chilicki.Ptsa.Domain.Search.Services.Base;
 using Chilicki.Ptsa.Domain.Search.Services.Dijkstra;
-using System.Collections.Generic;
 
 namespace Chilicki.Ptsa.Domain.Search.Services
 {

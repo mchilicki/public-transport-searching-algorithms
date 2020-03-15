@@ -1,7 +1,6 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Chilicki.Ptsa.Domain.Search.Aggregates
 {

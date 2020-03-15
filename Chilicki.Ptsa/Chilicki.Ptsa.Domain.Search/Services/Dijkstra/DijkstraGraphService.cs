@@ -1,7 +1,6 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Domain.Search.Aggregates;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 

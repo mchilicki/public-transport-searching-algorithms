@@ -1,6 +1,5 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Domain.Search.Aggregates;
-using System.Collections.Generic;
 
 namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
 {

@@ -1,6 +1,5 @@
 ﻿using Chilicki.Ptsa.Data.Entities.Base;
 using Chilicki.Ptsa.Data.Repositories.Base;
-using Chilicki.Ptsa.Data.Repositories.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
