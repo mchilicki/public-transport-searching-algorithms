@@ -1,6 +1,6 @@
 ﻿using Chilicki.Ptsa.Domain.Search.Aggregates;
 using Chilicki.Ptsa.Data.Entities;
-using Chilicki.Ptsa.Domain.Search.Exceptions;
+using Chilicki.Ptsa.Domain.Search.Helpers.Exceptions;
 using Chilicki.Ptsa.Domain.Search.Factories.Dijkstra;
 using Chilicki.Ptsa.Domain.Search.Services.Base;
 using Chilicki.Ptsa.Domain.Search.Services.Dijkstra;

@@ -35,6 +35,12 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "GtfsImportPC"
       }
+    },
+    "DijkstraBenchmark": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "DijkstraBenchmark"
+      }
     }
   }
 }

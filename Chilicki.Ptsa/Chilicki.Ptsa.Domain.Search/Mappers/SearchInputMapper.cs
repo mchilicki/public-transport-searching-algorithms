@@ -2,15 +2,16 @@
 using Chilicki.Ptsa.Domain.Search.Aggregates;
 using Chilicki.Ptsa.Data.Repositories;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
-namespace Chilicki.Ptsa.Domain.Search.ManualMappers
+namespace Chilicki.Ptsa.Domain.Search.Mappers
 {
-    public class SearchInputManualMapper 
+    public class SearchInputMapper 
     {
         readonly StopRepository stopRepository;
         readonly VertexRepository vertexRepository;
 
-        public SearchInputManualMapper(           
+        public SearchInputMapper(           
             StopRepository stopRepository,
             VertexRepository vertexRepository)
         {
@@ -28,6 +29,17 @@ namespace Chilicki.Ptsa.Domain.Search.ManualMappers
                 DestinationVertex = await vertexRepository.GetByStopId(searchInput.DestinationStopId),
                 StartTime = searchInput.StartTime,
             };
+        }
+
+        public async Task<IEnumerable<SearchInput>> ToDomain(IEnumerable<SearchInputDto> searchInputDtos)
+        {
+            var searchInputs = new List<SearchInput>();
+            foreach (var searchInputDto in searchInputDtos)
+            {
+                var searchInput = await ToDomain(searchInputDto);
+                searchInputs.Add(searchInput);
+            }
+            return searchInputs;
         }
     }
 }

@@ -2,13 +2,14 @@
 using Chilicki.Ptsa.Domain.Search.Factories.Dijkstra;
 using Chilicki.Ptsa.Domain.Search.Factories.SimilarVertices;
 using Chilicki.Ptsa.Domain.Search.Managers;
-using Chilicki.Ptsa.Domain.Search.ManualMappers;
+using Chilicki.Ptsa.Domain.Search.Mappers;
 using Chilicki.Ptsa.Domain.Search.Services;
 using Chilicki.Ptsa.Domain.Search.Services.Base;
 using Chilicki.Ptsa.Domain.Search.Services.Dijkstra;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories.Base;
 using Chilicki.Ptsa.Domain.Search.Services.Path;
+using Chilicki.Ptsa.Domain.Search.Services.SearchInputs;
 using Chilicki.Ptsa.Domain.Search.Validators;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -41,7 +42,8 @@ namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
             services.AddTransient<DijkstraContinueChecker>();
             services.AddTransient<FastestPathResolver>();
             services.AddTransient<FastestPathTimeCalculator>();
-            services.AddTransient<FastestPathTransferService>();            
+            services.AddTransient<FastestPathTransferService>();
+            services.AddTransient<RandomSearchInputGenerator>();
         }
 
         private void ConfigureFactories(IServiceCollection services)
@@ -59,7 +61,7 @@ namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
 
         private void ConfigureMappers(IServiceCollection services)
         {
-            services.AddTransient<SearchInputManualMapper>();
+            services.AddTransient<SearchInputMapper>();
         }
     }
 }

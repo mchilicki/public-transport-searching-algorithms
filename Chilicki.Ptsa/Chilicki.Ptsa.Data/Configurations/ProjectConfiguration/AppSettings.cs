@@ -8,5 +8,6 @@ namespace Chilicki.Ptsa.Data.Configurations.ProjectConfiguration
         public Guid StartStopId { get; set; }
         public Guid EndStopId { get; set; }
         public TimeSpan StartTime { get; set; }
+        public int BenchmarkIterations { get; set; }
     }
 }

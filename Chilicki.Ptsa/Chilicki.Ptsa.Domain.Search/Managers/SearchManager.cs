@@ -1,11 +1,15 @@
 ﻿using Chilicki.Ptsa.Domain.Search.Services.Base;
 using Chilicki.Ptsa.Domain.Search.Validators;
 using Chilicki.Ptsa.Domain.Search.Dtos;
-using Chilicki.Ptsa.Domain.Search.ManualMappers;
+using Chilicki.Ptsa.Domain.Search.Mappers;
 using Chilicki.Ptsa.Data.Repositories;
 using Chilicki.Ptsa.Domain.Search.Services.Path;
 using Chilicki.Ptsa.Domain.Search.Aggregates;
 using System.Threading.Tasks;
+using Chilicki.Ptsa.Domain.Search.Services.SearchInputs;
+using Chilicki.Ptsa.Data.Entities;
+using Chilicki.Ptsa.Domain.Search.Helpers.Exceptions;
+using System.Collections.Generic;
 
 namespace Chilicki.Ptsa.Domain.Search.Managers
 {
@@ -14,34 +18,69 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
         readonly IConnectionSearchEngine connectionSearchEngine;
         readonly FastestPathResolver fastestPathResolver;
         readonly SearchValidator searchValidator;
-        readonly SearchInputManualMapper searchInputManualMapper;
-        readonly StopRepository stopRepository;
+        readonly SearchInputMapper mapper;
         readonly GraphRepository graphRepository;
+        readonly RandomSearchInputGenerator searchInputGenerator;
 
         public SearchManager(
             IConnectionSearchEngine connectionSearchEngine,
             FastestPathResolver fastestPathResolver,
             SearchValidator searchValidator,
-            SearchInputManualMapper searchInputManualMapper,
-            StopRepository stopRepository,
-            GraphRepository graphRepository)
+            SearchInputMapper mapper,
+            GraphRepository graphRepository,
+            RandomSearchInputGenerator searchInputGenerator)
         {
             this.connectionSearchEngine = connectionSearchEngine;
             this.searchValidator = searchValidator;
-            this.searchInputManualMapper = searchInputManualMapper;
-            this.stopRepository = stopRepository;
+            this.mapper = mapper;
             this.fastestPathResolver = fastestPathResolver;
             this.graphRepository = graphRepository;
+            this.searchInputGenerator = searchInputGenerator;
         }
 
         public async Task<FastestPath> SearchFastestConnections(SearchInputDto searchInputDto)
         {
             await searchValidator.Validate(searchInputDto);
-            var searchInput = await searchInputManualMapper.ToDomain(searchInputDto);
+            var searchInput = await mapper.ToDomain(searchInputDto);
             var graph = await graphRepository.GetGraph();
-            var fastestConnections = connectionSearchEngine.SearchConnections(searchInput, graph);
-            var fastestPath = fastestPathResolver.ResolveFastestPath(searchInput, fastestConnections);
+            return PerformSearch(searchInput, graph);
+        }
+
+        private FastestPath PerformSearch(SearchInput searchInput, Graph graph)
+        {
+            FastestPath fastestPath;
+            try
+            {
+                var fastestConnections = connectionSearchEngine.SearchConnections(searchInput, graph);
+                fastestPath = fastestPathResolver.ResolveFastestPath(searchInput, fastestConnections);
+            }
+            catch (DijkstraNoFastestPathExistsException)
+            {
+                return null;
+            }            
             return fastestPath;
-        }        
+        }
+
+        public async Task PerformDijkstraBenchmark(int searchInputCount)
+        {
+            var searchInputDtos = await searchInputGenerator.Generate(searchInputCount);
+            var searchInputs = await mapper.ToDomain(searchInputDtos);
+            var graph = await graphRepository.GetGraph();
+            var fastestPaths = new List<FastestPath>();
+            foreach (var searchInput in searchInputs)
+            {
+                var path = PerformSearch(searchInput, graph);
+                fastestPaths.Add(path);
+                ClearVisitedVertices(graph);
+            }
+        }
+
+        private void ClearVisitedVertices(Graph graph)
+        {
+            foreach (var vertex in graph.Vertices)
+            {
+                vertex.IsVisited = false;
+            }
+        }
     }
 }

@@ -7,7 +7,7 @@ namespace Chilicki.Ptsa.Data.Entities
     {
         public virtual Graph Graph { get; set; }
 
-        public virtual Guid? TripId { get; set; }
+        public Guid? TripId { get; set; }
 
         public Guid? StartVertexId { get; set; }
         public virtual Vertex StartVertex { get; set; }

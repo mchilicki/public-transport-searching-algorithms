@@ -36,16 +36,19 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
                 await SearchWithDijkstra();
             if (environmentName == "CreateGraph")
                 await CreateGraph();
+            if (environmentName == "DijkstraBenchmark")
+                await PerformDijkstraBenchmark();
+        }
+
+        private async Task PerformDijkstraBenchmark()
+        {
+            await searchManager.PerformDijkstraBenchmark(appSettings.BenchmarkIterations);
         }
 
         private async Task SearchWithDijkstra()
         {
-            var searchInput = new SearchInputDto()
-            {
-                StartStopId = appSettings.StartStopId,
-                DestinationStopId = appSettings.EndStopId,
-                StartTime = appSettings.StartTime,
-            };
+            var searchInput = SearchInputDto.Create(
+                appSettings.StartStopId, appSettings.EndStopId, appSettings.StartTime);
             await searchManager.SearchFastestConnections(searchInput);
         }
 
