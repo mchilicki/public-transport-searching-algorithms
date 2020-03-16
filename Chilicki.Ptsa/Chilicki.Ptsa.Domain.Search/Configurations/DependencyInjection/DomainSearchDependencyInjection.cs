@@ -43,6 +43,7 @@ namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
             services.AddTransient<DijkstraContinueChecker>();
             services.AddTransient<FastestPathResolver>();
             services.AddTransient<FastestPathTransferService>();
+            services.AddTransient<FastestPathFlattener>();
             services.AddTransient<RandomSearchInputGenerator>();
             services.AddTransient<MeasureLogger>();
         }

@@ -11,16 +11,16 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
     {
         readonly FastestPathTransferService transferService;
         readonly DijkstraContinueChecker continueChecker;
-        readonly ConnectionFactory factory;
+        readonly FastestPathFlattener flattener;
 
         public FastestPathResolver(
             FastestPathTransferService transferService,
             DijkstraContinueChecker continueChecker,
-            ConnectionFactory factory)
+            FastestPathFlattener flattener)
         {
             this.transferService = transferService;
             this.continueChecker = continueChecker;
-            this.factory = factory;
+            this.flattener = flattener;
         }
 
         public FastestPath ResolveFastestPath(
@@ -34,21 +34,36 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
             int iteration = 0;
             while (continueChecker.ShouldContinue(search.StartStop.Id, currentConn.StartVertex))
             {
-                var nextConn = currentConn;
-                currentConn = fastestConnections.Get(currentConn.StartVertexId);
-
-                if (transferService.ShouldBeTransfer(currentConn, nextConn))
-                {
-                    var transfer = transferService
-                        .GenerateTransferAsStopConnection(currentConn, nextConn);
-                    fastestPath.Add(transfer);
-                }
-                fastestPath.Add(currentConn);
+                currentConn = IterateReversedFastestPath(fastestConnections, fastestPath, currentConn);
                 iteration++;
             }
             fastestPath.Reverse();
-            var flattenPath = FlattenFastestPath(fastestPath);
+            var flattenPath = flattener.FlattenFastestPath(fastestPath);
             return FastestPath.Create(search, fastestPath, flattenPath);
+        }
+
+        private Connection IterateReversedFastestPath(
+            FastestConnections fastestConnections, ICollection<Connection> fastestPath, Connection currentConn)
+        {
+            var nextConn = currentConn;
+            currentConn = fastestConnections.Get(currentConn.StartVertexId);
+            if (transferService.ShouldBeTransfer(currentConn, nextConn))
+            {
+                var transfer = transferService
+                    .CreateTranfer(currentConn, nextConn);
+                fastestPath.Add(transfer);
+            }
+            else if (transferService.ShouldExtendAlreadyTransfer(currentConn))
+            {
+                ExtendAlreadyTransfer(currentConn, nextConn);
+            }
+            fastestPath.Add(currentConn);
+            return currentConn;
+        }
+
+        private void ExtendAlreadyTransfer(Connection currentConn, Connection nextConn)
+        {
+            currentConn.ArrivalTime = nextConn.DepartureTime;
         }
 
         public FastestPath CreateNotFoundPath(SearchInput search)
@@ -56,44 +71,6 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
             return FastestPath.Create(search);
         }
 
-        private IEnumerable<Connection> FlattenFastestPath
-            (IList<Connection> fastestPath)
-        {
-            var flattenPath = new List<Connection>();
-
-            // Rewrite it pls, there are errors in this code
-            foreach (var currentConn  in fastestPath)
-            {              
-                if (flattenPath.Any() && !currentConn.IsTransfer && !flattenPath.Last().IsTransfer)
-                {
-                    var previousConn = flattenPath.Last();
-                    var currentTripId = currentConn.TripId;
-                    var lastAddedTripId = previousConn.TripId;
-                    if (currentTripId == lastAddedTripId)
-                    {
-                        previousConn.EndVertex = currentConn.EndVertex;
-                        previousConn.ArrivalTime = currentConn.ArrivalTime;
-                    }
-                    else
-                    {
-                        flattenPath.Add(factory.CloneFrom(currentConn));
-                        if (previousConn.IsTransfer)
-                            previousConn.ArrivalTime = currentConn.DepartureTime;
-                    }
-                }
-                else if (!flattenPath.Any())
-                {
-                    var firstConn = factory.CloneFrom(currentConn);
-                    flattenPath.Add(firstConn);
-                }
-                else
-                {
-                    var transferConn = factory.CloneFrom(currentConn);
-                    transferConn.DepartureTime = flattenPath.Last().ArrivalTime;
-                    flattenPath.Add(transferConn);
-                }
-            }
-            return flattenPath;
-        }
+       
     }
 }

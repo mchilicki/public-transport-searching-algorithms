@@ -22,7 +22,8 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Measures
         }
 
         readonly string dateTimeNowFormat = "yyyy-MM-dd-HH-mm-ss";
-        readonly string fileStart = "dijkstra-";
+        readonly string fileStart = "Dijkstra-";
+        readonly string logFolder = "Measures";
         readonly string fileExtension = ".txt";
         readonly string title = "Dijkstra measurements report";
 
@@ -37,7 +38,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Measures
             if (measures == null)
                 return;
             var nowString = DateTime.Now.ToString(dateTimeNowFormat);
-            var fileName = $"{fileStart}{nowString}{fileExtension}";
+            var fileName = $"{logFolder}/{fileStart}{nowString}{fileExtension}";
             var sb = new StringBuilder();
             MakeTitle(sb, nowString);
             MakeSeparation(sb);
@@ -45,7 +46,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Measures
             MakeSeparation(sb);
             await MakePaths(sb, measures);
             var log = sb.ToString();
-            await File.WriteAllTextAsync(fileName, log);
+            await SaveLogFile(fileName, log);
         }        
 
         private void MakeTitle(StringBuilder sb, string nowString)
@@ -182,6 +183,12 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Measures
         private void MakeNoPathFound(StringBuilder sb)
         {
             sb.AppendLine($"No path was found between these two stops at this hour");
+        }
+
+        private async Task SaveLogFile(string fileName, string log)
+        {
+            Directory.CreateDirectory(logFolder);
+            await File.WriteAllTextAsync(fileName, log);
         }
     }
 }

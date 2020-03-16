@@ -1,5 +1,6 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories;
+using System;
 
 namespace Chilicki.Ptsa.Domain.Search.Services.Path
 {
@@ -12,31 +13,31 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
         {
             this.factory = factory;
         }
-        
-        public bool IsAlreadyTransfer(Connection currentConn)
-        {
-            return currentConn.IsTransfer;
-        }
+       
 
         public bool ShouldBeTransfer(
             Connection sourceConn, Connection nextConn)
         {
-            if (IsAlreadyTransfer(sourceConn))
+            if (sourceConn.IsTransfer)
                 return false;
-            if (IsAlreadyTransfer(nextConn))
+            if (nextConn.IsTransfer)
                 return false;
             return sourceConn.TripId != nextConn.TripId;
         }
 
-        public Connection GenerateTransferAsStopConnection(
+        public Connection CreateTranfer(
             Connection sourceConnection, Connection nextConnection)
         {
-            // TODO Check if second parameter should be sourceConnection.EndVertex or nextConnection.EndVertex
             return factory.CreateTransfer(
                 sourceConnection.EndVertex,
-                nextConnection.StartVertex, 
-                sourceConnection.DepartureTime,
+                nextConnection.StartVertex,                
+                sourceConnection.ArrivalTime,
                 nextConnection.DepartureTime);
+        }
+
+        public bool ShouldExtendAlreadyTransfer(Connection currentConn)
+        {
+            return currentConn.IsTransfer;
         }
     }
 }
