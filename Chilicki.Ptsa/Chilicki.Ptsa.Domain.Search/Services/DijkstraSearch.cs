@@ -7,7 +7,7 @@ using Chilicki.Ptsa.Domain.Search.Services.Dijkstra;
 
 namespace Chilicki.Ptsa.Domain.Search.Services
 {
-    public class DijkstraConnectionSearchEngine : IConnectionSearchEngine
+    public class DijkstraSearch : IConnectionSearchEngine
     {
         readonly DijkstraEmptyFastestConnectionsFactory emptyConnFactory;
         readonly DijkstraNextVertexResolver resolver;
@@ -16,7 +16,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services
         readonly DijkstraGraphService graphService;
         readonly DijkstraContinueChecker continueChecker;
 
-        public DijkstraConnectionSearchEngine(
+        public DijkstraSearch(
             DijkstraEmptyFastestConnectionsFactory emptyConnFactory,
             DijkstraNextVertexResolver resolver,
             DijkstraFastestConnectionReplacer replacer,

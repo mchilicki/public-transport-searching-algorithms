@@ -14,17 +14,20 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
         readonly GtfsImportService importService;
         readonly SearchManager searchManager;
         readonly GraphManager graphManager;
+        readonly MultipleCriteriaSearchManager multipleCriteriaSearchManager;
 
         public ConsoleSearchService(
             IOptions<AppSettings> appSettings,
             GtfsImportService importService,
             SearchManager searchManager,
-            GraphManager graphManager)
+            GraphManager graphManager,
+            MultipleCriteriaSearchManager multipleCriteriaSearchManager)
         {
             this.appSettings = appSettings.Value;
             this.importService = importService;
             this.searchManager = searchManager;
             this.graphManager = graphManager;
+            this.multipleCriteriaSearchManager = multipleCriteriaSearchManager;
         }
 
         public async Task Run()
@@ -40,13 +43,15 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
                     await CreateGraph();
                 if (environmentName == "DijkstraBenchmark")
                     await PerformDijkstraBenchmark();
+                if (environmentName == "MultipleDijkstraSearch")
+                    await SearchWithMultipleCriteriaDijkstra();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
                 Console.ReadKey();
             }            
-        }
+        }        
 
         private async Task PerformDijkstraBenchmark()
         {
@@ -55,9 +60,14 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
 
         private async Task SearchWithDijkstra()
         {
-            var searchInput = SearchInputDto.Create(
-                appSettings.StartStopId, appSettings.EndStopId, appSettings.StartTime);
-            await searchManager.SearchFastestConnections(searchInput);
+            var search = SearchInputDto.Create(appSettings);
+            await searchManager.SearchFastestConnections(search);
+        }
+
+        private async Task SearchWithMultipleCriteriaDijkstra()
+        {
+            var search = SearchInputDto.Create(appSettings);
+            await multipleCriteriaSearchManager.SearchBestConnections(search);
         }
 
         private async Task CreateGraph()

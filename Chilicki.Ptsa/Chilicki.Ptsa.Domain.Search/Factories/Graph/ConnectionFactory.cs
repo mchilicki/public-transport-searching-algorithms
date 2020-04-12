@@ -28,7 +28,15 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
             Graph graph = null;
             Guid? tripId = null;
             return FillIn(
-                conn, graph, tripId, startVertex, startTime, endVertex, endTime);
+                conn, graph, tripId, startVertex, 
+                startTime, endVertex, endTime);
+        }
+
+        public Connection CreateZeroCostTransfer(
+             Vertex startVertex, Vertex endVertex, TimeSpan time)
+        {
+            var conn = new Connection();
+            return FillInZeroCostTransfer(conn, startVertex, endVertex, time);
         }
 
         public Connection FillInZeroCostTransfer(

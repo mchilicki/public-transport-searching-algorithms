@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Chilicki.Ptsa.Data.Configurations.ProjectConfiguration;
+using System;
 
 namespace Chilicki.Ptsa.Domain.Search.Dtos
 {
@@ -18,5 +19,15 @@ namespace Chilicki.Ptsa.Domain.Search.Dtos
                 StartTime = startTime,
             };            
         }
-}
+
+        public static SearchInputDto Create(AppSettings settings)
+        {
+            return new SearchInputDto
+            {
+                StartStopId = settings.StartStopId,
+                DestinationStopId = settings.EndStopId,
+                StartTime = settings.StartTime,
+            };            
+        }
+    }
 }

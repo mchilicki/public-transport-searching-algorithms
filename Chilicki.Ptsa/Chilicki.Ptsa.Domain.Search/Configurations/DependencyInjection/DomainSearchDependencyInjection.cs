@@ -1,5 +1,6 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Domain.Search.Factories.Dijkstra;
+using Chilicki.Ptsa.Domain.Search.Factories.MultipleCriterion;
 using Chilicki.Ptsa.Domain.Search.Factories.SimilarVertices;
 using Chilicki.Ptsa.Domain.Search.Managers;
 using Chilicki.Ptsa.Domain.Search.Mappers;
@@ -9,6 +10,7 @@ using Chilicki.Ptsa.Domain.Search.Services.Dijkstra;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories.Base;
 using Chilicki.Ptsa.Domain.Search.Services.Measures;
+using Chilicki.Ptsa.Domain.Search.Services.MultipleCriterion;
 using Chilicki.Ptsa.Domain.Search.Services.Path;
 using Chilicki.Ptsa.Domain.Search.Services.SearchInputs;
 using Chilicki.Ptsa.Domain.Search.Validators;
@@ -35,7 +37,7 @@ namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
 
         private void ConfigureServices(IServiceCollection services)
         {            
-            services.AddTransient<IConnectionSearchEngine, DijkstraConnectionSearchEngine>();
+            services.AddTransient<IConnectionSearchEngine, DijkstraSearch>();
             services.AddTransient<DijkstraFastestConnectionReplacer>();
             services.AddTransient<DijkstraNextVertexResolver>();
             services.AddTransient<DijkstraConnectionService>();
@@ -46,6 +48,10 @@ namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
             services.AddTransient<FastestPathFlattener>();
             services.AddTransient<RandomSearchInputGenerator>();
             services.AddTransient<MeasureLogger>();
+            services.AddTransient<MultipleCriteriaSearchManager>();
+            services.AddTransient<MultipleCriterionDijkstraSearch>();
+            services.AddTransient<MultipleCriterionGraphService>();
+            services.AddTransient<DominationService>();
         }
 
         private void ConfigureFactories(IServiceCollection services)
@@ -54,6 +60,9 @@ namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
             services.AddTransient<ConnectionFactory>();
             services.AddTransient<IGraphFactory<Graph>, GraphFactory>();
             services.AddTransient<SimilarVertexFactory>();
+            services.AddTransient<EmptyBestConnectionsFactory>();
+            services.AddTransient<LabelPriorityQueueFactory>();
+            services.AddTransient<LabelFactory>();
         }
 
         private void ConfigureValidators(IServiceCollection services)
