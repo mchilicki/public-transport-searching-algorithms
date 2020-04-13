@@ -52,6 +52,7 @@ namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
             services.AddTransient<MultipleCriterionDijkstraSearch>();
             services.AddTransient<MultipleCriterionGraphService>();
             services.AddTransient<DominationService>();
+            services.AddTransient<PossibleConnectionsService>();
         }
 
         private void ConfigureFactories(IServiceCollection services)

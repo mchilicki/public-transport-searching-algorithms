@@ -1,6 +1,7 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Domain.Search.Aggregates;
 using Chilicki.Ptsa.Domain.Search.Aggregates.MultipleCriterion;
+using Chilicki.Ptsa.Domain.Search.Services.MultipleCriterion;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,14 @@ namespace Chilicki.Ptsa.Domain.Search.Factories.MultipleCriterion
 {
     public class LabelFactory
     {
+        readonly PossibleConnectionsService possibleConnectionsService;
+
+        public LabelFactory(
+            PossibleConnectionsService possibleConnectionsService)
+        {
+            this.possibleConnectionsService = possibleConnectionsService;
+        }
+
         public ICollection<Label> CreateEmptyLabels()
         {
             return new List<Label>();
@@ -27,19 +36,23 @@ namespace Chilicki.Ptsa.Domain.Search.Factories.MultipleCriterion
         public ICollection<Label> CreateStartLabels(
             Vertex vertex, SearchInput search)
         {
-            var startTimePlusDelay = search.StartTime.Add(TimeSpan.FromHours(2));
-            var possibleConnections = vertex.Connections
-                .Where(p =>
-                    p.DepartureTime >= search.StartTime &&
-                    p.DepartureTime <= startTimePlusDelay
-                );
+            var possibleConnections = possibleConnectionsService
+                .GetPossibleConnections(vertex.Connections, search.StartTime);
             var labels = new List<Label>();
             foreach (var conn in possibleConnections)
             {
-                var label = CreateLabel(vertex, conn);
+                var label = CreateLabel(conn.EndVertex, conn);
                 labels.Add(label);
             }
             return labels;
+        }
+
+        public Label CreateLabel(Label currentLabel, Connection connection)
+        {
+            return new Label
+            {
+
+            };
         }
     }
 }

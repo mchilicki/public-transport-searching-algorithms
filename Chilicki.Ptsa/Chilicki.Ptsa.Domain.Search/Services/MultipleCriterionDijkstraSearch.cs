@@ -8,67 +8,67 @@ using Chilicki.Ptsa.Domain.Search.Aggregates.MultipleCriterion;
 using System;
 using Chilicki.Ptsa.Domain.Search.Factories.MultipleCriterion;
 using Chilicki.Ptsa.Domain.Search.Services.MultipleCriterion;
+using System.Linq;
 
 namespace Chilicki.Ptsa.Domain.Search.Services
 {
     public class MultipleCriterionDijkstraSearch 
     {
-        readonly EmptyBestConnectionsFactory emptyBestFactory;
-        readonly MultipleCriterionGraphService graphService;
-        readonly LabelPriorityQueueFactory priorityQueueFactory;
-
-        readonly DijkstraFastestConnectionReplacer replacer;
-        readonly DijkstraConnectionService connectionsService;
-        readonly DijkstraContinueChecker continueChecker;
+        private readonly EmptyBestConnectionsFactory emptyBestFactory;
+        private readonly MultipleCriterionGraphService graphService;
+        private readonly LabelPriorityQueueFactory priorityQueueFactory;
+        private readonly PossibleConnectionsService connectionsService;
+        private readonly LabelFactory labelFactory;
 
         public MultipleCriterionDijkstraSearch(
             EmptyBestConnectionsFactory emptyBestFactory,
             MultipleCriterionGraphService graphService,
             LabelPriorityQueueFactory priorityQueueFactory,
-
-
-            DijkstraFastestConnectionReplacer replacer,
-            DijkstraConnectionService connectionsService,
-            DijkstraContinueChecker continueChecker)
+            PossibleConnectionsService connectionsService,
+            LabelFactory labelFactory)
         {
             this.emptyBestFactory = emptyBestFactory;
             this.graphService = graphService;
             this.priorityQueueFactory = priorityQueueFactory;
-            
-            this.replacer = replacer;
             this.connectionsService = connectionsService;
-            this.continueChecker = continueChecker;
+            this.labelFactory = labelFactory;
         }
 
         public BestConnections SearchConnections(SearchInput search, Graph graph)
         {
-            var (bestConnections, currentVertex, priorityQueue) = PrepareFirstIteration(search, graph);
+            var (bestConnections, priorityQueue) = PrepareFirstIteration(search, graph);
             int iteration = 0;
-            while (continueChecker.ShouldContinue(search.DestinationStop.Id, currentVertex))
+            while (priorityQueue.Any())
             {
-                (bestConnections, currentVertex, priorityQueue) = 
-                    MakeIteration(search, bestConnections, currentVertex, priorityQueue);
+                (bestConnections, priorityQueue) = 
+                    MakeIteration(search, bestConnections, priorityQueue);
                 iteration++;
             }
             return bestConnections;
         }
 
-        private (BestConnections, Vertex, LabelPriorityQueue) MakeIteration(
-            SearchInput search, 
-            BestConnections bestConnections,
-            Vertex currentVertex, 
-            LabelPriorityQueue priorityQueue)
-        {
-            throw new NotImplementedException();
-        }
-
-        private (BestConnections, Vertex, LabelPriorityQueue) PrepareFirstIteration(
+        private (BestConnections, LabelPriorityQueue) PrepareFirstIteration(
             SearchInput search, Graph graph)
         {
             var bestConnections = emptyBestFactory.Create(graph, search);
             var startVertex = graphService.GetStopVertexByStop(graph, search.StartStop);
             var priorityQueue = priorityQueueFactory.Create(startVertex, search);
-            return (bestConnections, startVertex, priorityQueue);
+            return (bestConnections, priorityQueue);
         }
+
+        private (BestConnections, LabelPriorityQueue) MakeIteration(
+            SearchInput search, 
+            BestConnections bestConnections,
+            LabelPriorityQueue priorityQueue)
+        {
+            var currentLabel = priorityQueue.Dequeue();
+            var possibleConnections = connectionsService.GetPossibleConnections(
+                currentLabel.Vertex.Connections, currentLabel.Connection.ArrivalTime);
+            foreach (var connection in possibleConnections)
+            {
+                var label = labelFactory.CreateLabel(currentLabel, connection);
+            }
+            return (bestConnections, priorityQueue);
+        }        
     }
 }
