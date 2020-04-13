@@ -1,6 +1,7 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Domain.Search.Aggregates;
 using Chilicki.Ptsa.Domain.Search.Aggregates.MultipleCriterion;
+using Chilicki.Ptsa.Domain.Search.Services.Calculations;
 using Chilicki.Ptsa.Domain.Search.Services.MultipleCriterion;
 using System;
 using System.Collections.Generic;
@@ -11,48 +12,63 @@ namespace Chilicki.Ptsa.Domain.Search.Factories.MultipleCriterion
 {
     public class LabelFactory
     {
-        readonly PossibleConnectionsService possibleConnectionsService;
+        private readonly PossibleConnectionsService connectionsService;
+        private readonly ConnectionTimeCalculator calculator;
+        private readonly TransferCalculator transferCalculator;
 
         public LabelFactory(
-            PossibleConnectionsService possibleConnectionsService)
+            PossibleConnectionsService connectionsService,
+            ConnectionTimeCalculator calculator, 
+            TransferCalculator transferCalculator)
         {
-            this.possibleConnectionsService = possibleConnectionsService;
+            this.connectionsService = connectionsService;
+            this.calculator = calculator;
+            this.transferCalculator = transferCalculator;
         }
 
         public ICollection<Label> CreateEmptyLabels()
         {
             return new List<Label>();
-        }        
-
-        public Label CreateLabel(Vertex vertex, Connection connection)
-        {
-            return new Label
-            {
-                Vertex = vertex,
-                Connection = connection,
-            };
-        }
+        }   
 
         public ICollection<Label> CreateStartLabels(
             Vertex vertex, SearchInput search)
         {
-            var possibleConnections = possibleConnectionsService
+            var possibleConnections = connectionsService
                 .GetPossibleConnections(vertex.Connections, search.StartTime);
             var labels = new List<Label>();
             foreach (var conn in possibleConnections)
             {
-                var label = CreateLabel(conn.EndVertex, conn);
+                var label = CreateStartLabel(conn);
                 labels.Add(label);
             }
             return labels;
         }
 
-        public Label CreateLabel(Label currentLabel, Connection connection)
+        public Label CreateStartLabel(Connection connection)
         {
+            var connectionTime = calculator.CalculateConnectionTime(connection);
             return new Label
             {
-
+                Vertex = connection.EndVertex,
+                Connection = connection,
+                TimeCriterion = Criterion.Create(connectionTime),
+                StopCountCriterion = Criterion.CreateOne,
+                TransferCriterion = Criterion.CreateZero,
             };
         }
+
+        public Label CreateLabel(Label currentLabel, Connection connection)
+        {
+            int allConnectionsTime = calculator.CalculateAllConnectionsTime(currentLabel, connection);
+            return new Label
+            {
+                Vertex = connection.EndVertex,
+                Connection = connection,
+                TimeCriterion = Criterion.Create(allConnectionsTime),
+                StopCountCriterion = Criterion.CreateOneMore(currentLabel.StopCountCriterion),
+                TransferCriterion = transferCalculator.CalculateTransferCriterion(currentLabel, connection)
+            };
+        }        
     }
 }

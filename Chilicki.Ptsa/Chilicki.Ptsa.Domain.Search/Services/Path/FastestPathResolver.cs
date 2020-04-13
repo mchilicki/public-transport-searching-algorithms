@@ -69,8 +69,6 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
         public FastestPath CreateNotFoundPath(SearchInput search)
         {
             return FastestPath.Create(search);
-        }
-
-       
+        }       
     }
 }

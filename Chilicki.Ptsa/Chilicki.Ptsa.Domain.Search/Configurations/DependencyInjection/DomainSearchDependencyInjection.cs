@@ -6,6 +6,7 @@ using Chilicki.Ptsa.Domain.Search.Managers;
 using Chilicki.Ptsa.Domain.Search.Mappers;
 using Chilicki.Ptsa.Domain.Search.Services;
 using Chilicki.Ptsa.Domain.Search.Services.Base;
+using Chilicki.Ptsa.Domain.Search.Services.Calculations;
 using Chilicki.Ptsa.Domain.Search.Services.Dijkstra;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories.Base;
@@ -53,6 +54,9 @@ namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
             services.AddTransient<MultipleCriterionGraphService>();
             services.AddTransient<DominationService>();
             services.AddTransient<PossibleConnectionsService>();
+            services.AddTransient<ConnectionTimeCalculator>();
+            services.AddTransient<TransferCalculator>();
+            services.AddTransient<BestPathResolver>();
         }
 
         private void ConfigureFactories(IServiceCollection services)

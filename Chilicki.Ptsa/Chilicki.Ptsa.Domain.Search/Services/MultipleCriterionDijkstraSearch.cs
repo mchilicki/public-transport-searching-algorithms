@@ -19,19 +19,22 @@ namespace Chilicki.Ptsa.Domain.Search.Services
         private readonly LabelPriorityQueueFactory priorityQueueFactory;
         private readonly PossibleConnectionsService connectionsService;
         private readonly LabelFactory labelFactory;
+        private readonly DominationService dominationService;
 
         public MultipleCriterionDijkstraSearch(
             EmptyBestConnectionsFactory emptyBestFactory,
             MultipleCriterionGraphService graphService,
             LabelPriorityQueueFactory priorityQueueFactory,
             PossibleConnectionsService connectionsService,
-            LabelFactory labelFactory)
+            LabelFactory labelFactory,
+            DominationService dominationService)
         {
             this.emptyBestFactory = emptyBestFactory;
             this.graphService = graphService;
             this.priorityQueueFactory = priorityQueueFactory;
             this.connectionsService = connectionsService;
             this.labelFactory = labelFactory;
+            this.dominationService = dominationService;
         }
 
         public BestConnections SearchConnections(SearchInput search, Graph graph)
@@ -66,7 +69,13 @@ namespace Chilicki.Ptsa.Domain.Search.Services
                 currentLabel.Vertex.Connections, currentLabel.Connection.ArrivalTime);
             foreach (var connection in possibleConnections)
             {
-                var label = labelFactory.CreateLabel(currentLabel, connection);
+                var newLabel = labelFactory.CreateLabel(currentLabel, connection);
+                var currentLabels = bestConnections.Find(currentLabel.Vertex.Id);
+                if (dominationService.IsNewLabelDominated(newLabel, currentLabels))
+                    continue;
+                priorityQueue.Enqueue(newLabel);
+                dominationService.RemoveDominatedLabels(newLabel, currentLabels);
+                currentLabels.Add(newLabel);
             }
             return (bestConnections, priorityQueue);
         }        

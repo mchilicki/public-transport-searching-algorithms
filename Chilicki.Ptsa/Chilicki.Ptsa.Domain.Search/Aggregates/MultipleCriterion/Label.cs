@@ -19,5 +19,20 @@ namespace Chilicki.Ptsa.Domain.Search.Aggregates.MultipleCriterion
                 return Connection.ArrivalTime;
             return TimeSpan.MaxValue;
         }
+
+        public IList<Criterion> GetAllCriteria()
+        {
+            return new List<Criterion>
+            {
+                TimeCriterion,
+                TransferCriterion,
+                StopCountCriterion
+            };
+        }
+
+        public override string ToString()
+        {
+            return $"(Time: {TimeCriterion.Value}, Transfer: {TransferCriterion.Value}, Stops: {StopCountCriterion})";
+        }
     }
 }

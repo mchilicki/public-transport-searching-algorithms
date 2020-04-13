@@ -44,7 +44,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Measures
             MakeSeparation(sb);
             MakeMeasures(sb, measures);
             MakeSeparation(sb);
-            await MakePaths(sb, measures);
+            await MakePathsMeasures(sb, measures);
             var log = sb.ToString();
             await SaveLogFile(fileName, log);
         }        
@@ -101,13 +101,17 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Measures
             sb.AppendLine($"Standard deviation time: {time}");
         }
 
-        private async Task MakePaths(StringBuilder sb, IEnumerable<PerformanceMeasure> measures)
+        private async Task MakePathsMeasures(StringBuilder sb, IEnumerable<PerformanceMeasure> measures)
         {
             MakePathsTitle(sb);
             foreach (var measure in measures)
             {
                 MakeSeparation(sb);
-                await MakePath(sb, measure);
+                foreach (var path in measure.FastestPaths)
+                {
+                    await MakePath(sb, path);
+                    MakeSeparation(sb);
+                }                
             }
         }
 
@@ -116,14 +120,14 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Measures
             sb.AppendLine($"Paths");
         }
 
-        private async Task MakePath(StringBuilder sb, PerformanceMeasure measure)
+        private async Task MakePath(StringBuilder sb, FastestPath path)
         {
-            MakeInputStops(sb, measure);
+            MakeInputStops(sb, path);
             MakeSeparation(sb);            
-            if (measure.FastestPath.FlattenPath != null)
+            if (path.FlattenPath != null)
             {
                 MakePathTitle(sb);
-                await MakePath(sb, measure.FastestPath.FlattenPath);
+                await MakePath(sb, path.FlattenPath);
             }
             else
             {
@@ -136,16 +140,16 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Measures
             sb.AppendLine($"Path found");
         }
 
-        private void MakeInputStops(StringBuilder sb, PerformanceMeasure measure)
+        private void MakeInputStops(StringBuilder sb, FastestPath path)
         {
-            var startStop = measure.FastestPath.StartStop.ToString();
+            var startStop = path.StartStop.ToString();
             sb.AppendLine($"Input");
             sb.AppendLine($"Start stop");
             sb.AppendLine(startStop);
-            var destinationStop = measure.FastestPath.DestinationStop.ToString();
+            var destinationStop = path.DestinationStop.ToString();
             sb.AppendLine($"Destination stop");
             sb.AppendLine(destinationStop);
-            sb.AppendLine($"Start time {measure.FastestPath.StartTime}");
+            sb.AppendLine($"Start time {path.StartTime}");
         }
 
         private async Task MakePath(StringBuilder sb, IEnumerable<Connection> pathConnections)

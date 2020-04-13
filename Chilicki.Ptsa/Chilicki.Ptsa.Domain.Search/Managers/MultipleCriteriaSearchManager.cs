@@ -21,7 +21,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
     public class MultipleCriteriaSearchManager
     {
         readonly MultipleCriterionDijkstraSearch searchEngine;
-        readonly FastestPathResolver fastestPathResolver;
+        readonly BestPathResolver bestPathResolver;
         readonly SearchValidator searchValidator;
         readonly SearchInputMapper mapper;
         readonly GraphRepository graphRepository;
@@ -30,7 +30,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
 
         public MultipleCriteriaSearchManager(
             MultipleCriterionDijkstraSearch searchEngine,
-            FastestPathResolver fastestPathResolver,
+            BestPathResolver bestPathResolver,
             SearchValidator searchValidator,
             SearchInputMapper mapper,
             GraphRepository graphRepository,
@@ -40,7 +40,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             this.searchEngine = searchEngine;
             this.searchValidator = searchValidator;
             this.mapper = mapper;
-            this.fastestPathResolver = fastestPathResolver;
+            this.bestPathResolver = bestPathResolver;
             this.graphRepository = graphRepository;
             this.searchInputGenerator = searchInputGenerator;
             this.measureLogger = measureLogger;
@@ -51,15 +51,24 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             await searchValidator.Validate(searchInputDto);
             var search = await mapper.ToDomain(searchInputDto);
             var graph = await graphRepository.GetGraph();
-            PerformSearch(search, graph);
+            await PerformSearchWithLog(search, graph);
         }
 
-        private IEnumerable<FastestPath> PerformSearch(SearchInput search, Graph graph)
+        private async Task PerformSearchWithLog(SearchInput search, Graph graph)
+        {
+            var stopwatch = Stopwatch.StartNew();
+            var paths = PerformSearch(search, graph);
+            stopwatch.Stop();
+            var measure = PerformanceMeasure.Create(paths, stopwatch.Elapsed);
+            await measureLogger.Log(measure);
+        }
+
+        private ICollection<FastestPath> PerformSearch(SearchInput search, Graph graph)
         {
             try
             {
                 var bestConnections = searchEngine.SearchConnections(search, graph);
-                return null;
+                return bestPathResolver.ResolveBestPaths(search, bestConnections);
             }
             catch (DijkstraNoFastestPathExistsException)
             {
