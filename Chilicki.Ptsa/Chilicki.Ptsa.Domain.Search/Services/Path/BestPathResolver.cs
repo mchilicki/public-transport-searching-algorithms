@@ -10,15 +10,18 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
 {
     public class BestPathResolver
     {
-        readonly FastestPathTransferService transferService;
-        readonly FastestPathFlattener flattener;
+        private readonly FastestPathTransferService transferService;
+        private readonly FastestPathFlattener flattener;
+        private readonly CurrentConnectionService currentConnectionService;
 
         public BestPathResolver(
             FastestPathTransferService transferService,
-            FastestPathFlattener flattener)
+            FastestPathFlattener flattener,
+            CurrentConnectionService currentConnectionService)
         {
             this.transferService = transferService;
             this.flattener = flattener;
+            this.currentConnectionService = currentConnectionService;
         }
 
         public ICollection<FastestPath> ResolveBestPaths(
@@ -41,7 +44,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
             var currentConn = label.Connection;
             connPath.Add(currentConn);
             int iteration = 0;
-            while (search.StartStop.Id != currentConn.StartVertex.Id)
+            while (search.StartStop.Id != currentConn.StartVertex.Stop.Id)
             {
                 currentConn = IterateReversedFastestPath(bestConnections, connPath, currentConn);
                 iteration++;
@@ -55,10 +58,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
             BestConnections bestConnections, ICollection<Connection> connPath, Connection currentConn)
         {
             var nextConn = currentConn;
-            // Cannot access previous connection because StartVertexId is currentVertex
-            currentConn = bestConnections.Get(currentConn.StartVertexId)
-                .First(p => p.Connection.ArrivalTime <= currentConn.ArrivalTime)
-                .Connection;
+            currentConn = currentConnectionService.GetCurrentConnection(bestConnections, currentConn);
             if (transferService.ShouldBeTransfer(currentConn, nextConn))
             {
                 var transfer = transferService

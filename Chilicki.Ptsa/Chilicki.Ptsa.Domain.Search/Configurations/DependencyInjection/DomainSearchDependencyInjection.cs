@@ -57,6 +57,7 @@ namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
             services.AddTransient<ConnectionTimeCalculator>();
             services.AddTransient<TransferCalculator>();
             services.AddTransient<BestPathResolver>();
+            services.AddTransient<CurrentConnectionService>();
         }
 
         private void ConfigureFactories(IServiceCollection services)

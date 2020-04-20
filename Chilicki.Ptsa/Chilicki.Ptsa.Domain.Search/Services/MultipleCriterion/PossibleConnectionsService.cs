@@ -18,6 +18,13 @@ namespace Chilicki.Ptsa.Domain.Search.Services.MultipleCriterion
                     p.DepartureTime >= earliestTime &&
                     p.DepartureTime <= latestTime
                 );
+            var bla = connections.OrderBy(p => p.DepartureTime);
+            if (possibleConnections.Count() >= 3)                
+                return possibleConnections;
+            possibleConnections = connections
+                .Where(p => p.DepartureTime >= earliestTime)
+                .OrderBy(p => p.DepartureTime)
+                .Take(3);
             return possibleConnections;
         }
     }

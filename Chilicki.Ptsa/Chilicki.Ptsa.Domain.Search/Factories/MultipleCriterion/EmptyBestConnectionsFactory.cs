@@ -22,33 +22,15 @@ namespace Chilicki.Ptsa.Domain.Search.Factories.MultipleCriterion
             this.labelFactory = labelFactory;
         }
 
-        public BestConnections Create(
-            Graph graph, SearchInput search)
+        public BestConnections Create(Graph graph)
         {
             var bestConnections = new BestConnections();
-            var (startVertex, startLabels) = GetStartVertexAndEmptyLabels(graph, search);
-            bestConnections.Add(startVertex.Id, startLabels);
             foreach (var vertex in graph.Vertices)
             {
-                if (vertex.StopId != search.StartStop.Id)
-                {
-                    var connection = connFactory.CreateEmptyConnection(graph, vertex);
-                    var labels = labelFactory.CreateEmptyLabels();
-                    bestConnections.Add(vertex.Id, labels);
-                }
+                var labels = labelFactory.CreateEmptyLabels();
+                bestConnections.Add(vertex.Id, labels);
             }
             return bestConnections;
-        }
-
-        private (Vertex, ICollection<Label>) GetStartVertexAndEmptyLabels(
-            Graph graph, SearchInput search)
-        {
-            var startVertex = graph.Vertices
-                .First(p => p.StopId == search.StartStop.Id);
-            var startConnection = connFactory
-                .CreateStartingConnection(graph, startVertex, search);
-            var labels = labelFactory.CreateEmptyLabels();
-            return (startVertex, labels);
         }
     }
 }

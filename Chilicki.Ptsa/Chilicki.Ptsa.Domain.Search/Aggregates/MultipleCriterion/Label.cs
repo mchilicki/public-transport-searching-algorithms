@@ -11,7 +11,6 @@ namespace Chilicki.Ptsa.Domain.Search.Aggregates.MultipleCriterion
         public Connection Connection { get; set; }
         public Criterion TimeCriterion { get; set; }
         public Criterion TransferCriterion { get; set; }
-        public Criterion StopCountCriterion { get; set; }
 
         public TimeSpan GetArrivalTime()
         {
@@ -26,13 +25,12 @@ namespace Chilicki.Ptsa.Domain.Search.Aggregates.MultipleCriterion
             {
                 TimeCriterion,
                 TransferCriterion,
-                StopCountCriterion
             };
         }
 
         public override string ToString()
         {
-            return $"(Time: {TimeCriterion.Value}, Transfer: {TransferCriterion.Value}, Stops: {StopCountCriterion})";
+            return $"(Time: {TimeCriterion.Value}, Transfer: {TransferCriterion.Value})";
         }
     }
 }

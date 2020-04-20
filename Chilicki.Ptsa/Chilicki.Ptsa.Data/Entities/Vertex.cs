@@ -15,5 +15,10 @@ namespace Chilicki.Ptsa.Data.Entities
         
         public virtual ICollection<Connection> Connections { get; set; }        
         public virtual ICollection<SimilarVertex> SimilarVertices { get; set; }
+
+        public override string ToString()
+        {
+            return StopName;
+        }
     }
 }

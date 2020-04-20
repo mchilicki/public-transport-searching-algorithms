@@ -44,7 +44,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services
             while (priorityQueue.Any())
             {
                 (bestConnections, priorityQueue) = 
-                    MakeIteration(search, bestConnections, priorityQueue);
+                    MakeIteration(bestConnections, priorityQueue); 
                 iteration++;
             }
             return bestConnections;
@@ -53,14 +53,13 @@ namespace Chilicki.Ptsa.Domain.Search.Services
         private (BestConnections, LabelPriorityQueue) PrepareFirstIteration(
             SearchInput search, Graph graph)
         {
-            var bestConnections = emptyBestFactory.Create(graph, search);
+            var bestConnections = emptyBestFactory.Create(graph);
             var startVertex = graphService.GetStopVertexByStop(graph, search.StartStop);
             var priorityQueue = priorityQueueFactory.Create(startVertex, search);
             return (bestConnections, priorityQueue);
         }
 
         private (BestConnections, LabelPriorityQueue) MakeIteration(
-            SearchInput search, 
             BestConnections bestConnections,
             LabelPriorityQueue priorityQueue)
         {
@@ -70,7 +69,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services
             foreach (var connection in possibleConnections)
             {
                 var newLabel = labelFactory.CreateLabel(currentLabel, connection);
-                var currentLabels = bestConnections.Find(currentLabel.Vertex.Id);
+                var currentLabels = bestConnections.Find(newLabel.Vertex.Id);
                 if (dominationService.IsNewLabelDominated(newLabel, currentLabels))
                     continue;
                 priorityQueue.Enqueue(newLabel);

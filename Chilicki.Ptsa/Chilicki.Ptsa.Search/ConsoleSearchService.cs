@@ -45,13 +45,21 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
                     await PerformDijkstraBenchmark();
                 if (environmentName == "MultipleDijkstraSearch")
                     await SearchWithMultipleCriteriaDijkstra();
+                if (environmentName == "MultipleDijkstraBenchmark")
+                    await PerformMultipleDijkstraBenchmark();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
                 Console.ReadKey();
             }            
-        }        
+        }
+
+        private async Task PerformMultipleDijkstraBenchmark()
+        {
+            await multipleCriteriaSearchManager.PerformDijkstraBenchmark(
+                appSettings.BenchmarkIterations);
+        }
 
         private async Task PerformDijkstraBenchmark()
         {

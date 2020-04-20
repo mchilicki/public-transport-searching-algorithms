@@ -20,7 +20,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
                 conn, graph, tripId, startVertex, departureTime, 
                 endVertex, arrivalTime, isTransfer);
         }
-
+        
         public Connection CreateTransfer(
             Vertex startVertex, Vertex endVertex, TimeSpan startTime, TimeSpan endTime)
         {
@@ -30,6 +30,12 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
             return FillIn(
                 conn, graph, tripId, startVertex, 
                 startTime, endVertex, endTime);
+        }
+
+        public Connection CreateSameVertexZeroCostTransfer(
+            Vertex vertex, TimeSpan time)
+        {
+            return CreateTransfer(vertex, vertex, time, time);
         }
 
         public Connection CreateZeroCostTransfer(
