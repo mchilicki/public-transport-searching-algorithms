@@ -22,7 +22,10 @@ namespace Chilicki.Ptsa.Data.Entities
 
         public override string ToString()
         {
-            return $"({StartVertex.ToString()}) {DepartureTime} -> " +
+            var startVertexName = "EMPTY";
+            if (StartVertex != null)
+                startVertexName = StartVertex.ToString();
+            return $"({startVertexName}) {DepartureTime} -> " +
                 $"({EndVertex.ToString()}) {ArrivalTime}";
         }
     }

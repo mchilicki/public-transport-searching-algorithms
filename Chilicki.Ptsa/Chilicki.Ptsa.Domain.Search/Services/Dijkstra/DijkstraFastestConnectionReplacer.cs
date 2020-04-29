@@ -1,6 +1,8 @@
 ﻿using Chilicki.Ptsa.Domain.Search.Aggregates;
 using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories;
+using System.Linq;
+using System;
 
 namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
 {
@@ -43,6 +45,18 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
             var isPossibleConnAfterInput = search.StartTime <= possibleConn.DepartureTime;
             if (!isPossibleConnAfterInput)
                 return false;
+            if (previousVertexConn.TripId == null)
+            {
+                var similarPossible = previousVertexConn.StartVertex.SimilarVertices
+                    .FirstOrDefault(p => p.SimilarId == possibleConn.StartVertexId);
+                if (similarPossible != null)
+                {
+                    var transferArrivalTime = previousVertexConn.ArrivalTime
+                    .Add(TimeSpan.FromMinutes(similarPossible.DistanceInMinutes));
+                    if (transferArrivalTime > possibleConn.DepartureTime)
+                        return false;
+                }                
+            }
             var isPossibleConnAfterPrevConn = previousVertexConn.ArrivalTime <= possibleConn.DepartureTime;
             return isPossibleConnAfterPrevConn || isPreviousVertexConnEmpty;
         }

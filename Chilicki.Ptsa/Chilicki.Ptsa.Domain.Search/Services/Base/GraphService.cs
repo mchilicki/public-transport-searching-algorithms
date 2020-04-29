@@ -22,9 +22,11 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Base
                 GetValidConnections(vertex.Connections, earliestTime));
             foreach (var similar in vertex.SimilarVertices)
             {
-                connections.AddRange(GetValidConnections(similar.Similar.Connections, earliestTime));
+                var earliestTimeAfterTransfer = earliestTime.Add(TimeSpan.FromMinutes(similar.DistanceInMinutes));
+                var similarConns = GetValidConnections(similar.Similar.Connections, earliestTimeAfterTransfer);
+                connections.AddRange(similarConns);
             }
-            return connections;
+            return connections.OrderBy(p => p.ArrivalTime);
         }
 
         private IEnumerable<Connection> GetValidConnections(

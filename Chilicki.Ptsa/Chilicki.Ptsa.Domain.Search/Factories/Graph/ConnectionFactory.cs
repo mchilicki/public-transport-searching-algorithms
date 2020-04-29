@@ -38,21 +38,18 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
             return CreateTransfer(vertex, vertex, time, time);
         }
 
-        public Connection CreateZeroCostTransfer(
-             Vertex startVertex, Vertex endVertex, TimeSpan time)
-        {
-            var conn = new Connection();
-            return FillInZeroCostTransfer(conn, startVertex, endVertex, time);
-        }
-
-        public Connection FillInZeroCostTransfer(
-            Connection conn, Vertex startVertex, Vertex endVertex, TimeSpan time)
+        public Connection FillInTransfer(
+            Connection conn, 
+            Vertex startVertex, 
+            Vertex endVertex, 
+            TimeSpan time, 
+            int distanceInMinutes)
         {
             Graph graph = null;
             Guid? tripId = null;           
             var isTransfer = true;
             var departureTime = time;
-            var arrivalTime = time;
+            var arrivalTime = time.Add(TimeSpan.FromMinutes(distanceInMinutes));
             return FillIn(
                 conn, graph, tripId, startVertex, departureTime,
                 endVertex, arrivalTime, isTransfer);

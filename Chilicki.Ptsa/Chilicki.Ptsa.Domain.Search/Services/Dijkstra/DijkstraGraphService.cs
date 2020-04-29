@@ -36,9 +36,9 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
             foreach (var similarVertex in similarVertices)
             {
                 var similar = fastestConnections.Find(similarVertex.SimilarId);
-                factory.FillInZeroCostTransfer(
+                factory.FillInTransfer(
                     similar, vertex, similarVertex.Similar, 
-                    connectionToVertex.DepartureTime);
+                    connectionToVertex.DepartureTime, similarVertex.DistanceInMinutes);
             }
             return fastestConnections;
         }
