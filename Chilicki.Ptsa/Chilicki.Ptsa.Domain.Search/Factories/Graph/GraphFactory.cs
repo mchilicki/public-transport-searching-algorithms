@@ -1,7 +1,10 @@
-﻿using Chilicki.Ptsa.Data.Entities;
+﻿using Chilicki.Ptsa.Data.Configurations.ProjectConfiguration;
+using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Data.Repositories.Base;
 using Chilicki.Ptsa.Domain.Search.Factories.SimilarVertices;
+using Chilicki.Ptsa.Domain.Search.Services.Calculations;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories.Base;
+using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,19 +18,28 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
         readonly IBaseRepository<Vertex> vertexRepository;
         readonly SimilarVertexFactory similarVertexFactory;
         readonly ISimilarVertexRepository similarVertexRepository;
+        private readonly HaversineDistanceCalculator distanceCalculator;
+        private readonly KilometersToDistanceMinutesConverter minutesConverter;
+        private readonly double NEIGHBOUR_MAXIMUM_DISTANCE = 0.5;
 
         public GraphFactory(
             ConnectionFactory connectionFactory,
             IBaseRepository<Connection> connectionRepository,
             IBaseRepository<Vertex> vertexRepository,
             SimilarVertexFactory similarVertexFactory,
-            ISimilarVertexRepository similarVertexRepository)
+            ISimilarVertexRepository similarVertexRepository,
+            HaversineDistanceCalculator distanceCalculator,
+            KilometersToDistanceMinutesConverter minutesConverter,
+            IOptions<AppSettings> options)
         {
             this.connectionFactory = connectionFactory;
             this.connectionRepository = connectionRepository;
             this.vertexRepository = vertexRepository;
             this.similarVertexFactory = similarVertexFactory;
             this.similarVertexRepository = similarVertexRepository;
+            this.distanceCalculator = distanceCalculator;
+            this.minutesConverter = minutesConverter;
+            NEIGHBOUR_MAXIMUM_DISTANCE = options.Value.SimilarVertexMaximumDistanceInKm;
         }
 
         public async Task<Graph> CreateGraph(IEnumerable<Stop> stops)
@@ -88,23 +100,33 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
         {
             foreach (var vertex in vertices)
             {
-                var similarVertices = FindSimilarVerticesByName(vertices, vertex);
+                var similarVertices = FindSimilarVerticesByDistance(vertices, vertex);
                 if (vertex.SimilarVertices == null)
                     vertex.SimilarVertices = new List<SimilarVertex>();
                 foreach (var similarVertex in similarVertices)
                 {
-                    var similar = similarVertexFactory.Create(vertex, similarVertex);
+                    var similar = similarVertexFactory.Create(
+                        vertex, similarVertex.Vertex, similarVertex.DistanceInMinutes);
                     await similarVertexRepository.AddAsync(similar);
                 }
             }
         }
 
-        private IEnumerable<Vertex> FindSimilarVerticesByName(
-            IEnumerable<Vertex> vertices, Vertex vertex)
+        private IEnumerable<(Vertex Vertex, int DistanceInMinutes)> FindSimilarVerticesByDistance(
+            IEnumerable<Vertex> vertices, Vertex currentVertex)
         {
-            return vertices
-                .Where(p => p.StopName == vertex.StopName &&
-                    p.Stop.Id != vertex.Stop.Id);
+            var list = new List<(Vertex, int)>();
+            foreach (var vertex in vertices)
+            {
+                if (vertex.Stop.Id == currentVertex.Stop.Id)
+                    continue;
+                var distanceInKm = distanceCalculator.CalculateDistance(vertex, currentVertex);
+                if (distanceInKm > NEIGHBOUR_MAXIMUM_DISTANCE)
+                    continue;
+                var distanceInMinutes = minutesConverter.ConvertToDistanceInMinutes(distanceInKm);
+                list.Add((vertex, distanceInMinutes));
+            }
+            return list;
         }
     }
 }

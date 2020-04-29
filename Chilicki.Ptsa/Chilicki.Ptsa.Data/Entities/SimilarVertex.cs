@@ -8,5 +8,6 @@ namespace Chilicki.Ptsa.Data.Entities
         public virtual Vertex Vertex { get; set; }
         public Guid SimilarId { get; set; }
         public virtual Vertex Similar { get; set; }
+        public int DistanceInMinutes { get; set; }
     }
 }

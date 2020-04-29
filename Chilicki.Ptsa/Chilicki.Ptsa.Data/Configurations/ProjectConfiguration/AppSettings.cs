@@ -9,5 +9,6 @@ namespace Chilicki.Ptsa.Data.Configurations.ProjectConfiguration
         public Guid EndStopId { get; set; }
         public TimeSpan StartTime { get; set; }
         public int BenchmarkIterations { get; set; }
+        public double SimilarVertexMaximumDistanceInKm { get; set; }
     }
 }

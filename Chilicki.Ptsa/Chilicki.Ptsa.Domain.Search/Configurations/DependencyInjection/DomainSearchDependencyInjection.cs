@@ -59,6 +59,8 @@ namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
             services.AddTransient<BestPathResolver>();
             services.AddTransient<CurrentConnectionService>();
             services.AddTransient<InfeasiblityService>();
+            services.AddTransient<HaversineDistanceCalculator>();
+            services.AddTransient<KilometersToDistanceMinutesConverter>();
         }
 
         private void ConfigureFactories(IServiceCollection services)
