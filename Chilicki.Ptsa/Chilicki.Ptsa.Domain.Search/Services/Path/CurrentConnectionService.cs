@@ -14,8 +14,9 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
         {
             var vertexLabels = bestConnections.Get(currentConn.StartVertexId)
                 .OrderBy(p => p.Connection.ArrivalTime);
-            var label = vertexLabels
-                .FirstOrDefault(p => p.Connection.ArrivalTime <= currentConn.ArrivalTime);
+            //var label = vertexLabels
+            //    .FirstOrDefault(p => p.Connection.ArrivalTime <= currentConn.ArrivalTime);
+            var label = vertexLabels.First();
             currentConn = label.Connection;
             return currentConn;
         }

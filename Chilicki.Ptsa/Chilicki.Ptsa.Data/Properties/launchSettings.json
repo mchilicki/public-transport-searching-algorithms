@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Chilicki.Ptsa.Data": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}

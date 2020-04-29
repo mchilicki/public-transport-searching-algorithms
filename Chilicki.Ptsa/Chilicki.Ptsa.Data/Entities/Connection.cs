@@ -19,5 +19,11 @@ namespace Chilicki.Ptsa.Data.Entities
         public TimeSpan ArrivalTime { get; set; }
         
         public bool IsTransfer { get; set; }
+
+        public override string ToString()
+        {
+            return $"({StartVertex.ToString()}) {DepartureTime} -> " +
+                $"({EndVertex.ToString()}) {ArrivalTime}";
+        }
     }
 }

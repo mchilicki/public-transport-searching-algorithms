@@ -46,7 +46,8 @@
       "commandName": "Project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "MultipleDijkstraSearch"
-      }
+      },
+      "nativeDebugging": false
     },
     "MultipleDijkstraBenchmark": {
       "commandName": "Project",

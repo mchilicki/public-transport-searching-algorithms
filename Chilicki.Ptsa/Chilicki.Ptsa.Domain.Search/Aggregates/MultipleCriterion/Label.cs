@@ -30,7 +30,9 @@ namespace Chilicki.Ptsa.Domain.Search.Aggregates.MultipleCriterion
 
         public override string ToString()
         {
-            return $"(Time: {TimeCriterion.Value}, Transfer: {TransferCriterion.Value})";
+            return $"(Time: {TimeCriterion.Value}, " +
+                $"Transfer: {TransferCriterion.Value}), " +
+                $"Connection: {Connection.ToString()}";
         }
     }
 }

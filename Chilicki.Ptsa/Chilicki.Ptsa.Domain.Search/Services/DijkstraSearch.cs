@@ -58,7 +58,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services
         private (FastestConnections, Vertex) MakeIteration(
             SearchInput search, FastestConnections fastestConnections, Vertex currentVertex)
         {
-            var possibleConnections = graphService.GetPossibleConnections(currentVertex, search);
+            var possibleConnections = graphService.GetPossibleConnections(currentVertex, search.StartTime);
             foreach (var possibleConn in possibleConnections)
             {
                 ReplaceFastestConnectionIfShould(search, fastestConnections, possibleConn);

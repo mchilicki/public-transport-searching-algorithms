@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Chilicki.Ptsa.Domain.Search": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}

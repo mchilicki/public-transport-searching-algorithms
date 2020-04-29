@@ -15,23 +15,23 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Base
                 .First(p => p.StopId == stop.Id);
         }
 
-        public IEnumerable<Connection> GetPossibleConnections(Vertex vertex, SearchInput search)
+        public IEnumerable<Connection> GetPossibleConnections(Vertex vertex, TimeSpan earliestTime)
         {
             var connections = new List<Connection>();
             connections.AddRange(
-                GetValidConnections(vertex.Connections, search));
+                GetValidConnections(vertex.Connections, earliestTime));
             foreach (var similar in vertex.SimilarVertices)
             {
-                connections.AddRange(GetValidConnections(similar.Similar.Connections, search));
+                connections.AddRange(GetValidConnections(similar.Similar.Connections, earliestTime));
             }
             return connections;
         }
 
         private IEnumerable<Connection> GetValidConnections(
-            ICollection<Connection> connections, SearchInput search)
+            ICollection<Connection> connections, TimeSpan earliestTime)
         {
             return connections
-                .Where(p => p.DepartureTime >= search.StartTime);
+                .Where(p => p.DepartureTime >= earliestTime);
         }
     }
 }

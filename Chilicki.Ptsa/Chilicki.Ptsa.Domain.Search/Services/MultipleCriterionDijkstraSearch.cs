@@ -20,6 +20,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services
         private readonly PossibleConnectionsService connectionsService;
         private readonly LabelFactory labelFactory;
         private readonly DominationService dominationService;
+        private readonly InfeasiblityService infeasiblityService;
 
         public MultipleCriterionDijkstraSearch(
             EmptyBestConnectionsFactory emptyBestFactory,
@@ -27,7 +28,8 @@ namespace Chilicki.Ptsa.Domain.Search.Services
             LabelPriorityQueueFactory priorityQueueFactory,
             PossibleConnectionsService connectionsService,
             LabelFactory labelFactory,
-            DominationService dominationService)
+            DominationService dominationService,
+            InfeasiblityService infeasiblityService)
         {
             this.emptyBestFactory = emptyBestFactory;
             this.graphService = graphService;
@@ -35,6 +37,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services
             this.connectionsService = connectionsService;
             this.labelFactory = labelFactory;
             this.dominationService = dominationService;
+            this.infeasiblityService = infeasiblityService;
         }
 
         public BestConnections SearchConnections(SearchInput search, Graph graph)
@@ -65,11 +68,13 @@ namespace Chilicki.Ptsa.Domain.Search.Services
         {
             var currentLabel = priorityQueue.Dequeue();
             var possibleConnections = connectionsService.GetPossibleConnections(
-                currentLabel.Vertex.Connections, currentLabel.Connection.ArrivalTime);
+                currentLabel.Vertex, currentLabel.Connection.ArrivalTime);
             foreach (var connection in possibleConnections)
             {
-                var newLabel = labelFactory.CreateLabel(currentLabel, connection);
-                var currentLabels = bestConnections.Find(newLabel.Vertex.Id);
+                var currentLabels = bestConnections.Get(connection.EndVertexId);
+                if (infeasiblityService.IsInfeasible(connection, currentLabels))
+                    continue;
+                var newLabel = labelFactory.CreateLabel(currentLabel, connection);                                      
                 if (dominationService.IsNewLabelDominated(newLabel, currentLabels))
                     continue;
                 priorityQueue.Enqueue(newLabel);
