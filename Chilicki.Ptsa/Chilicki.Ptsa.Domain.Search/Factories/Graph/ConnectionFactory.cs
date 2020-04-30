@@ -32,21 +32,15 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
                 startTime, endVertex, endTime);
         }
 
-        public Connection CreateSameVertexZeroCostTransfer(
-            Vertex vertex, TimeSpan time)
-        {
-            return CreateTransfer(vertex, vertex, time, time);
-        }
-
-        public Connection FillInTransfer(
-            Connection conn, 
-            Vertex startVertex, 
-            Vertex endVertex, 
-            TimeSpan time, 
+        public Connection CreateTransfer(
+            Vertex startVertex,
+            Vertex endVertex,
+            TimeSpan time,
             int distanceInMinutes)
         {
+            var conn = new Connection();
             Graph graph = null;
-            Guid? tripId = null;           
+            Guid? tripId = null;
             var isTransfer = true;
             var departureTime = time;
             var arrivalTime = time.Add(TimeSpan.FromMinutes(distanceInMinutes));
@@ -54,6 +48,12 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
                 conn, graph, tripId, startVertex, departureTime,
                 endVertex, arrivalTime, isTransfer);
         }
+
+        public Connection CreateSameVertexZeroCostTransfer(
+            Vertex vertex, TimeSpan time)
+        {
+            return CreateTransfer(vertex, vertex, time, time);
+        }        
 
         public Connection CreateStartingConnection(
             Graph graph, Vertex startVertex, SearchInput search)

@@ -8,23 +8,28 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
 {
     public class DijkstraFastestConnectionReplacer
     {
-        readonly DijkstraConnectionService service;
-        readonly ConnectionFactory factory;
+        private readonly DijkstraConnectionService service;
+        private readonly ConnectionFactory factory;
+        private readonly DijkstraConnectionService connectionService;
 
         public DijkstraFastestConnectionReplacer(
             DijkstraConnectionService service,
-            ConnectionFactory factory)
+            ConnectionFactory factory,
+            DijkstraConnectionService connectionService)
         {
             this.service = service;
             this.factory = factory;
+            this.connectionService = connectionService;
         }
 
         public bool ShouldConnectionBeReplaced(
             SearchInput search,
-            Connection previousVertexConn,
+            FastestConnections fastestConnections,
             Connection currentConn,
             Connection possibleConn)
         {
+            var previousVertexConn = connectionService.GetPreviousVertexConnection(
+                fastestConnections, possibleConn);
             var isVertexVisited = currentConn.EndVertex.IsVisited;
             if (isVertexVisited)
                 return false;
@@ -45,18 +50,18 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
             var isPossibleConnAfterInput = search.StartTime <= possibleConn.DepartureTime;
             if (!isPossibleConnAfterInput)
                 return false;
-            if (previousVertexConn.TripId == null)
-            {
-                var similarPossible = previousVertexConn.StartVertex.SimilarVertices
-                    .FirstOrDefault(p => p.SimilarId == possibleConn.StartVertexId);
-                if (similarPossible != null)
-                {
-                    var transferArrivalTime = previousVertexConn.ArrivalTime
-                    .Add(TimeSpan.FromMinutes(similarPossible.DistanceInMinutes));
-                    if (transferArrivalTime > possibleConn.DepartureTime)
-                        return false;
-                }                
-            }
+            //if (previousVertexConn.TripId == null && !previousVertexConn.IsTransfer)
+            //{
+            //    var similarPossible = previousVertexConn.StartVertex.SimilarVertices
+            //        .FirstOrDefault(p => p.SimilarId == possibleConn.StartVertexId);
+            //    if (similarPossible != null)
+            //    {
+            //        var transferArrivalTime = previousVertexConn.ArrivalTime
+            //        .Add(TimeSpan.FromMinutes(similarPossible.DistanceInMinutes));
+            //        if (transferArrivalTime > possibleConn.DepartureTime)
+            //            return false;
+            //    }                
+            //}
             var isPossibleConnAfterPrevConn = previousVertexConn.ArrivalTime <= possibleConn.DepartureTime;
             return isPossibleConnAfterPrevConn || isPreviousVertexConnEmpty;
         }
