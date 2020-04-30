@@ -41,7 +41,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
             {
                 var currentSimilar = fastestConnections.Find(similarVertex.SimilarId);
                 var possibleSimilar = factory.CreateTransfer(vertex, similarVertex.Similar, 
-                    connectionToVertex.DepartureTime, similarVertex.DistanceInMinutes);
+                    connectionToVertex.ArrivalTime, similarVertex.DistanceInMinutes);
                 if (replacer.ShouldConnectionBeReplaced(search, fastestConnections, currentSimilar, possibleSimilar))
                 {
                     replacer.ReplaceWithNewFastestConnection(currentSimilar, possibleSimilar);

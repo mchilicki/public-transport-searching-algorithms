@@ -9,5 +9,10 @@ namespace Chilicki.Ptsa.Data.Entities
         public Guid SimilarId { get; set; }
         public virtual Vertex Similar { get; set; }
         public int DistanceInMinutes { get; set; }
+
+        public override string ToString()
+        {
+            return $"({Vertex.ToString()}) -> {DistanceInMinutes} minutes -> ({Similar.ToString()})";
+        }
     }
 }
