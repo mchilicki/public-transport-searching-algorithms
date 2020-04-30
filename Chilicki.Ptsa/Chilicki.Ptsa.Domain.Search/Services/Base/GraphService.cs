@@ -18,8 +18,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Base
         public IEnumerable<Connection> GetPossibleConnections(Vertex vertex, TimeSpan earliestTime)
         {
             var connections = new List<Connection>();
-            connections.AddRange(
-                GetValidConnections(vertex.Connections, earliestTime));
+            connections.AddRange(GetValidConnections(vertex.Connections, earliestTime));
             foreach (var similar in vertex.SimilarVertices)
             {
                 var earliestTimeAfterTransfer = earliestTime.Add(TimeSpan.FromMinutes(similar.DistanceInMinutes));

@@ -22,21 +22,10 @@ namespace Chilicki.Ptsa.Domain.Search.Services.MultipleCriterion
         {
             var connections = graphService.GetPossibleConnections(vertex, earliestTime);
             var latestTime = earliestTime.Add(TimeSpan.FromHours(2));
-            var possibleConnections = connections
-                .Where(p =>
-                    p.DepartureTime >= earliestTime &&
-                    p.DepartureTime <= latestTime
-                )
-                .OrderBy(p => p.ArrivalTime)
-                .Take(3);
-            var bla = connections.OrderBy(p => p.DepartureTime);
+            var possibleConnections = connections.Where(p => p.DepartureTime <= latestTime).Take(5);
             if (possibleConnections.Count() >= 3)                
                 return possibleConnections;
-            var firstPossibleConnections = connections
-                .Where(p => p.DepartureTime >= earliestTime)
-                .OrderBy(p => p.ArrivalTime)
-                .Take(3);
-            return firstPossibleConnections;
+            return connections.Take(3);
         }
     }
 }

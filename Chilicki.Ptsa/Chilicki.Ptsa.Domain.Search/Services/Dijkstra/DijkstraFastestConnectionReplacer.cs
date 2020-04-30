@@ -50,18 +50,6 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
             var isPossibleConnAfterInput = search.StartTime <= possibleConn.DepartureTime;
             if (!isPossibleConnAfterInput)
                 return false;
-            //if (previousVertexConn.TripId == null && !previousVertexConn.IsTransfer)
-            //{
-            //    var similarPossible = previousVertexConn.StartVertex.SimilarVertices
-            //        .FirstOrDefault(p => p.SimilarId == possibleConn.StartVertexId);
-            //    if (similarPossible != null)
-            //    {
-            //        var transferArrivalTime = previousVertexConn.ArrivalTime
-            //        .Add(TimeSpan.FromMinutes(similarPossible.DistanceInMinutes));
-            //        if (transferArrivalTime > possibleConn.DepartureTime)
-            //            return false;
-            //    }                
-            //}
             var isPossibleConnAfterPrevConn = previousVertexConn.ArrivalTime <= possibleConn.DepartureTime;
             return isPossibleConnAfterPrevConn || isPreviousVertexConnEmpty;
         }
