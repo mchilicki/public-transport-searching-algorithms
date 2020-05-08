@@ -57,7 +57,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services
             SearchInput search, Graph graph)
         {
             var bestConnections = emptyBestFactory.Create(graph);
-            var startVertex = graphService.GetStopVertexByStop(graph, search.StartStop);
+            var startVertex = graphService.GetVertexByStop(graph, search.StartStop);
             var priorityQueue = priorityQueueFactory.Create(startVertex, search);
             return (bestConnections, priorityQueue);
         }
@@ -68,7 +68,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services
         {
             var currentLabel = priorityQueue.Dequeue();
             var possibleConnections = connectionsService.GetPossibleConnections(
-                currentLabel.Vertex, currentLabel.Connection.ArrivalTime);
+                currentLabel.Vertex, currentLabel.Connection.ArrivalTime, currentLabel.Connection.IsTransfer);
             foreach (var connection in possibleConnections)
             {
                 var currentLabels = bestConnections.Get(connection.EndVertexId);

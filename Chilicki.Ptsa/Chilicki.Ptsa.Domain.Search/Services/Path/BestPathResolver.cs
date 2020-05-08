@@ -44,7 +44,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
             var currentConn = label.Connection;
             connPath.Add(currentConn);
             int iteration = 0;
-            while (search.StartStop.Id != currentConn.StartVertex.Stop.Id)
+            while (IsResolvingNotEnded(search, currentConn))
             {
                 currentConn = IterateReversedFastestPath(bestConnections, connPath, currentConn);
                 iteration++;
@@ -52,6 +52,11 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
             connPath.Reverse();
             var flattenPath = flattener.FlattenFastestPath(connPath);
             return FastestPath.Create(search, connPath, flattenPath);
+        }
+
+        private bool IsResolvingNotEnded(SearchInput search, Connection currentConn)
+        {
+            return search.StartStop.Id != currentConn.StartVertex.Stop.Id;
         }
 
         private Connection IterateReversedFastestPath(

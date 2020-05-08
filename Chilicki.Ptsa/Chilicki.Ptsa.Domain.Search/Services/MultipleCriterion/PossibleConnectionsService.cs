@@ -18,11 +18,11 @@ namespace Chilicki.Ptsa.Domain.Search.Services.MultipleCriterion
         }
 
         public IEnumerable<Connection> GetPossibleConnections(
-            Vertex vertex, TimeSpan earliestTime)
+            Vertex vertex, TimeSpan earliestTime, bool isPreviousConnTransfer)
         {
-            var connections = graphService.GetPossibleConnections(vertex, earliestTime);
+            var connections = graphService.GetPossibleConnections(vertex, earliestTime, isPreviousConnTransfer);
             var latestTime = earliestTime.Add(TimeSpan.FromHours(2));
-            var possibleConnections = connections.Where(p => p.DepartureTime <= latestTime).Take(5);
+            var possibleConnections = connections.Where(p => p.DepartureTime <= latestTime);
             if (possibleConnections.Count() >= 3)                
                 return possibleConnections;
             return connections.Take(3);

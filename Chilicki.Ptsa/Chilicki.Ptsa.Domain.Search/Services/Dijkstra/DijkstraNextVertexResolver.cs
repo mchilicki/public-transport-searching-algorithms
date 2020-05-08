@@ -19,7 +19,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
         public Vertex GetFirstVertex(Graph graph, Stop startStop)
         {
             return graphService
-                .GetStopVertexByStop(graph, startStop);         
+                .GetVertexByStop(graph, startStop);         
         }
 
         public Vertex GetNextVertex(FastestConnections fastestConnections)

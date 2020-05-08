@@ -2,6 +2,7 @@
 using Chilicki.Ptsa.Domain.Search.Aggregates;
 using Chilicki.Ptsa.Domain.Search.Services.Base;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,7 +15,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
 
         public DijkstraGraphService(
             ConnectionFactory factory,
-            DijkstraFastestConnectionReplacer replacer)
+            DijkstraFastestConnectionReplacer replacer) : base(factory)
         {
             this.factory = factory;
             this.replacer = replacer;
@@ -48,6 +49,25 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
                 }
             }
             return fastestConnections;
+        }
+
+        public IEnumerable<Connection> GetPossibleConnections(Vertex vertex, TimeSpan earliestTime)
+        {
+            var connections = new List<Connection>();
+            connections.AddRange(GetValidConnections(vertex.Connections, earliestTime));
+            AddSimilarVerticesTransfers(vertex, connections, earliestTime);
+            return connections.OrderBy(p => p.ArrivalTime);
+        }
+
+        private void AddSimilarVerticesTransfers(
+            Vertex vertex, List<Connection> connections, TimeSpan earliestTime)
+        {
+            foreach (var similar in vertex.SimilarVertices)
+            {
+                var earliestTimeAfterTransfer = earliestTime.Add(TimeSpan.FromMinutes(similar.DistanceInMinutes));
+                var similarConns = GetValidConnections(similar.Similar.Connections, earliestTimeAfterTransfer);
+                connections.AddRange(similarConns);
+            }
         }
     }
 }

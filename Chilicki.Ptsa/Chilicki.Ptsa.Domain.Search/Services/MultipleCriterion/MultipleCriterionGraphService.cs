@@ -12,29 +12,35 @@ namespace Chilicki.Ptsa.Domain.Search.Services.MultipleCriterion
 {
     public class MultipleCriterionGraphService : GraphService
     {
-        readonly ConnectionFactory connFactory;
+        private readonly ConnectionFactory connectionFactory;
 
         public MultipleCriterionGraphService(
-            ConnectionFactory connFactory)
+            ConnectionFactory connectionFactory) : base(connectionFactory)
         {
-            this.connFactory = connFactory;
+            this.connectionFactory = connectionFactory;
         }
 
-        //public BestConnections SetTransferLabelsToSimilarVertices(
-        //    BestConnections bestConnections, 
-        //    Vertex vertex, 
-        //    ICollection<SimilarVertex> similarVertices,
-        //    LabelPriorityQueue priorityQueue)
-        //{
-        //    var vertexLabels = bestConnections.Find(vertex.Id);
-        //    foreach (var similarVertex in similarVertices)
-        //    {
-        //        var departureTime = vertexLabels.First().Connection.DepartureTime;
-        //        var conn = connFactory.CreateZeroCostTransfer(
-        //            vertex, similarVertex.Similar, departureTime);
-        //        var label = 
-        //    }
-        //    return bestConnections;
-        //}
+        public IEnumerable<Connection> GetPossibleConnections(
+            Vertex vertex, TimeSpan earliestTime, bool isPreviousConnTransfer = false)
+        {
+            var connections = new List<Connection>();
+            connections.AddRange(GetValidConnections(vertex.Connections, earliestTime));
+            AddSimilarVerticesTransfers(vertex, connections, earliestTime, isPreviousConnTransfer);
+            return connections.OrderBy(p => p.ArrivalTime);
+        }
+
+        private void AddSimilarVerticesTransfers(
+            Vertex vertex, ICollection<Connection> connections, TimeSpan earliestTime, bool isPreviousConnTransfer)
+        {
+            if (!isPreviousConnTransfer)
+            {
+                foreach (var similar in vertex.SimilarVertices)
+                {
+                    var transferConn = connectionFactory
+                        .CreateTransfer(vertex, similar.Similar, earliestTime, similar.DistanceInMinutes);
+                    connections.Add(transferConn);
+                }
+            }
+        }
     }
 }
