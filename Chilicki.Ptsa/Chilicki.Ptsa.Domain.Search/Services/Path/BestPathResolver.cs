@@ -75,7 +75,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
 
         private bool IsResolvingNotEnded(SearchInput search, Connection currentConn)
         {
-            return search.StartStop.Id != currentConn.StartVertex.Stop.Id;
+            return search.StartStop.Id != currentConn.StartVertex.StopId;
         }
 
         private void RecursivelyFindAllPaths(
