@@ -68,7 +68,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
                 var fastestConnections = connectionSearchEngine.SearchConnections(search, graph);
                 return fastestPathResolver.ResolveFastestPath(search, fastestConnections);
             }
-            catch (DijkstraNoFastestPathExistsException)
+            catch (NoFastestPathExistsException)
             {
                 var previousDayStartTime = search.StartTime;
                 search.StartTime = TimeSpan.FromMinutes(1);
@@ -84,7 +84,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
                 search.StartTime = previousDayStartTime;
                 return fastestPathResolver.ResolveFastestPath(search, fastestConnections);
             }
-            catch (DijkstraNoFastestPathExistsException)
+            catch (NoFastestPathExistsException)
             {                
                 return fastestPathResolver.CreateNotFoundPath(search);
             }

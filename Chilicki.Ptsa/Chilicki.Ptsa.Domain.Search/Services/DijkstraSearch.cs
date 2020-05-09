@@ -93,7 +93,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services
         private void ValidatePathExists(Vertex currentVertex)
         {
             if (currentVertex == null)
-                throw new DijkstraNoFastestPathExistsException();
+                throw new NoFastestPathExistsException();
         }
     }
 }

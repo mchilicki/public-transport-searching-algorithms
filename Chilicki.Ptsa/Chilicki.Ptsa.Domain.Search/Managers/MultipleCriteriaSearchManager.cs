@@ -63,8 +63,9 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             foreach (var search in searches)
             {
                 var stopwatch = Stopwatch.StartNew();
-                var paths = PerformSearch(search, graph);
+                var bestConnections = PerformSearch(search, graph);
                 stopwatch.Stop();
+                var paths = bestPathResolver.ResolveBestPaths(search, bestConnections);
                 measures.Add(PerformanceMeasure.Create(paths, stopwatch.Elapsed));
             }
             await measureLogger.Log(measures);
@@ -73,20 +74,20 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
         private async Task PerformSearchWithLog(SearchInput search, Graph graph)
         {
             var stopwatch = Stopwatch.StartNew();
-            var paths = PerformSearch(search, graph);
+            var bestConnections = PerformSearch(search, graph);
             stopwatch.Stop();
+            var paths = bestPathResolver.ResolveBestPaths(search, bestConnections);
             var measure = PerformanceMeasure.Create(paths, stopwatch.Elapsed);
             await measureLogger.Log(measure);
         }
 
-        private ICollection<FastestPath> PerformSearch(SearchInput search, Graph graph)
+        private BestConnections PerformSearch(SearchInput search, Graph graph)
         {
             try
             {
-                var bestConnections = searchEngine.SearchConnections(search, graph);
-                return bestPathResolver.ResolveBestPaths(search, bestConnections);
+                return searchEngine.SearchConnections(search, graph);                
             }
-            catch (DijkstraNoFastestPathExistsException)
+            catch (NoFastestPathExistsException)
             {
                 return null;
             }

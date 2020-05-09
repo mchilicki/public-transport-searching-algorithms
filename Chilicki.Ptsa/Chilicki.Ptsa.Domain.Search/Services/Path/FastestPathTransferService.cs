@@ -39,5 +39,10 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
         {
             return currentConn.IsTransfer;
         }
+
+        public void ExtendAlreadyTransfer(Connection currentConn, Connection nextConn)
+        {
+            currentConn.ArrivalTime = nextConn.DepartureTime;
+        }
     }
 }
