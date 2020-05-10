@@ -20,11 +20,19 @@
     <None Remove="appsettings.GtfsImport.json" />
     <None Remove="appsettings.GtfsImportPC.json" />
     <None Remove="appsettings.json" />
+    <None Remove="Settings\appsettings.GoogleBenchmark.json" />
+    <None Remove="Settings\appsettings.GoogleSearch.json" />
     <None Remove="Settings\appsettings.MultipleDijkstraBenchmark.json" />
     <None Remove="Settings\appsettings.MultipleDijkstraSearch.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Settings\appsettings.GoogleBenchmark.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Settings\appsettings.GoogleSearch.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Settings\appsettings.MultipleDijkstraBenchmark.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
