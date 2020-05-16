@@ -34,7 +34,6 @@ namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
         {
             services.AddTransient<SearchManager>();
             services.AddTransient<GraphManager>();
-            services.AddTransient<GoogleManager>();
         }
 
         private void ConfigureServices(IServiceCollection services)
@@ -62,7 +61,6 @@ namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
             services.AddTransient<InfeasiblityService>();
             services.AddTransient<HaversineDistanceCalculator>();
             services.AddTransient<KilometersToDistanceMinutesConverter>();
-            services.AddTransient<GoogleSearchEngine>();
         }
 
         private void ConfigureFactories(IServiceCollection services)

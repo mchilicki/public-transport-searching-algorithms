@@ -15,22 +15,19 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
         readonly SearchManager searchManager;
         readonly GraphManager graphManager;
         readonly MultipleCriteriaSearchManager multipleCriteriaSearchManager;
-        private readonly GoogleManager googleManager;
 
         public ConsoleSearchService(
             IOptions<AppSettings> appSettings,
             GtfsImportService importService,
             SearchManager searchManager,
             GraphManager graphManager,
-            MultipleCriteriaSearchManager multipleCriteriaSearchManager,
-            GoogleManager googleManager)
+            MultipleCriteriaSearchManager multipleCriteriaSearchManager)
         {
             this.appSettings = appSettings.Value;
             this.importService = importService;
             this.searchManager = searchManager;
             this.graphManager = graphManager;
             this.multipleCriteriaSearchManager = multipleCriteriaSearchManager;
-            this.googleManager = googleManager;
         }
 
         public async Task Run()
@@ -50,28 +47,12 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
                     await SearchWithMultipleCriteriaDijkstra();
                 if (environmentName == "MultipleDijkstraBenchmark")
                     await PerformMultipleDijkstraBenchmark();
-                if (environmentName == "GoogleSearch")
-                    await SearchWithGoogle();
-                if (environmentName == "GoogleBenchmark")
-                    await PerformGoogleBenchmark();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
                 Console.ReadKey();
             }            
-        }
-
-        private async Task PerformGoogleBenchmark()
-        {
-            await googleManager.PerformGoogleBenchmark(
-                appSettings.BenchmarkIterations);
-        }
-
-        private async Task SearchWithGoogle()
-        {
-            var search = SearchInputDto.Create(appSettings);
-            await googleManager.SearchBestConnections(search);
         }
 
         private async Task PerformMultipleDijkstraBenchmark()

@@ -54,19 +54,6 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "MultipleDijkstraBenchmark"
       }
-    },
-    "GoogleSearch": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "GoogleSearch"
-      },
-      "nativeDebugging": false
-    },
-    "GoogleBenchmark": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "GoogleBenchmark"
-      }
     }
   }
 }
