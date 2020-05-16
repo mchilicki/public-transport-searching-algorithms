@@ -12,7 +12,7 @@ namespace Chilicki.Ptsa.Data.Configurations.EntityConfigurations
             builder.ToTable("StopTimes");
             builder.HasOne(p => p.Trip)
                 .WithMany(p => p.StopTimes)
-                .HasForeignKey("TripId")
+                .HasForeignKey(p => p.TripId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
             builder.HasOne(p => p.Stop)
