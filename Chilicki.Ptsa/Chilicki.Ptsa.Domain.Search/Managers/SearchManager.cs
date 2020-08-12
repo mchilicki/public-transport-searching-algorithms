@@ -61,7 +61,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             await measureLogger.Log(measure);
         }
 
-        private FastestPath PerformSearch(SearchInput search, Graph graph)
+        public FastestPath PerformSearch(SearchInput search, Graph graph)
         {
             try
             {

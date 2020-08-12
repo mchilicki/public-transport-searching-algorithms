@@ -1,4 +1,6 @@
-﻿using Chilicki.Ptsa.Data.Configurations.ProjectConfiguration;
+﻿using BenchmarkDotNet.Running;
+using Chilicki.Ptsa.Benchmarks;
+using Chilicki.Ptsa.Data.Configurations.ProjectConfiguration;
 using Chilicki.Ptsa.Domain.Gtfs.Services;
 using Chilicki.Ptsa.Domain.Search.Dtos;
 using Chilicki.Ptsa.Domain.Search.Managers;
@@ -47,12 +49,21 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
                     await SearchWithMultipleCriteriaDijkstra();
                 if (environmentName == "MultipleDijkstraBenchmark")
                     await PerformMultipleDijkstraBenchmark();
+                if (environmentName == "Benchmarks")
+                    PerformFullBenchmarks();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
                 Console.ReadKey();
             }            
+        }
+
+        private void PerformFullBenchmarks()
+        {
+            var summary = BenchmarkRunner.Run<SingleCriteriaDijkstraVsMultipleCriterionDijkstra>();
+            Console.WriteLine(summary);
+            Console.ReadKey();
         }
 
         private async Task PerformMultipleDijkstraBenchmark()

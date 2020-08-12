@@ -54,6 +54,12 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "MultipleDijkstraBenchmark"
       }
+    },
+    "Benchmarks": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Benchmarks"
+      }
     }
   }
 }

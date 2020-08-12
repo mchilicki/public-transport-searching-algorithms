@@ -20,13 +20,13 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
             await RunService();
         }
 
-        private void Configure()
+        public IServiceProvider Configure()
         {
             ConfigureAppSettings();
-            ConfigureDependencyInjection();
+            return ConfigureDependencyInjection();
         }
 
-        private void ConfigureDependencyInjection()
+        private IServiceProvider ConfigureDependencyInjection()
         {
             var serviceCollection = new ServiceCollection();
             serviceCollection.Configure<AppSettings>
@@ -38,6 +38,7 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
             var connectionStrings = ServiceProvider.GetService<IOptions<ConnectionStrings>>().Value;
             searchDependencyInjection.Configure(serviceCollection, connectionStrings);
             ServiceProvider = serviceCollection.BuildServiceProvider();
+            return ServiceProvider;
         }
 
         private void ConfigureAppSettings()
@@ -46,7 +47,7 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
             var builder = new ConfigurationBuilder()
                 .SetBasePath($"{Directory.GetCurrentDirectory()}//Settings//")
                 .AddJsonFile($"appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{environmentName}.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{environmentName}.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
         }
