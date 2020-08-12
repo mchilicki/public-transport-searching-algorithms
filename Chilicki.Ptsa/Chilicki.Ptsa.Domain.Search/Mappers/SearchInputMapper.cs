@@ -3,6 +3,8 @@ using Chilicki.Ptsa.Domain.Search.Aggregates;
 using Chilicki.Ptsa.Data.Repositories;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Chilicki.Ptsa.Data.Entities;
+using System.Linq;
 
 namespace Chilicki.Ptsa.Domain.Search.Mappers
 {
@@ -28,6 +30,20 @@ namespace Chilicki.Ptsa.Domain.Search.Mappers
                 StartVertex = await vertexRepository.GetByStopId(searchInput.StartStopId),
                 DestinationVertex = await vertexRepository.GetByStopId(searchInput.DestinationStopId),
                 StartTime = searchInput.StartTime,
+            };
+        }
+
+        public SearchInput ToDomainFromGraph(SearchInputDto searchInputDto, Graph graph)
+        {
+            var startVertex = graph.Vertices.FirstOrDefault(p => p.StopId == searchInputDto.StartStopId);
+            var destinationVertex = graph.Vertices.FirstOrDefault(p => p.StopId == searchInputDto.DestinationStopId);
+            return new SearchInput()
+            {
+                StartStop = startVertex.Stop,
+                DestinationStop = destinationVertex.Stop,
+                StartVertex = startVertex,
+                DestinationVertex = destinationVertex,
+                StartTime = searchInputDto.StartTime,
             };
         }
 

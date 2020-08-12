@@ -107,7 +107,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             await measureLogger.Log(measures);
         }
 
-        private void ClearVisitedVertices(Graph graph)
+        public void ClearVisitedVertices(Graph graph)
         {
             foreach (var vertex in graph.Vertices)
             {

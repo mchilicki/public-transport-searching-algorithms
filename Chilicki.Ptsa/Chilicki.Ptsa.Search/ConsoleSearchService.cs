@@ -4,8 +4,12 @@ using Chilicki.Ptsa.Data.Configurations.ProjectConfiguration;
 using Chilicki.Ptsa.Domain.Gtfs.Services;
 using Chilicki.Ptsa.Domain.Search.Dtos;
 using Chilicki.Ptsa.Domain.Search.Managers;
+using Chilicki.Ptsa.Domain.Search.Mappers;
+using Chilicki.Ptsa.Domain.Search.Services.SearchInputs;
 using Microsoft.Extensions.Options;
 using System;
+using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Chilicki.Ptsa.Search.Configurations.Startup
@@ -17,19 +21,25 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
         readonly SearchManager searchManager;
         readonly GraphManager graphManager;
         readonly MultipleCriteriaSearchManager multipleCriteriaSearchManager;
+        private readonly RandomSearchInputGenerator searchInputGenerator;
+        private readonly SearchInputMapper searchInputMapper;
 
         public ConsoleSearchService(
             IOptions<AppSettings> appSettings,
             GtfsImportService importService,
             SearchManager searchManager,
             GraphManager graphManager,
-            MultipleCriteriaSearchManager multipleCriteriaSearchManager)
+            MultipleCriteriaSearchManager multipleCriteriaSearchManager,
+            RandomSearchInputGenerator searchInputGenerator,
+            SearchInputMapper searchInputMapper)
         {
             this.appSettings = appSettings.Value;
             this.importService = importService;
             this.searchManager = searchManager;
             this.graphManager = graphManager;
             this.multipleCriteriaSearchManager = multipleCriteriaSearchManager;
+            this.searchInputGenerator = searchInputGenerator;
+            this.searchInputMapper = searchInputMapper;
         }
 
         public async Task Run()
@@ -49,6 +59,8 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
                     await SearchWithMultipleCriteriaDijkstra();
                 if (environmentName == "MultipleDijkstraBenchmark")
                     await PerformMultipleDijkstraBenchmark();
+                if (environmentName == "GenerateRandomSearchInputs")
+                    await GenerateRandomSearchInputs();
                 if (environmentName == "Benchmarks")
                     PerformFullBenchmarks();
             }
@@ -59,10 +71,25 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
             }            
         }
 
+        private async Task GenerateRandomSearchInputs()
+        {
+            string path = $"C:\\Users\\Marcin Chilicki\\Desktop\\RandomSearchInputs.txt";
+            var searches = await searchInputGenerator.Generate(100);
+            var sb = new StringBuilder();
+            foreach (var search in searches)
+            {
+                sb.Append($"new SearchInputDto() {{ " +
+                    $"StartStopId = new Guid(\"{search.StartStopId}\"), " +
+                    $"DestinationStopId = new Guid(\"{search.DestinationStopId}\"), " +
+                    $"StartTime = TimeSpan.Parse(\"{search.StartTime}\") }},{Environment.NewLine}");
+            }
+            string result = sb.ToString();
+            File.WriteAllText(path, result);            
+        }
+
         private void PerformFullBenchmarks()
         {
             var summary = BenchmarkRunner.Run<SingleCriteriaDijkstraVsMultipleCriterionDijkstra>();
-            Console.WriteLine(summary);
             Console.ReadKey();
         }
 

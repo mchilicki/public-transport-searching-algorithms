@@ -60,6 +60,12 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Benchmarks"
       }
+    },
+    "GenerateRandomSearchInputs": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "GenerateRandomSearchInputs"
+      }
     }
   }
 }
