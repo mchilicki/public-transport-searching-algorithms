@@ -8,9 +8,9 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
     {
         public Connection GetCurrentConnection(
             FastestConnections fastestConnections,
-            Connection conn)
+            Guid vertexId)
         {
-            return fastestConnections.Get(conn.EndVertexId);
+            return fastestConnections.Get(vertexId);
         }
 
         public Connection GetPreviousVertexConnection(

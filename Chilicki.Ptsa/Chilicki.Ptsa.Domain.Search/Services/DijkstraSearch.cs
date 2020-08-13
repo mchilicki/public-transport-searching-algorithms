@@ -58,11 +58,11 @@ namespace Chilicki.Ptsa.Domain.Search.Services
         private (FastestConnections, Vertex) MakeIteration(
             SearchInput search, FastestConnections fastestConnections, Vertex currentVertex)
         {
-            var possibleConnections = graphService.GetPossibleConnections(
-                currentVertex, search.StartTime);
+            var currentConn = connectionsService.GetCurrentConnection(fastestConnections, currentVertex.Id);
+            var possibleConnections = graphService.GetPossibleConnections(currentVertex, search, currentConn.ArrivalTime);
             foreach (var possibleConn in possibleConnections)
             {
-                ReplaceFastestConnectionIfShould(search, fastestConnections, possibleConn);
+                ReplaceFastestConnectionIfShould(search, fastestConnections, currentConn, possibleConn);
             }
             (fastestConnections, currentVertex) =
                 PrepareVerticesForNextIteration(search, fastestConnections, currentVertex);
@@ -70,9 +70,8 @@ namespace Chilicki.Ptsa.Domain.Search.Services
         }
 
         private void ReplaceFastestConnectionIfShould(
-            SearchInput search, FastestConnections fastestConnections, Connection possibleConn)
-        {
-            var currentConn = connectionsService.GetCurrentConnection(fastestConnections, possibleConn);
+            SearchInput search, FastestConnections fastestConnections, Connection currentConn, Connection possibleConn)
+        {            
             if (replacer.ShouldConnectionBeReplaced(search, fastestConnections, currentConn, possibleConn))
             {
                 replacer.ReplaceWithNewFastestConnection(currentConn, possibleConn);

@@ -51,12 +51,28 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
             return fastestConnections;
         }
 
-        public IEnumerable<Connection> GetPossibleConnections(Vertex vertex, TimeSpan earliestTime)
+        public IEnumerable<Connection> GetPossibleConnections(Vertex vertex, SearchInput search, TimeSpan earliestTime)
         {
-            var connections = new List<Connection>();
-            connections.AddRange(GetValidConnections(vertex.Connections, earliestTime));
-            AddSimilarVerticesTransfers(vertex, connections, earliestTime);
-            return connections.OrderBy(p => p.ArrivalTime);
+            var connections = new List<Connection>();            
+            if (earliestTime == TimeSpan.Zero)
+            {
+                earliestTime = search.StartTime;
+            }
+            connections.AddRange(GetValidConnections(vertex.Connections, search.StartTime));
+            AddSimilarVerticesTransfers(vertex, connections, search.StartTime);
+            TimeSpan latestTime;
+            if (earliestTime == search.StartTime)
+            {
+                latestTime = new TimeSpan(23, 59, 59);
+            }
+            else
+            {
+                latestTime = earliestTime.Add(TimeSpan.FromMinutes(search.Parameters.MaxTimeAheadFetchingPossibleConnections));
+            }            
+            var possibleConnections = connections.Where(p => p.DepartureTime <= latestTime);
+            if (possibleConnections.Count() >= search.Parameters.MinimumPossibleConnectionsFetched)
+                return possibleConnections.OrderBy(p => p.ArrivalTime);
+            return connections.Take(search.Parameters.MinimumPossibleConnectionsFetched).OrderBy(p => p.ArrivalTime);
         }
 
         private void AddSimilarVerticesTransfers(
