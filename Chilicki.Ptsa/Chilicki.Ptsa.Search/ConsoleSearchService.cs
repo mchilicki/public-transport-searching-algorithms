@@ -23,7 +23,6 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
         readonly GraphManager graphManager;
         readonly MultipleCriteriaSearchManager multipleCriteriaSearchManager;
         private readonly RandomSearchInputGenerator searchInputGenerator;
-        private readonly SearchInputMapper searchInputMapper;
 
         public ConsoleSearchService(
             IOptions<AppSettings> appSettings,
@@ -31,8 +30,7 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
             SearchManager searchManager,
             GraphManager graphManager,
             MultipleCriteriaSearchManager multipleCriteriaSearchManager,
-            RandomSearchInputGenerator searchInputGenerator,
-            SearchInputMapper searchInputMapper)
+            RandomSearchInputGenerator searchInputGenerator)
         {
             this.appSettings = appSettings.Value;
             this.importService = importService;
@@ -40,7 +38,6 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
             this.graphManager = graphManager;
             this.multipleCriteriaSearchManager = multipleCriteriaSearchManager;
             this.searchInputGenerator = searchInputGenerator;
-            this.searchInputMapper = searchInputMapper;
         }
 
         public async Task Run()

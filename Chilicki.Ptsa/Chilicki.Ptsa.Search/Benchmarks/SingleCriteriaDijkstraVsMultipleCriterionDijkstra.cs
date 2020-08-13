@@ -4,6 +4,7 @@ using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Data.Repositories;
 using Chilicki.Ptsa.Domain.Search.Aggregates;
 using Chilicki.Ptsa.Domain.Search.Aggregates.MultipleCriterion;
+using Chilicki.Ptsa.Domain.Search.Configurations.Options;
 using Chilicki.Ptsa.Domain.Search.Dtos;
 using Chilicki.Ptsa.Domain.Search.Managers;
 using Chilicki.Ptsa.Domain.Search.Mappers;
@@ -42,6 +43,19 @@ namespace Chilicki.Ptsa.Benchmarks
             //new SearchInputDto() { StartStopId = new Guid("c9835234-011e-4719-b5da-8070864a54ff"), DestinationStopId = new Guid("568c9b9e-2739-4c86-a57c-3ad44a8bcea5"), StartTime = TimeSpan.Parse("13:11:00") },
         };
 
+        [Params(60, 120/*, 180, 240, 300, 360*/)]
+        public int MaxTimeAheadFetchingPossibleConnections { get; set; }
+
+        [Params(/*0, 1,*/ 3, 5/*, 10, 25, 50, 100*/)]
+        public int MinimumPossibleConnectionsFetched { get; set; }
+
+        [Params(2/*, 3, 4, 5*/)]
+        public int MinimalTransferTime { get; set; }
+
+        [Params(5/*, 7, 10, 20*/)]
+        public int MaximalTransferTime { get; set; }
+
+
         public SingleCriteriaDijkstraVsMultipleCriterionDijkstra()
         {
             Console.WriteLine("Constructor - Started");
@@ -64,9 +78,10 @@ namespace Chilicki.Ptsa.Benchmarks
         public void SingleCriteriaDijkstra()
         {
             var list = new List<FastestPath>();
+            var parameters = CreateParameters();
             foreach (var search in Searches)
             {
-                var searchInput = searchInputMapper.ToDomainFromGraph(search, Graph);
+                var searchInput = searchInputMapper.ToDomainFromGraph(search, parameters, Graph);
                 var path = dijkstraSearchManager.PerformSearch(searchInput, Graph);
                 list.Add(path); 
                 dijkstraSearchManager.ClearVisitedVertices(Graph);
@@ -78,13 +93,25 @@ namespace Chilicki.Ptsa.Benchmarks
         public void MultipleCriteriaDijkstra()
         {
             var list = new List<BestConnections>();
+            var parameters = CreateParameters();
             foreach (var search in Searches)
             {
-                var searchInput = searchInputMapper.ToDomainFromGraph(search, Graph);
+                var searchInput = searchInputMapper.ToDomainFromGraph(search, parameters, Graph);
                 var paths = multipleCriteriaSearchManager.PerformSearch(searchInput, Graph);
                 list.Add(paths);
             }
             list.Consume(new Consumer());
+        }
+
+        private SearchParameters CreateParameters()
+        {
+            return new SearchParameters()
+            {
+                MaxTimeAheadFetchingPossibleConnections = this.MaxTimeAheadFetchingPossibleConnections,
+                MinimumPossibleConnectionsFetched = this.MinimumPossibleConnectionsFetched,
+                MinimalTransferTime = this.MinimalTransferTime,
+                MaximalTransferTime = this.MaximalTransferTime,
+            };
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Chilicki.Ptsa.Data.Entities;
 using System.Linq;
+using Chilicki.Ptsa.Domain.Search.Configurations.Options;
 
 namespace Chilicki.Ptsa.Domain.Search.Mappers
 {
@@ -33,7 +34,7 @@ namespace Chilicki.Ptsa.Domain.Search.Mappers
             };
         }
 
-        public SearchInput ToDomainFromGraph(SearchInputDto searchInputDto, Graph graph)
+        public SearchInput ToDomainFromGraph(SearchInputDto searchInputDto, SearchParameters parameters, Graph graph)
         {
             var startVertex = graph.Vertices.FirstOrDefault(p => p.StopId == searchInputDto.StartStopId);
             var destinationVertex = graph.Vertices.FirstOrDefault(p => p.StopId == searchInputDto.DestinationStopId);
@@ -44,6 +45,7 @@ namespace Chilicki.Ptsa.Domain.Search.Mappers
                 StartVertex = startVertex,
                 DestinationVertex = destinationVertex,
                 StartTime = searchInputDto.StartTime,
+                Parameters = parameters,
             };
         }
 

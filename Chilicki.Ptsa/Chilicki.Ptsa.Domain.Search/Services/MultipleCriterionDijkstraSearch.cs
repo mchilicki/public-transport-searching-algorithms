@@ -47,7 +47,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services
             while (priorityQueue.Any())
             {
                 (bestConnections, priorityQueue) = 
-                    MakeIteration(bestConnections, priorityQueue); 
+                    MakeIteration(bestConnections, priorityQueue, search); 
                 iteration++;
             }
             return bestConnections;
@@ -64,11 +64,12 @@ namespace Chilicki.Ptsa.Domain.Search.Services
 
         private (BestConnections, LabelPriorityQueue) MakeIteration(
             BestConnections bestConnections,
-            LabelPriorityQueue priorityQueue)
+            LabelPriorityQueue priorityQueue,
+            SearchInput search)
         {
             var currentLabel = priorityQueue.Dequeue();
             var possibleConnections = connectionsService.GetPossibleConnections(
-                currentLabel.Vertex, currentLabel.Connection.ArrivalTime, currentLabel.Connection.IsTransfer);
+                currentLabel.Vertex, currentLabel.Connection.ArrivalTime, currentLabel.Connection.IsTransfer, search);
             foreach (var connection in possibleConnections)
             {
                 var currentLabels = bestConnections.Get(connection.EndVertexId);
