@@ -29,5 +29,10 @@ namespace Chilicki.Ptsa.Domain.Search.Dtos
                 StartTime = settings.StartTime,
             };            
         }
+
+        public override string ToString()
+        {
+            return $"{StartStopId} {DestinationStopId} {StartTime}";
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using BenchmarkDotNet.Running;
+﻿using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Running;
 using Chilicki.Ptsa.Benchmarks;
 using Chilicki.Ptsa.Data.Configurations.ProjectConfiguration;
 using Chilicki.Ptsa.Domain.Gtfs.Services;
@@ -89,7 +90,11 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
 
         private void PerformFullBenchmarks()
         {
-            var summary = BenchmarkRunner.Run<SingleCriteriaDijkstraVsMultipleCriterionDijkstra>();
+            BenchmarkRunner
+                .Run<SingleCriteriaDijkstraVsMultipleCriterionDijkstra>(
+                ManualConfig
+                    .Create(DefaultConfig.Instance)
+                    .WithOptions(ConfigOptions.JoinSummary));
             Console.ReadKey();
         }
 
