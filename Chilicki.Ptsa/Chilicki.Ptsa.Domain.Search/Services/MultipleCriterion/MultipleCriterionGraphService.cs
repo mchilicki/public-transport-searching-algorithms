@@ -28,8 +28,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.MultipleCriterion
         public IEnumerable<Connection> GetPossibleConnections(
             Vertex vertex, SearchInput search, TimeSpan earliestTime, bool isPreviousConnTransfer = false)
         {
-            var connections = new List<Connection>();
-            connections.AddRange(GetValidConnections(vertex.Connections, earliestTime));
+            var connections = GetValidConnections(vertex.Connections, earliestTime).ToList();
             AddSimilarVerticesTransfers(vertex, connections, search, earliestTime, isPreviousConnTransfer);
             return connections.OrderBy(p => p.ArrivalTime);
         }

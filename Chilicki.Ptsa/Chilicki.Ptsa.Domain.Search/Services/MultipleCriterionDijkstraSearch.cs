@@ -68,8 +68,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services
             SearchInput search)
         {
             var currentLabel = priorityQueue.Dequeue();
-            var possibleConnections = connectionsService.GetPossibleConnections(
-                currentLabel.Vertex, currentLabel.Connection.ArrivalTime, currentLabel.Connection.IsTransfer, search);
+            var possibleConnections = connectionsService.GetPossibleConnections(currentLabel, search);
             foreach (var connection in possibleConnections)
             {
                 var currentLabels = bestConnections.Get(connection.EndVertexId);

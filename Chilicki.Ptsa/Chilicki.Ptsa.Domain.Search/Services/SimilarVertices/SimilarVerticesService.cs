@@ -13,7 +13,8 @@ namespace Chilicki.Ptsa.Domain.Search.Services.SimilarVertices
             ICollection<SimilarVertex> similarVertices, SearchInput search)
         {
             var possibleSimilarVertices = similarVertices
-                .Where(p => p.DistanceInMinutes <= search.Parameters.MaximalTransferDistanceInMinutes);
+                .Where(p => p.DistanceInMinutes <= search.Parameters.MaximalTransferDistanceInMinutes && 
+                    p.DistanceInMinutes >= search.Parameters.MinimalTransferTime);
             return possibleSimilarVertices;
         }
     }
