@@ -14,6 +14,7 @@ using Chilicki.Ptsa.Domain.Search.Services.Measures;
 using Chilicki.Ptsa.Domain.Search.Services.MultipleCriterion;
 using Chilicki.Ptsa.Domain.Search.Services.Path;
 using Chilicki.Ptsa.Domain.Search.Services.SearchInputs;
+using Chilicki.Ptsa.Domain.Search.Services.SimilarVertices;
 using Chilicki.Ptsa.Domain.Search.Validators;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -61,6 +62,7 @@ namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
             services.AddTransient<InfeasiblityService>();
             services.AddTransient<HaversineDistanceCalculator>();
             services.AddTransient<KilometersToDistanceMinutesConverter>();
+            services.AddTransient<SimilarVerticesService>();
         }
 
         private void ConfigureFactories(IServiceCollection services)

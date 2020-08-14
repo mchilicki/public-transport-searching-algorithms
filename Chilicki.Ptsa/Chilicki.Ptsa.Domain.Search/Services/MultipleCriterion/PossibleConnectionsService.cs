@@ -22,7 +22,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.MultipleCriterion
         public IEnumerable<Connection> GetPossibleConnections(
             Vertex vertex, TimeSpan earliestTime, bool isPreviousConnTransfer, SearchInput search)
         {
-            var connections = graphService.GetPossibleConnections(vertex, earliestTime, isPreviousConnTransfer);
+            var connections = graphService.GetPossibleConnections(vertex, search, earliestTime, isPreviousConnTransfer);
             var latestTime = earliestTime.Add(TimeSpan.FromMinutes(search.Parameters.MaxTimeAheadFetchingPossibleConnections));
             var possibleConnections = connections.Where(p => p.DepartureTime <= latestTime);
             if (possibleConnections.Count() >= search.Parameters.MinimumPossibleConnectionsFetched)

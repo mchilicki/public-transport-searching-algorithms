@@ -4,6 +4,7 @@ using Chilicki.Ptsa.Domain.Search.Helpers.Exceptions;
 using Chilicki.Ptsa.Domain.Search.Factories.Dijkstra;
 using Chilicki.Ptsa.Domain.Search.Services.Base;
 using Chilicki.Ptsa.Domain.Search.Services.Dijkstra;
+using Chilicki.Ptsa.Domain.Search.Services.SimilarVertices;
 
 namespace Chilicki.Ptsa.Domain.Search.Services
 {
@@ -15,6 +16,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services
         readonly DijkstraConnectionService connectionsService;
         readonly DijkstraGraphService graphService;
         readonly DijkstraContinueChecker continueChecker;
+        private readonly SimilarVerticesService similarVerticesService;
 
         public DijkstraSearch(
             DijkstraEmptyFastestConnectionsFactory emptyConnFactory,
@@ -22,7 +24,8 @@ namespace Chilicki.Ptsa.Domain.Search.Services
             DijkstraFastestConnectionReplacer replacer,
             DijkstraConnectionService connectionsService,
             DijkstraGraphService graphService,
-            DijkstraContinueChecker continueChecker)
+            DijkstraContinueChecker continueChecker,
+            SimilarVerticesService similarVerticesService)
         {
             this.emptyConnFactory = emptyConnFactory;
             this.resolver = resolver;
@@ -30,13 +33,14 @@ namespace Chilicki.Ptsa.Domain.Search.Services
             this.connectionsService = connectionsService;
             this.graphService = graphService;
             this.continueChecker = continueChecker;
+            this.similarVerticesService = similarVerticesService;
         }
 
         public FastestConnections SearchConnections(SearchInput search, Graph graph)
         {
             var (fastestConnections, currentVertex) = PrepareVerticesForFirstIteration(search, graph);
             int iteration = 0;
-            while (continueChecker.ShouldContinue(search.DestinationStop.Id, currentVertex))
+            while (continueChecker.ShouldContinue(search.DestinationStop.Id, currentVertex, search))
             {
                 (fastestConnections, currentVertex) = 
                     MakeIteration(search, fastestConnections, currentVertex);
@@ -50,16 +54,16 @@ namespace Chilicki.Ptsa.Domain.Search.Services
         {
             var fastestConnections = emptyConnFactory.Create(graph, search);
             var currentVertex = resolver.GetFirstVertex(graph, search.StartStop);
+            var possibleSimilarVertices = similarVerticesService.GetPossibleSimilarVertices(currentVertex.SimilarVertices, search);
             fastestConnections = graphService.SetTransferConnectionsToSimilarVertices(
-                search, fastestConnections, currentVertex, currentVertex.SimilarVertices);
+                search, fastestConnections, currentVertex, possibleSimilarVertices);
             return (fastestConnections, currentVertex);
         }
 
         private (FastestConnections, Vertex) MakeIteration(
             SearchInput search, FastestConnections fastestConnections, Vertex currentVertex)
         {
-            var possibleConnections = graphService.GetPossibleConnections(
-                currentVertex, search.StartTime);
+            var possibleConnections = graphService.GetPossibleConnections(currentVertex, search, search.StartTime);
             foreach (var possibleConn in possibleConnections)
             {
                 ReplaceFastestConnectionIfShould(search, fastestConnections, possibleConn);
@@ -82,11 +86,12 @@ namespace Chilicki.Ptsa.Domain.Search.Services
         private (FastestConnections, Vertex) PrepareVerticesForNextIteration(
             SearchInput search, FastestConnections fastestConnections, Vertex currentVertex)
         {
-            graphService.MarkVertexAsVisited(currentVertex);
+            graphService.MarkVertexAsVisited(currentVertex, search);
             currentVertex = resolver.GetNextVertex(fastestConnections);
             ValidatePathExists(currentVertex);
+            var possibleSimilarVertices = similarVerticesService.GetPossibleSimilarVertices(currentVertex.SimilarVertices, search);
             fastestConnections = graphService.SetTransferConnectionsToSimilarVertices(
-                search, fastestConnections, currentVertex, currentVertex.SimilarVertices);
+                search, fastestConnections, currentVertex, possibleSimilarVertices);
             return (fastestConnections, currentVertex);
         }
 

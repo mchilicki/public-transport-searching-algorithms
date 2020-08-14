@@ -32,7 +32,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Path
                 .Value;            
             fastestPath.Add(currentConn);
             int iteration = 0;
-            while (continueChecker.ShouldContinue(search.StartStop.Id, currentConn.StartVertex))
+            while (continueChecker.ShouldContinue(search.StartStop.Id, currentConn.StartVertex, search))
             {
                 currentConn = IterateReversedFastestPath(fastestConnections, fastestPath, currentConn);
                 iteration++;

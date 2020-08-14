@@ -2,6 +2,7 @@
 using Chilicki.Ptsa.Domain.Search.Aggregates;
 using Chilicki.Ptsa.Domain.Search.Services.Base;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories;
+using Chilicki.Ptsa.Domain.Search.Services.SimilarVertices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,23 +13,27 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
     {
         private readonly ConnectionFactory factory;
         private readonly DijkstraFastestConnectionReplacer replacer;
+        private readonly SimilarVerticesService similarVerticesService;
 
         public DijkstraGraphService(
             ConnectionFactory factory,
-            DijkstraFastestConnectionReplacer replacer) : base(factory)
+            DijkstraFastestConnectionReplacer replacer,
+            SimilarVerticesService similarVerticesService)
         {
             this.factory = factory;
             this.replacer = replacer;
+            this.similarVerticesService = similarVerticesService;
         }        
 
-        public Vertex MarkVertexAsVisited(Vertex stopVertex)
+        public Vertex MarkVertexAsVisited(Vertex vertex, SearchInput search)
         {
-            stopVertex.IsVisited = true;
-            foreach (var similarStopVertex in stopVertex.SimilarVertices)
+            vertex.IsVisited = true;
+            var possibleSimilarVertices = similarVerticesService.GetPossibleSimilarVertices(vertex.SimilarVertices, search);
+            foreach (var similarStopVertex in possibleSimilarVertices)
             {
                 similarStopVertex.Similar.IsVisited = true;
             }
-            return stopVertex;
+            return vertex;
         }
 
         public FastestConnections SetTransferConnectionsToSimilarVertices(
@@ -51,18 +56,19 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
             return fastestConnections;
         }
 
-        public IEnumerable<Connection> GetPossibleConnections(Vertex vertex, TimeSpan earliestTime)
+        public IEnumerable<Connection> GetPossibleConnections(Vertex vertex, SearchInput search, TimeSpan earliestTime)
         {
             var connections = new List<Connection>();
             connections.AddRange(GetValidConnections(vertex.Connections, earliestTime));
-            AddSimilarVerticesTransfers(vertex, connections, earliestTime);
+            AddSimilarVerticesTransfers(vertex, connections, search, earliestTime);
             return connections.OrderBy(p => p.ArrivalTime);
         }
 
         private void AddSimilarVerticesTransfers(
-            Vertex vertex, List<Connection> connections, TimeSpan earliestTime)
+            Vertex vertex, List<Connection> connections, SearchInput search, TimeSpan earliestTime)
         {
-            foreach (var similar in vertex.SimilarVertices)
+            var possibleSimilarVertices = similarVerticesService.GetPossibleSimilarVertices(vertex.SimilarVertices, search);
+            foreach (var similar in possibleSimilarVertices)
             {
                 var earliestTimeAfterTransfer = earliestTime.Add(TimeSpan.FromMinutes(similar.DistanceInMinutes));
                 var similarConns = GetValidConnections(similar.Similar.Connections, earliestTimeAfterTransfer);

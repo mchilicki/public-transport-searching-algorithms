@@ -9,6 +9,6 @@ namespace Chilicki.Ptsa.Domain.Search.Configurations.Options
         public int MaxTimeAheadFetchingPossibleConnections { get; set; }
         public int MinimumPossibleConnectionsFetched { get; set; }
         public int MinimalTransferTime { get; set; }
-        public int MaximalTransferTime { get; set; }
+        public int MaximalTransferDistanceInMinutes { get; set; }
     }
 }

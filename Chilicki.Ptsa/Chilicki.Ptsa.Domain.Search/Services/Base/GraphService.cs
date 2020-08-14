@@ -10,14 +10,6 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Base
 {
     public abstract class GraphService
     {
-        private readonly ConnectionFactory connectionFactory;
-
-        public GraphService(
-            ConnectionFactory connectionFactory)
-        {
-            this.connectionFactory = connectionFactory;
-        }
-
         public Vertex GetVertexByStop(Graph graph, Stop stop)
         {
             return graph.Vertices

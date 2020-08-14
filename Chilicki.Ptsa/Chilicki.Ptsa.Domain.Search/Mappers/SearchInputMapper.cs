@@ -34,7 +34,7 @@ namespace Chilicki.Ptsa.Domain.Search.Mappers
                 Parameters = new SearchParameters()
                 {
                     MaxTimeAheadFetchingPossibleConnections = 120,
-                    MaximalTransferTime = 20,
+                    MaximalTransferDistanceInMinutes = 20,
                     MinimalTransferTime = 0,
                     MinimumPossibleConnectionsFetched = 3,
                 }
