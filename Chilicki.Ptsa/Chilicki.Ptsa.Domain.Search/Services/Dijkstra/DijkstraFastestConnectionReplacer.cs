@@ -48,7 +48,11 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
             bool isPreviousVertexConnEmpty)
         {
             var isPossibleConnAfterInput = search.StartTime <= possibleConn.DepartureTime;
+            var latestTime = previousVertexConn.ArrivalTime.Add(TimeSpan.FromMinutes(search.Parameters.MaxTimeAheadFetchingPossibleConnections));
+            var isPossibleConnBeforeMaxTimeParameter = latestTime >= possibleConn.DepartureTime;
             if (!isPossibleConnAfterInput)
+                return false;
+            if (!isPossibleConnBeforeMaxTimeParameter)
                 return false;
             var isPossibleConnAfterPrevConn = previousVertexConn.ArrivalTime <= possibleConn.DepartureTime;
             return isPossibleConnAfterPrevConn || isPreviousVertexConnEmpty;

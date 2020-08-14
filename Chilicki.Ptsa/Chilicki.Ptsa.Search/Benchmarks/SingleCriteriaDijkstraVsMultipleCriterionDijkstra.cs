@@ -50,10 +50,10 @@ namespace Chilicki.Ptsa.Benchmarks
         public int MinimumPossibleConnectionsFetched { get; set; }
 
         [Params(2/*, 3, 4, 5*/)]
-        public int MinimalTransferTime { get; set; }
+        public int MinimalTransferTimeOnTheSameStop { get; set; }
 
         [Params(5/*, 7, 10, 20*/)]
-        public int MaximalTransferTime { get; set; }
+        public int MaximalTransferTimeBetweenTwoDifferentStops { get; set; }
 
 
         public SingleCriteriaDijkstraVsMultipleCriterionDijkstra()
@@ -109,8 +109,8 @@ namespace Chilicki.Ptsa.Benchmarks
             {
                 MaxTimeAheadFetchingPossibleConnections = this.MaxTimeAheadFetchingPossibleConnections,
                 MinimumPossibleConnectionsFetched = this.MinimumPossibleConnectionsFetched,
-                MinimalTransferTime = this.MinimalTransferTime,
-                MaximalTransferTime = this.MaximalTransferTime,
+                MinimalTransferTime = this.MinimalTransferTimeOnTheSameStop,
+                MaximalTransferTime = this.MaximalTransferTimeBetweenTwoDifferentStops,
             };
         }
     }
