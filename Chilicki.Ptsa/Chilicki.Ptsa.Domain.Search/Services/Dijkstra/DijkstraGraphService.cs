@@ -53,7 +53,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Dijkstra
 
         public IEnumerable<Connection> GetPossibleConnections(Vertex vertex, SearchInput search, TimeSpan earliestTime)
         {
-            var connections = new List<Connection>();            
+            var connections = new List<Connection>();
             if (earliestTime == TimeSpan.Zero)
             {
                 earliestTime = search.StartTime;

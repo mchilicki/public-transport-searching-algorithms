@@ -24,12 +24,6 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Base
                 .First(p => p.StopId == stop.Id);
         }
 
-        
-
-        
-
-        
-
         protected IEnumerable<Connection> GetValidConnections(
             ICollection<Connection> connections, TimeSpan earliestTime)
         {

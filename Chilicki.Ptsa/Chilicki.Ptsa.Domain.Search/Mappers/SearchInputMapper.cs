@@ -31,6 +31,13 @@ namespace Chilicki.Ptsa.Domain.Search.Mappers
                 StartVertex = await vertexRepository.GetByStopId(searchInput.StartStopId),
                 DestinationVertex = await vertexRepository.GetByStopId(searchInput.DestinationStopId),
                 StartTime = searchInput.StartTime,
+                Parameters = new SearchParameters()
+                {
+                    MaxTimeAheadFetchingPossibleConnections = 120,
+                    MaximalTransferTime = 20,
+                    MinimalTransferTime = 0,
+                    MinimumPossibleConnectionsFetched = 3,
+                }
             };
         }
 
