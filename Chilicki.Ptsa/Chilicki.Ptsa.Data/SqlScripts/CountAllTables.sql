@@ -1,27 +1,27 @@
 
 SELECT count(*) as "AgenciesCount"
-  FROM [LahtiPtsaDb].[dbo].[Agencies]
+  FROM [dbo].[Agencies]
 
 SELECT count(*) as "RoutesCount"
-  FROM [LahtiPtsaDb].[dbo].[Routes]
+  FROM [dbo].[Routes]
 
 SELECT count(*) as "StopsCount"
-  FROM [LahtiPtsaDb].[dbo].[Stops]
+  FROM [dbo].[Stops]
 
 SELECT count(*) as "TripsCount"
-  FROM [LahtiPtsaDb].[dbo].[Trips]
+  FROM [dbo].[Trips]
 
 SELECT count(*) as "StopTimesCount"
-  FROM [LahtiPtsaDb].[dbo].[StopTimes]
+  FROM [dbo].[StopTimes]
 
 SELECT count(*) as "GraphsCount"
-  FROM [LahtiPtsaDb].[dbo].[Graphs]
+  FROM [dbo].[Graphs]
 
 SELECT count(*) as "VerticesCount"
-  FROM [LahtiPtsaDb].[dbo].[Vertices]
+  FROM [dbo].[Vertices]
 
 SELECT count(*) as "ConnectionsCount"
-  FROM [LahtiPtsaDb].[dbo].[Connections]
+  FROM [dbo].[Connections]
 
 SELECT count(*) as "SimilarVerticesCount"
-  FROM [LahtiPtsaDb].[dbo].[SimilarVertices]
+  FROM [dbo].[SimilarVertices]
