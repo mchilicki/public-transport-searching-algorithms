@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Chilicki.Ptsa.Search.Benchmarks.InputSearches
 {
-    public static class BenchmarkInputSearches
+    public static class PoznanInputSearches
     {
         public static IEnumerable<SearchInputDto> Searches { get; set; } = new List<SearchInputDto>()
         {

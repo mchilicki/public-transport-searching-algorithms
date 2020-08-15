@@ -35,12 +35,12 @@ namespace Chilicki.Ptsa.Benchmarks
         private readonly MultipleCriteriaSearchManager multipleCriteriaSearchManager;
 
         public Graph Graph { get; set; }
-        public IEnumerable<SearchInputDto> Searches { get; set; } = BenchmarkInputSearches.Searches;
+        public IEnumerable<SearchInputDto> Searches { get; set; } = LahtiInputSearches.Searches;
 
-        [Params(30, 60, 120, 180, 240, 360, 480, 720)]
+        [Params(/*30, 60, 120, 180, 240, 360, 480,*/ 720)]
         public int MaxTimeAheadFetchingPossibleConnections { get; set; }
 
-        [Params(3, 15, 30, 50)]
+        [Params(3, 15/*, 30, 50*/)]
         public int MinimumPossibleConnectionsFetched { get; set; }
 
         public SingleCriteriaDijkstraVsMultipleCriterionDijkstra()
@@ -83,10 +83,10 @@ namespace Chilicki.Ptsa.Benchmarks
 
         [Benchmark]
         [Arguments(0, 8)]
-        [Arguments(0, 6)]
-        [Arguments(0, 4)]
-        [Arguments(4, 8)]
-        [Arguments(4, 6)]
+        //[Arguments(0, 6)]
+        //[Arguments(0, 4)]
+        //[Arguments(4, 8)]
+        //[Arguments(4, 6)]
         public void MultipleCriteriaDijkstra(int minimalTransferTime, int maximalTransferDistanceInMinutes)
         {
             var list = new List<BestConnections>();
