@@ -62,9 +62,11 @@ namespace Chilicki.Ptsa.Benchmarks
         }
 
         [Benchmark]
-        [Arguments(0, 5)]
-        [Arguments(0, 3)]
-        [Arguments(3, 5)]
+        [Arguments(0, 8)]
+        [Arguments(0, 6)]
+        [Arguments(0, 4)]
+        [Arguments(4, 8)]
+        [Arguments(4, 6)]
         public void SingleCriteriaDijkstra(int minimalTransferTime, int maximalTransferDistanceInMinutes)
         {
             var list = new List<FastestPath>();
