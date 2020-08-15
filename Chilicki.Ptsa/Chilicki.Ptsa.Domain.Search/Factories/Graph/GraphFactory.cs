@@ -5,6 +5,7 @@ using Chilicki.Ptsa.Domain.Search.Factories.SimilarVertices;
 using Chilicki.Ptsa.Domain.Search.Services.Calculations;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories.Base;
 using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -44,11 +45,18 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
 
         public async Task<Graph> CreateGraph(IEnumerable<Stop> stops)
         {
+            Console.WriteLine($"Started creating graph");
             var graph = new Graph();
+            Console.WriteLine($"Started creating vertices");
             var vertices = CreateEmptyVertices(graph, stops);
-            await vertexRepository.AddRangeAsync(vertices);            
+            await vertexRepository.AddRangeAsync(vertices);
+            Console.WriteLine($"Vertices created: {vertices.Count}");
+            Console.WriteLine($"Started creating connections");
             await FillVerticesWithConnections(graph, vertices);
+            Console.WriteLine($"Connections created: {vertices.Sum(p => p.Connections.Count)}");
+            Console.WriteLine($"Started creating similar vertices");
             await FillVerticesWithSimilarVertices(vertices);
+            Console.WriteLine($"Similar vertices created: {vertices.Sum(p => p.SimilarVertices.Count)}");
             return graph;
         }
         

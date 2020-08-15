@@ -2,6 +2,7 @@
 using Chilicki.Ptsa.Data.Repositories;
 using Chilicki.Ptsa.Data.UnitsOfWork;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories.Base;
+using System;
 using System.Threading.Tasks;
 
 namespace Chilicki.Ptsa.Domain.Search.Managers
@@ -29,8 +30,10 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
         {
             var stops = await stopRepository.GetAllAsync();
             var graph = await graphFactory.CreateGraph(stops);
+            Console.WriteLine("Saving graph to database");
             await graphRepository.AddAsync(graph);
             await unitOfWork.SaveAsync();
+            Console.WriteLine("Everything saved to database");
         }
     }
 }
