@@ -37,11 +37,11 @@ namespace Chilicki.Ptsa.Benchmarks
         public Graph Graph { get; set; }
         public IEnumerable<SearchInputDto> Searches { get; set; } = BenchmarkInputSearches.Searches;
 
-        //[Params(120, 240, 360, 480)]
-        //public int MaxTimeAheadFetchingPossibleConnections { get; set; }
+        [Params(30, 60, 120, 180, 240, 360, 480, 720)]
+        public int MaxTimeAheadFetchingPossibleConnections { get; set; }
 
-        //[Params(3, 20, 50)]
-        //public int MinimumPossibleConnectionsFetched { get; set; }
+        [Params(3, 15, 30, 50)]
+        public int MinimumPossibleConnectionsFetched { get; set; }
 
         public SingleCriteriaDijkstraVsMultipleCriterionDijkstra()
         {
@@ -61,12 +61,12 @@ namespace Chilicki.Ptsa.Benchmarks
             Graph = await GraphSingleton.GetGraph(graphRepository);
         }
 
-        [Benchmark]
-        [Arguments(0, 8)]
-        [Arguments(0, 6)]
-        [Arguments(0, 4)]
-        [Arguments(4, 8)]
-        [Arguments(4, 6)]
+        //[Benchmark]
+        //[Arguments(0, 8)]
+        //[Arguments(0, 6)]
+        //[Arguments(0, 4)]
+        //[Arguments(4, 8)]
+        //[Arguments(4, 6)]
         public void SingleCriteriaDijkstra(int minimalTransferTime, int maximalTransferDistanceInMinutes)
         {
             var list = new List<FastestPath>();
@@ -81,10 +81,12 @@ namespace Chilicki.Ptsa.Benchmarks
             list.Consume(new Consumer());
         }
 
-        //[Benchmark]
-        //[Arguments(0, 5)]
-        //[Arguments(0, 3)]
-        //[Arguments(3, 5)]
+        [Benchmark]
+        [Arguments(0, 8)]
+        [Arguments(0, 6)]
+        [Arguments(0, 4)]
+        [Arguments(4, 8)]
+        [Arguments(4, 6)]
         public void MultipleCriteriaDijkstra(int minimalTransferTime, int maximalTransferDistanceInMinutes)
         {
             var list = new List<BestConnections>();
@@ -102,8 +104,8 @@ namespace Chilicki.Ptsa.Benchmarks
         {
             return new SearchParameters()
             {
-                //MaxTimeAheadFetchingPossibleConnections = MaxTimeAheadFetchingPossibleConnections,
-                //MinimumPossibleConnectionsFetched = MinimumPossibleConnectionsFetched,
+                MaxTimeAheadFetchingPossibleConnections = MaxTimeAheadFetchingPossibleConnections,
+                MinimumPossibleConnectionsFetched = MinimumPossibleConnectionsFetched,
                 MinimalTransferTime = minimalTransferTime,
                 MaximalTransferDistanceInMinutes = maximalTransferDistanceInMinutes,
             };

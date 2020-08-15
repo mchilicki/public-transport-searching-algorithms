@@ -20,24 +20,11 @@
     <None Remove="appsettings.GtfsImport.json" />
     <None Remove="appsettings.GtfsImportPC.json" />
     <None Remove="appsettings.json" />
-    <None Remove="Settings\appsettings.MultipleDijkstraBenchmark.json" />
     <None Remove="Settings\appsettings.MultipleDijkstraSearch.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Settings\appsettings.MultipleDijkstraBenchmark.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Settings\appsettings.MultipleDijkstraSearch.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Settings\appsettings.DijkstraBenchmark.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Settings\appsettings.GtfsImportPC.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Settings\appsettings.DijkstraSearchPC.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Settings\appsettings.CreateGraph.json">

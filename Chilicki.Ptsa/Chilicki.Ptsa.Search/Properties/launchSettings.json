@@ -1,21 +1,9 @@
 {
   "profiles": {
-    "Chilicki.Ptsa.Search": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "GtfsImport"
-      }
-    },
     "GtfsImport": {
       "commandName": "Project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "GtfsImport"
-      }
-    },
-    "DijkstraSearch": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "DijkstraSearch"
       }
     },
     "CreateGraph": {
@@ -24,35 +12,10 @@
         "ASPNETCORE_ENVIRONMENT": "CreateGraph"
       }
     },
-    "DijkstraSearchPC": {
+    "GenerateRandomSearchInputs": {
       "commandName": "Project",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "DijkstraSearchPC"
-      }
-    },
-    "GtfsImportPC": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "GtfsImportPC"
-      }
-    },
-    "DijkstraBenchmark": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "DijkstraBenchmark"
-      }
-    },
-    "MultipleDijkstraSearch": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "MultipleDijkstraSearch"
-      },
-      "nativeDebugging": false
-    },
-    "MultipleDijkstraBenchmark": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "MultipleDijkstraBenchmark"
+        "ASPNETCORE_ENVIRONMENT": "GenerateRandomSearchInputs"
       }
     },
     "Benchmarks": {
@@ -61,11 +24,18 @@
         "ASPNETCORE_ENVIRONMENT": "Benchmarks"
       }
     },
-    "GenerateRandomSearchInputs": {
+    "DijkstraSearch": {
       "commandName": "Project",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "GenerateRandomSearchInputs"
+        "ASPNETCORE_ENVIRONMENT": "DijkstraSearch"
       }
+    },
+    "MultipleDijkstraSearch": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "MultipleDijkstraSearch"
+      },
+      "nativeDebugging": false
     }
   }
 }
