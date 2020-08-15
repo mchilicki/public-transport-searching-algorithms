@@ -18,7 +18,7 @@ namespace Chilicki.Ptsa.Domain.Gtfs.Services
         private readonly string STOPS = "stops.txt";
         private readonly string TRIPS = "trips.txt";
 
-        private bool IsServiceCheckingTurnedOff = true;
+        private readonly bool IsServiceCheckingTurnedOff = false;
 
         private readonly IBaseRepository<Agency> agencyRepository;
         private readonly IBaseRepository<Stop> stopRepository;
@@ -194,7 +194,7 @@ namespace Chilicki.Ptsa.Domain.Gtfs.Services
                     {
                         isFirstLine = false;
                         continue;
-                    }    
+                    }
                     if (IsServiceCheckingTurnedOff || serviceId == splittedLine[1].Clean())
                     {
                         var route = routes.FirstOrDefault(p => p.GtfsId == routeGtfsId);
@@ -205,13 +205,9 @@ namespace Chilicki.Ptsa.Domain.Gtfs.Services
                                 GtfsId = tripGtfsId,
                                 HeadSign = headSign,
                                 Route = route,
-                            };                            
-                            trips.Add(trip);                            
-                        }                                             
-                    }
-                    else
-                    {
-                        Console.WriteLine($"No service found {serviceId}");
+                            };
+                            trips.Add(trip);
+                        }
                     }
                 }
             }
@@ -270,15 +266,7 @@ namespace Chilicki.Ptsa.Domain.Gtfs.Services
                             };
                             stopTimes.Add(stopTime);
                         }
-                        else
-                        {
-                            Console.WriteLine($"No stop found {stopId}");
-                        }
                     }  
-                    else
-                    {
-                        Console.WriteLine($"No trip found {tripId}");
-                    }
                 }
             }
             Console.WriteLine($"StopTimes added: {stopTimes.Count}");
