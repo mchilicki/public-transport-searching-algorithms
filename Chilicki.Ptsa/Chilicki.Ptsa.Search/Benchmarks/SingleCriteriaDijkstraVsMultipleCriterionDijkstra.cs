@@ -26,7 +26,6 @@ namespace Chilicki.Ptsa.Benchmarks
     [MinColumn, MaxColumn, MeanColumn, MedianColumn]
     [CsvExporter]
     [HtmlExporter]
-    [KeepBenchmarkFiles]
     public class SingleCriteriaDijkstraVsMultipleCriterionDijkstra
     {
         private readonly SearchInputMapper searchInputMapper;
@@ -37,10 +36,10 @@ namespace Chilicki.Ptsa.Benchmarks
         public Graph Graph { get; set; }
         public IEnumerable<SearchInputDto> Searches { get; set; } = BenchmarkInputSearches.Searches;
 
-        [Params(60, 120, 180, 240, 360, 480)]
+        [Params(120, 240, 360, 480)]
         public int MaxTimeAheadFetchingPossibleConnections { get; set; }
 
-        [Params(3, 10, 50)]
+        [Params(3/*, 10, 50*/)]
         public int MinimumPossibleConnectionsFetched { get; set; }
 
         public SingleCriteriaDijkstraVsMultipleCriterionDijkstra()
@@ -63,10 +62,8 @@ namespace Chilicki.Ptsa.Benchmarks
 
         [Benchmark]
         [Arguments(0, 5)]
-        [Arguments(0, 3)]
-        [Arguments(2, 5)]
-        [Arguments(2, 3)]
-        [Arguments(3, 5)]
+        //[Arguments(0, 3)]
+        //[Arguments(3, 5)]
         public void SingleCriteriaDijkstra(int minimalTransferTime, int maximalTransferDistanceInMinutes)
         {
             var list = new List<FastestPath>();
@@ -83,10 +80,8 @@ namespace Chilicki.Ptsa.Benchmarks
 
         [Benchmark]
         [Arguments(0, 5)]
-        [Arguments(0, 3)]
-        [Arguments(2, 5)]
-        [Arguments(2, 3)]
-        [Arguments(3, 5)]
+        //[Arguments(0, 3)]
+        //[Arguments(3, 5)]
         public void MultipleCriteriaDijkstra(int minimalTransferTime, int maximalTransferDistanceInMinutes)
         {
             var list = new List<BestConnections>();

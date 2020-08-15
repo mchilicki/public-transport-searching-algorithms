@@ -82,7 +82,7 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
                     $"StartTime = TimeSpan.Parse(\"{search.StartTime}\") }},{Environment.NewLine}");
             }
             string result = sb.ToString();
-            File.WriteAllText(path, result);            
+            File.WriteAllText(path, result);
         }
 
         private void PerformFullBenchmarks()
