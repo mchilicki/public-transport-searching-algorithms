@@ -20,7 +20,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
         readonly ISimilarVertexRepository similarVertexRepository;
         private readonly HaversineDistanceCalculator distanceCalculator;
         private readonly KilometersToDistanceMinutesConverter minutesConverter;
-        private readonly double NEIGHBOUR_MAXIMUM_DISTANCE = 0.5;
+        private readonly double NEIGHBOUR_MAXIMUM_DISTANCE = 0.8;
 
         public GraphFactory(
             ConnectionFactory connectionFactory,
