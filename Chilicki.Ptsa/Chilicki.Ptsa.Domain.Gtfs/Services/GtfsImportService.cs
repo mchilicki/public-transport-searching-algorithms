@@ -57,7 +57,7 @@ namespace Chilicki.Ptsa.Domain.Gtfs.Services
             await tripRepository.AddRangeAsync(trips);
             await stopTimeRepository.AddRangeAsync(stopTimes);
             await unitOfWork.SaveAsync();
-            Console.WriteLine($"Everything is saved");
+            Console.WriteLine($"Everything is saved to database");
         }
 
         private Agency ReadAgency(string path)

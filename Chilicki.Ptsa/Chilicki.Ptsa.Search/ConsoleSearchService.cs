@@ -121,7 +121,6 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
         private async Task CreateGraph()
         {
             await graphManager.CreateGraph();
-            Console.ReadKey();
         }
 
         private async Task ImportGtfs()

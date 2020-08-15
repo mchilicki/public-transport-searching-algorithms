@@ -6,6 +6,7 @@ using Chilicki.Ptsa.Domain.Search.Services.Calculations;
 using Chilicki.Ptsa.Domain.Search.Services.GraphFactories.Base;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -48,7 +49,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
             Console.WriteLine($"Started creating graph");
             var graph = new Graph();
             Console.WriteLine($"Started creating vertices");
-            var vertices = CreateEmptyVertices(graph, stops);
+            var vertices = await CreateEmptyVertices(graph, stops);
             await vertexRepository.AddRangeAsync(vertices);
             Console.WriteLine($"Vertices created: {vertices.Count}");
             Console.WriteLine($"Started creating connections");
@@ -60,13 +61,24 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
             return graph;
         }
         
-        private ICollection<Vertex> CreateEmptyVertices(
+        private async Task<ConcurrentBag<Vertex>> CreateEmptyVertices(
             Graph graph, IEnumerable<Stop> stops)
         {
-            var stopVertices = new List<Vertex>();
+            Console.WriteLine($"Creating tasks for vertices");
+            var vertices = new ConcurrentBag<Vertex>();
+            var tasks = new List<Task>();
             foreach (var stop in stops)
             {
-                stopVertices.Add(new Vertex()
+                Task task = AddVertexToList(graph, vertices, stop);
+                tasks.Add(task);
+            }
+            Console.WriteLine($"Executing vertices tasks");
+            await Task.WhenAll(tasks);
+            return vertices;
+
+            async Task AddVertexToList(Graph graph, ConcurrentBag<Vertex> vertices, Stop stop)
+            {
+                vertices.Add(new Vertex()
                 {
                     Graph = graph,
                     Stop = stop,
@@ -75,13 +87,23 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
                     IsVisited = false,
                 });
             }
-            return stopVertices;
         }
 
-        private async Task<ICollection<Vertex>> FillVerticesWithConnections(
-            Graph graph, ICollection<Vertex> allVertices)
+        private async Task<ConcurrentBag<Vertex>> FillVerticesWithConnections(
+            Graph graph, ConcurrentBag<Vertex> vertices)
         {
-            foreach (var vertex in allVertices)
+            Console.WriteLine($"Creating tasks for connections");
+            var tasks = new List<Task>();
+            foreach (var vertex in vertices)
+            {
+                Task task = FillVertexWithConnections(graph, vertices, vertex);
+                tasks.Add(task);
+            }
+            Console.WriteLine($"Executing connections tasks");
+            await Task.WhenAll(tasks);
+            return vertices;
+
+            async Task FillVertexWithConnections(Graph graph, ConcurrentBag<Vertex> vertices, Vertex vertex)
             {
                 var connections = new List<Connection>();
                 foreach (var departureStopTime in vertex.Stop.StopTimes)
@@ -89,11 +111,11 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
                     var arrivalStopTime = departureStopTime.GetTripNextStopTime();
                     if (arrivalStopTime != null)
                     {
-                        var departureVertex = allVertices
+                        var departureVertex = vertices
                             .SingleOrDefault(p => p.Stop.Id == arrivalStopTime.Stop.Id);
                         var connection = connectionFactory
-                            .CreateConnection(graph, departureStopTime.Trip.Id, vertex, 
-                                departureStopTime.DepartureTime, departureVertex, 
+                            .CreateConnection(graph, departureStopTime.Trip.Id, vertex,
+                                departureStopTime.DepartureTime, departureVertex,
                                 arrivalStopTime.DepartureTime);
                         connections.Add(connection);
                     }
@@ -101,12 +123,21 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
                 vertex.Connections = connections;
                 await connectionRepository.AddRangeAsync(connections);
             }
-            return allVertices;
         }
 
-        private async Task FillVerticesWithSimilarVertices(ICollection<Vertex> vertices)
+        private async Task FillVerticesWithSimilarVertices(ConcurrentBag<Vertex> vertices)
         {
+            Console.WriteLine($"Creating tasks for similar vertices");
+            var tasks = new List<Task>();
             foreach (var vertex in vertices)
+            {
+                var task = FillVertexWithSimilarVertices(vertices, vertex);
+                tasks.Add(task);
+            }
+            Console.WriteLine($"Executing similar vertices tasks");
+            await Task.WhenAll(tasks);
+
+            async Task FillVertexWithSimilarVertices(ConcurrentBag<Vertex> vertices, Vertex vertex)
             {
                 var similarVertices = FindSimilarVerticesByDistance(vertices, vertex);
                 if (vertex.SimilarVertices == null)
@@ -120,10 +151,10 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
             }
         }
 
-        private IEnumerable<(Vertex Vertex, int DistanceInMinutes)> FindSimilarVerticesByDistance(
-            IEnumerable<Vertex> vertices, Vertex currentVertex)
+        private ConcurrentBag<(Vertex Vertex, int DistanceInMinutes)> FindSimilarVerticesByDistance(
+            ConcurrentBag<Vertex> vertices, Vertex currentVertex)
         {
-            var list = new List<(Vertex, int)>();
+            var list = new ConcurrentBag<(Vertex, int)>();
             foreach (var vertex in vertices)
             {
                 if (vertex.Stop.Id == currentVertex.Stop.Id)
