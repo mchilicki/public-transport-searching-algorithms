@@ -36,6 +36,12 @@
         "ASPNETCORE_ENVIRONMENT": "MultipleDijkstraSearch"
       },
       "nativeDebugging": false
+    },
+    "DataSummary": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "DataSummary"
+      }
     }
   }
 }

@@ -35,7 +35,7 @@ namespace Chilicki.Ptsa.Benchmarks
         private readonly MultipleCriteriaSearchManager multipleCriteriaSearchManager;
 
         public Graph Graph { get; set; }
-        public IEnumerable<SearchInputDto> Searches { get; set; } = LahtiInputSearches.Searches;
+        public IEnumerable<SearchInputDto> Searches { get; set; } = StavangerInputSearches.Searches;
 
         [Params(30, 60, 120, 180, 240, 360, 480, 720)]
         public int MaxTimeAheadFetchingPossibleConnections { get; set; }

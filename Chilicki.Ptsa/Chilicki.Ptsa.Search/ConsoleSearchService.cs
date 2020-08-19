@@ -7,6 +7,7 @@ using Chilicki.Ptsa.Domain.Search.Dtos;
 using Chilicki.Ptsa.Domain.Search.Managers;
 using Chilicki.Ptsa.Domain.Search.Mappers;
 using Chilicki.Ptsa.Domain.Search.Services.SearchInputs;
+using Chilicki.Ptsa.Domain.Search.Services.Summary;
 using Microsoft.Extensions.Options;
 using System;
 using System.IO;
@@ -23,6 +24,7 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
         readonly GraphManager graphManager;
         readonly MultipleCriteriaSearchManager multipleCriteriaSearchManager;
         private readonly RandomSearchInputGenerator searchInputGenerator;
+        private readonly DataSummaryService dataSummaryService;
 
         public ConsoleSearchService(
             IOptions<AppSettings> appSettings,
@@ -30,7 +32,8 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
             SearchManager searchManager,
             GraphManager graphManager,
             MultipleCriteriaSearchManager multipleCriteriaSearchManager,
-            RandomSearchInputGenerator searchInputGenerator)
+            RandomSearchInputGenerator searchInputGenerator,
+            DataSummaryService dataSummaryService)
         {
             this.appSettings = appSettings.Value;
             this.importService = importService;
@@ -38,6 +41,7 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
             this.graphManager = graphManager;
             this.multipleCriteriaSearchManager = multipleCriteriaSearchManager;
             this.searchInputGenerator = searchInputGenerator;
+            this.dataSummaryService = dataSummaryService;
         }
 
         public async Task Run()
@@ -61,12 +65,19 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
                     await GenerateRandomSearchInputs();
                 if (environmentName == "Benchmarks")
                     PerformFullBenchmarks();
+                if (environmentName == "DataSummary")
+                    await PerformDataSummary();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
                 Console.ReadKey();
             }            
+        }
+
+        private async Task PerformDataSummary()
+        {
+            await dataSummaryService.Summarize();
         }
 
         private async Task GenerateRandomSearchInputs()

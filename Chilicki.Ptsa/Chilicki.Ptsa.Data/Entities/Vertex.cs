@@ -13,7 +13,7 @@ namespace Chilicki.Ptsa.Data.Entities
         public string StopName { get; set; }
         public virtual Stop Stop { get; set; }
         
-        public virtual ICollection<Connection> Connections { get; set; }        
+        public virtual ICollection<Connection> Connections { get; set; }
         public virtual ICollection<SimilarVertex> SimilarVertices { get; set; }
 
         public override string ToString()
