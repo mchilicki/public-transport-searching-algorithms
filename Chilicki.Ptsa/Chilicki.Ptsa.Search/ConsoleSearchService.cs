@@ -108,8 +108,7 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
 
         private async Task PerformMultipleDijkstraBenchmark()
         {
-            await multipleCriteriaSearchManager.PerformDijkstraBenchmark(
-                appSettings.BenchmarkIterations);
+            await multipleCriteriaSearchManager.PerformDijkstraBenchmark();
         }
 
         private async Task PerformDijkstraBenchmark()

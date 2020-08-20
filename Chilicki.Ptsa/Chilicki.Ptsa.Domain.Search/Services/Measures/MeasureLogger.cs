@@ -49,17 +49,17 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Measures
             await SaveLogFile(fileName, log);
         }        
 
-        private void MakeTitle(StringBuilder sb, string nowString)
+        public void MakeTitle(StringBuilder sb, string nowString)
         {
             sb.AppendLine($"{title} {nowString}");
         }
 
-        private void MakeSeparation(StringBuilder sb)
+        public void MakeSeparation(StringBuilder sb)
         {
             sb.AppendLine();
         }
 
-        private void MakeMeasures(StringBuilder sb, IEnumerable<PerformanceMeasure> measures)
+        public void MakeMeasures(StringBuilder sb, IEnumerable<PerformanceMeasure> measures)
         {
             MakeMeasuresTitle(sb);
             MakeAverageTime(sb, measures);
@@ -189,7 +189,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Measures
             sb.AppendLine($"No path was found between these two stops at this hour");
         }
 
-        private async Task SaveLogFile(string fileName, string log)
+        public async Task SaveLogFile(string fileName, string log)
         {
             Directory.CreateDirectory(logFolder);
             await File.WriteAllTextAsync(fileName, log);

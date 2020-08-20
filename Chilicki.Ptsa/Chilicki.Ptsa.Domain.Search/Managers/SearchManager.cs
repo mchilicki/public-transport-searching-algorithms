@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Chilicki.Ptsa.Domain.Search.Services.Measures;
 using System;
+using Chilicki.Ptsa.Domain.InputSearches;
+using Chilicki.Ptsa.Domain.Search.InputSearches;
 
 namespace Chilicki.Ptsa.Domain.Search.Managers
 {
@@ -24,7 +26,8 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
         readonly SearchInputMapper mapper;
         readonly GraphRepository graphRepository;
         readonly RandomSearchInputGenerator searchInputGenerator;
-        readonly MeasureLogger measureLogger;
+        readonly ShortMeasureLogger measureLogger;
+        private readonly string algorithmName = "SingleDijkstra";
 
         public SearchManager(
             IConnectionSearchEngine connectionSearchEngine,
@@ -33,7 +36,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             SearchInputMapper mapper,
             GraphRepository graphRepository,
             RandomSearchInputGenerator searchInputGenerator,
-            MeasureLogger measureLogger)
+            ShortMeasureLogger measureLogger)
         {
             this.connectionSearchEngine = connectionSearchEngine;
             this.searchValidator = searchValidator;
@@ -58,7 +61,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             var path = PerformSearch(search, graph);
             stopwatch.Stop();
             var measure = PerformanceMeasure.Create(path, stopwatch.Elapsed);
-            await measureLogger.Log(measure);
+            await measureLogger.Log(measure, algorithmName);
         }
 
         public FastestPath PerformSearch(SearchInput search, Graph graph)
@@ -92,7 +95,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
 
         public async Task PerformDijkstraBenchmark(int searchInputCount)
         {
-            var searchInputDtos = await searchInputGenerator.Generate(searchInputCount);
+            var searchInputDtos = CurrentInputSearches.Searches;
             var searches = await mapper.ToDomain(searchInputDtos);
             var graph = await graphRepository.GetGraph();
             var measures = new List<PerformanceMeasure>();
@@ -104,7 +107,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
                 measures.Add(PerformanceMeasure.Create(path, stopwatch.Elapsed));
                 ClearVisitedVertices(graph);
             }
-            await measureLogger.Log(measures);
+            await measureLogger.Log(measures, algorithmName);
         }
 
         public void ClearVisitedVertices(Graph graph)

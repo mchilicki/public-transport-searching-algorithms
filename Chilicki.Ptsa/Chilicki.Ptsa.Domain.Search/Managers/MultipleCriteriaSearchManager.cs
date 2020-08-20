@@ -1,9 +1,11 @@
 ﻿using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Data.Repositories;
+using Chilicki.Ptsa.Domain.InputSearches;
 using Chilicki.Ptsa.Domain.Search.Aggregates;
 using Chilicki.Ptsa.Domain.Search.Aggregates.MultipleCriterion;
 using Chilicki.Ptsa.Domain.Search.Dtos;
 using Chilicki.Ptsa.Domain.Search.Helpers.Exceptions;
+using Chilicki.Ptsa.Domain.Search.InputSearches;
 using Chilicki.Ptsa.Domain.Search.Mappers;
 using Chilicki.Ptsa.Domain.Search.Services;
 using Chilicki.Ptsa.Domain.Search.Services.Measures;
@@ -26,7 +28,8 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
         readonly SearchInputMapper mapper;
         readonly GraphRepository graphRepository;
         readonly RandomSearchInputGenerator searchInputGenerator;
-        readonly MeasureLogger measureLogger;
+        readonly ShortMeasureLogger measureLogger;
+        private readonly string algorithmName = "MultiDijkstra";
 
         public MultipleCriteriaSearchManager(
             MultipleCriterionDijkstraSearch searchEngine,
@@ -35,7 +38,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             SearchInputMapper mapper,
             GraphRepository graphRepository,
             RandomSearchInputGenerator searchInputGenerator,
-            MeasureLogger measureLogger)
+            ShortMeasureLogger measureLogger)
         {
             this.searchEngine = searchEngine;
             this.searchValidator = searchValidator;
@@ -54,9 +57,9 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             await PerformSearchWithLog(search, graph);
         }
 
-        public async Task PerformDijkstraBenchmark(int searchInputCount)
+        public async Task PerformDijkstraBenchmark()
         {
-            var searchInputDtos = await searchInputGenerator.Generate(searchInputCount);
+            var searchInputDtos = CurrentInputSearches.Searches;
             var searches = await mapper.ToDomain(searchInputDtos);
             var graph = await graphRepository.GetGraph();
             var measures = new List<PerformanceMeasure>();
@@ -68,7 +71,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
                 var paths = bestPathResolver.ResolveBestPaths(search, bestConnections);
                 measures.Add(PerformanceMeasure.Create(paths, stopwatch.Elapsed));
             }
-            await measureLogger.Log(measures);
+            await measureLogger.Log(measures, algorithmName);
         }
 
         private async Task PerformSearchWithLog(SearchInput search, Graph graph)
@@ -78,7 +81,7 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             stopwatch.Stop();
             var paths = bestPathResolver.ResolveBestPaths(search, bestConnections);
             var measure = PerformanceMeasure.Create(paths, stopwatch.Elapsed);
-            await measureLogger.Log(measure);
+            await measureLogger.Log(measure, algorithmName);
         }
 
         public BestConnections PerformSearch(SearchInput search, Graph graph)

@@ -42,6 +42,18 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "DataSummary"
       }
+    },
+    "DijkstraBenchmark": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "DijkstraBenchmark"
+      }
+    },
+    "MultipleDijkstraBenchmark": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "MultipleDijkstraBenchmark"
+      }
     }
   }
 }

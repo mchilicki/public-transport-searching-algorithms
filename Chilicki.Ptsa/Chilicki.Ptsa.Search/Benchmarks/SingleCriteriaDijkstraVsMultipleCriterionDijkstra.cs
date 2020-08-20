@@ -7,6 +7,7 @@ using Chilicki.Ptsa.Domain.Search.Aggregates;
 using Chilicki.Ptsa.Domain.Search.Aggregates.MultipleCriterion;
 using Chilicki.Ptsa.Domain.Search.Configurations.Options;
 using Chilicki.Ptsa.Domain.Search.Dtos;
+using Chilicki.Ptsa.Domain.Search.InputSearches;
 using Chilicki.Ptsa.Domain.Search.Managers;
 using Chilicki.Ptsa.Domain.Search.Mappers;
 using Chilicki.Ptsa.Search.Benchmarks.Singletons;
@@ -33,7 +34,7 @@ namespace Chilicki.Ptsa.Benchmarks
         private readonly MultipleCriteriaSearchManager multipleCriteriaSearchManager;
 
         public Graph Graph { get; set; }
-        public IEnumerable<SearchInputDto> Searches { get; set; } = StavangerInputSearches.Searches;
+        public IEnumerable<SearchInputDto> Searches { get; set; } = CurrentInputSearches.Searches;
 
         [Params(30, 60, 120, 180, 240, 360, 480, 720)]
         public int MaxTimeAheadFetchingPossibleConnections { get; set; }

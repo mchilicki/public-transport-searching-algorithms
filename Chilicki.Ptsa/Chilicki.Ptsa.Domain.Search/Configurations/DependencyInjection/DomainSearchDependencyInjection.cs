@@ -66,6 +66,7 @@ namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
             services.AddTransient<SimilarVerticesService>();
             services.AddTransient<DataSummaryService>();
             services.AddTransient<StopsFinder>();
+            services.AddTransient<ShortMeasureLogger>();
         }
 
         private void ConfigureFactories(IServiceCollection services)
