@@ -2,15 +2,13 @@
 using BenchmarkDotNet.Engines;
 using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Data.Repositories;
+using Chilicki.Ptsa.Domain.InputSearches;
 using Chilicki.Ptsa.Domain.Search.Aggregates;
 using Chilicki.Ptsa.Domain.Search.Aggregates.MultipleCriterion;
 using Chilicki.Ptsa.Domain.Search.Configurations.Options;
 using Chilicki.Ptsa.Domain.Search.Dtos;
 using Chilicki.Ptsa.Domain.Search.Managers;
 using Chilicki.Ptsa.Domain.Search.Mappers;
-using Chilicki.Ptsa.Domain.Search.Services;
-using Chilicki.Ptsa.Domain.Search.Services.SearchInputs;
-using Chilicki.Ptsa.Search.Benchmarks.InputSearches;
 using Chilicki.Ptsa.Search.Benchmarks.Singletons;
 using Chilicki.Ptsa.Search.Configurations.Startup;
 using Microsoft.Extensions.DependencyInjection;

@@ -10,17 +10,17 @@ namespace Chilicki.Ptsa.Domain.Search.Services.SearchInputs
 {
     public class RandomSearchInputGenerator
     {
-        readonly StopRepository stopRepository;
+        private readonly StopsFinder stopsFinder;
 
         public RandomSearchInputGenerator(
-            StopRepository stopRepository)
+            StopsFinder stopsFinder)
         {
-            this.stopRepository = stopRepository;
+            this.stopsFinder = stopsFinder;
         }
 
         public async Task<IEnumerable<SearchInputDto>> Generate(int searchInputCount)
         {
-            var stopIds = await stopRepository.GetStopIds();
+            var stopIds = await stopsFinder.FindStopIdsNearCenter();
             var stopIdsCount = stopIds.Count;
             var random = new Random();
             var searchInputs = new List<SearchInputDto>();

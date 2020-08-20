@@ -83,7 +83,7 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
         private async Task GenerateRandomSearchInputs()
         {
             string path = $"C:\\Users\\Marcin Chilicki\\Desktop\\RandomSearchInputs.txt";
-            var searches = await searchInputGenerator.Generate(100);
+            var searches = await searchInputGenerator.Generate(25);
             var sb = new StringBuilder();
             foreach (var search in searches)
             {

@@ -14,10 +14,10 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Calculations
 
         private double CalculateDistance(Stop stop1, Stop stop2)
         {
-            return CalculateDistance(stop1.Latitude, stop1.Longitude, stop2.Latitude, stop2.Longitude);
+            return CalculateDistanceInKm(stop1.Latitude, stop1.Longitude, stop2.Latitude, stop2.Longitude);
         }
 
-        public double CalculateDistance(
+        public double CalculateDistanceInKm(
             double latitude1, double longitude1, double latitude2, double longitude2)
         {
             var piDividedBy180 = 0.017453292519943295;

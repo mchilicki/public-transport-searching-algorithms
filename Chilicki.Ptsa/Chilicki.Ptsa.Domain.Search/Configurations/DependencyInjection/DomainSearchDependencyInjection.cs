@@ -65,6 +65,7 @@ namespace Chilicki.Ptsa.Domain.Search.Configurations.DependencyInjection
             services.AddTransient<KilometersToDistanceMinutesConverter>();
             services.AddTransient<SimilarVerticesService>();
             services.AddTransient<DataSummaryService>();
+            services.AddTransient<StopsFinder>();
         }
 
         private void ConfigureFactories(IServiceCollection services)
