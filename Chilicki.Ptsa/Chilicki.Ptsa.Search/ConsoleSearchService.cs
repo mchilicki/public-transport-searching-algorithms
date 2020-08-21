@@ -67,6 +67,8 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
                     PerformFullBenchmarks();
                 if (environmentName == "DataSummary")
                     await PerformDataSummary();
+                if (environmentName == "NearCenterDataSummary")
+                    await PerformNearCenterDataSummary();
             }
             catch (Exception ex)
             {
@@ -78,6 +80,11 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
         private async Task PerformDataSummary()
         {
             await dataSummaryService.Summarize();
+        }
+
+        private async Task PerformNearCenterDataSummary()
+        {
+            await dataSummaryService.SummarizeNearCenter();
         }
 
         private async Task GenerateRandomSearchInputs()

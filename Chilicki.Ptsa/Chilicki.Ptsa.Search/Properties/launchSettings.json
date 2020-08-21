@@ -43,6 +43,12 @@
         "ASPNETCORE_ENVIRONMENT": "DataSummary"
       }
     },
+    "NearCenterDataSummary": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "NearCenterDataSummary"
+      }
+    },
     "DijkstraBenchmark": {
       "commandName": "Project",
       "environmentVariables": {

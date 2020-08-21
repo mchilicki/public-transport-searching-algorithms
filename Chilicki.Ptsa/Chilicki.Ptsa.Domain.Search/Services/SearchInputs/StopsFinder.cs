@@ -12,16 +12,16 @@ namespace Chilicki.Ptsa.Domain.Search.Services.SearchInputs
     public class StopsFinder
     {
         // Poznan
-        //private readonly double latitude = 52.406397; 
-        //private readonly double longitude = 16.925207;
+        private readonly double latitude = 52.406397; 
+        private readonly double longitude = 16.925207;
 
         // Lahti 
         //private readonly double latitude = 60.977406;
         //private readonly double longitude = 25.657927;
 
         // Stavanger 
-        private readonly double latitude = 58.962080; 
-        private readonly double longitude = 5.720296;
+        //private readonly double latitude = 58.962080; 
+        //private readonly double longitude = 5.720296;
 
         private readonly double maxDistanceFromCenter = 3.5;
         private readonly StopRepository stopRepository;
@@ -46,6 +46,14 @@ namespace Chilicki.Ptsa.Domain.Search.Services.SearchInputs
                     selectedStops.Add(stop);
             }
             return selectedStops.Select(p => p.Id).ToList();
+        }
+
+        public async Task<IEnumerable<Vertex>> FindVerticesNearCenter(IEnumerable<Vertex> vertices)
+        {
+            var stopIdsNearCenter = await FindStopIdsNearCenter();
+            var verticesNearCenter = vertices.Where(p =>
+                stopIdsNearCenter.Contains(p.StopId));
+            return verticesNearCenter;
         }
     }
 }

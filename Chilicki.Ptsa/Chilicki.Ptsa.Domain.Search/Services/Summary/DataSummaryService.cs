@@ -1,4 +1,5 @@
 ﻿using Chilicki.Ptsa.Data.Repositories;
+using Chilicki.Ptsa.Domain.Search.Services.SearchInputs;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,6 +17,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Summary
         private readonly TripRepository tripRepository;
         private readonly VertexRepository vertexRepository;
         private readonly ConnectionRepository connectionRepository;
+        private readonly StopsFinder stopsFinder;
 
         public DataSummaryService(
             AgencyRepository agencyRepository,
@@ -23,7 +25,8 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Summary
             RouteRepository routeRepository,
             TripRepository tripRepository,
             VertexRepository vertexRepository,
-            ConnectionRepository connectionRepository)
+            ConnectionRepository connectionRepository,
+            StopsFinder stopsFinder)
         {
             this.agencyRepository = agencyRepository;
             this.graphRepository = graphRepository;
@@ -31,6 +34,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Summary
             this.tripRepository = tripRepository;
             this.vertexRepository = vertexRepository;
             this.connectionRepository = connectionRepository;
+            this.stopsFinder = stopsFinder;
         }
 
         public async Task Summarize()
@@ -77,6 +81,49 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Summary
             AppendLine(sb, "AverageTripsPerRouteCount", averageTripsPerRouteCount);
             AppendLine(sb, "MinTripsPerRouteCount", minTripsPerRouteCount);
             AppendLine(sb, "MaxTripsPerRouteCount", maxTripsPerRouteCount);
+
+            sb.AppendLine();
+            AppendLine(sb, "AverageConnectionsPerVertexCount", averageConnectionsPerVertexCount);
+            AppendLine(sb, "MinConnectionsPerVertexCount", minConnectionsPerVertexCount);
+            AppendLine(sb, "MaxConnectionsPerVertexCount", maxConnectionsPerVertexCount);
+
+            sb.AppendLine();
+            AppendLine(sb, "AverageSimilarConnectionsPerVertexCount", averageSimilarConnectionsPerVertexCount);
+            AppendLine(sb, "MinSimilarConnectionsPerVertexCount", minSimilarConnectionsPerVertexCount);
+            AppendLine(sb, "MaxSimilarConnectionsPerVertexCount", maxSimilarConnectionsPerVertexCount);
+            string summary = sb.ToString();
+            File.WriteAllText($"Summaries\\Summary-{DateTime.Now.ToShortDateString()}.txt", summary);
+        }
+
+        public async Task SummarizeNearCenter()
+        {
+            var graph = await graphRepository.GetGraph();
+            var verticesNearCenter = await stopsFinder.FindVerticesNearCenter(graph.Vertices);
+
+            var agencies = await agencyRepository.GetAllAsync();
+            var agencyName = agencies.FirstOrDefault().Name;
+
+            int vertexCount = verticesNearCenter.Count();
+            int connectionCount = verticesNearCenter.Sum(p => p.Connections.Count);
+            int similarVertexCount = verticesNearCenter.Sum(p => p.SimilarVertices.Count);
+
+            double averageConnectionsPerVertexCount = verticesNearCenter.Average(p => p.Connections.Count);
+            int minConnectionsPerVertexCount = verticesNearCenter
+                .Where(p => p.Connections.Any())
+                .Min(p => p.Connections.Count);
+            int maxConnectionsPerVertexCount = verticesNearCenter.Max(p => p.Connections.Count);
+
+            double averageSimilarConnectionsPerVertexCount = verticesNearCenter.Average(p => p.SimilarVertices.Count);
+            int minSimilarConnectionsPerVertexCount = verticesNearCenter
+                .Where(p => p.SimilarVertices.Any())
+                .Min(p => p.SimilarVertices.Count);
+            int maxSimilarConnectionsPerVertexCount = verticesNearCenter.Max(p => p.SimilarVertices.Count);
+
+            var sb = new StringBuilder();
+            sb.AppendLine($"Agency {agencyName}");
+            AppendLine(sb, "VertexCount", vertexCount);
+            AppendLine(sb, "ConnectionCount", connectionCount);
+            AppendLine(sb, "SimilarVertexCount", similarVertexCount);
 
             sb.AppendLine();
             AppendLine(sb, "AverageConnectionsPerVertexCount", averageConnectionsPerVertexCount);
