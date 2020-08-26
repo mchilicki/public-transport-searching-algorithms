@@ -1,7 +1,10 @@
-﻿using Chilicki.Ptsa.Data.Databases;
+﻿using Chilicki.Ptsa.Data.Configurations.ProjectConfiguration;
+using Chilicki.Ptsa.Data.Databases;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using System.IO;
 
 namespace Chilicki.Ptsa.Search.Configurations.Migrations
@@ -9,9 +12,8 @@ namespace Chilicki.Ptsa.Search.Configurations.Migrations
     public class PtsaDbContextFactoryForEFCoreMigrations : IDesignTimeDbContextFactory<PtsaDbContext>
     {
         public PtsaDbContext CreateDbContext(string[] args)
-        {
-            var configuration = GetConfiguration();
-            var databaseConnectionString = configuration.GetConnectionString("PtsaDatabase");
+        {            
+            string databaseConnectionString = GetCurrentConnectionString();
             var optionsBuilder = new DbContextOptionsBuilder<PtsaDbContext>();
             optionsBuilder.UseSqlServer(
                 databaseConnectionString,
@@ -19,6 +21,18 @@ namespace Chilicki.Ptsa.Search.Configurations.Migrations
             );
             optionsBuilder.EnableSensitiveDataLogging(true);
             return new PtsaDbContext(optionsBuilder.Options);
+        }
+
+        private string GetCurrentConnectionString()
+        {
+            var configuration = GetConfiguration();
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.Configure<ConnectionStrings>
+                (configuration.GetSection(nameof(ConnectionStrings)));
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            var connectionStrings = serviceProvider.GetRequiredService<IOptions<ConnectionStrings>>().Value;
+            var databaseConnectionString = connectionStrings.CurrentDatabase;
+            return databaseConnectionString;
         }
 
         private IConfigurationRoot GetConfiguration()

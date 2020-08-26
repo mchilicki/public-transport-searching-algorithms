@@ -1,4 +1,6 @@
-﻿using Chilicki.Ptsa.Domain.Search.Aggregates;
+﻿using Chilicki.Ptsa.Data.Configurations.ProjectConfiguration;
+using Chilicki.Ptsa.Domain.Search.Aggregates;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,14 +12,16 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Measures
     public class ShortMeasureLogger
     {
         readonly string dateTimeNowFormat = "yyyy-MM-dd-HH-mm-ss";
-        readonly string logFolder = $"C:\\Users\\Marcin Chilicki\\Desktop\\Measures";
+        readonly string logFolder;
         readonly string fileExtension = ".txt";
         private readonly MeasureLogger measureLogger;
 
         public ShortMeasureLogger(
-            MeasureLogger measureLogger)
+            MeasureLogger measureLogger,
+            IOptions<PathSettings> pathSettingsOptions)
         {
             this.measureLogger = measureLogger;
+            logFolder = pathSettingsOptions.Value.AlgorithmMeasuresOutputFile;
         }
 
         public async Task Log(PerformanceMeasure measure, string algorithm)
@@ -31,7 +35,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Measures
             if (measures == null)
                 return;
             var nowString = DateTime.Now.ToString(dateTimeNowFormat);
-            var fileName = $"{logFolder}/{algorithm}-{nowString}{fileExtension}";
+            var fileName = $"{logFolder}{algorithm}-{nowString}{fileExtension}";
             var sb = new StringBuilder();
             measureLogger.MakeTitle(sb, nowString);
             measureLogger.MakeSeparation(sb);

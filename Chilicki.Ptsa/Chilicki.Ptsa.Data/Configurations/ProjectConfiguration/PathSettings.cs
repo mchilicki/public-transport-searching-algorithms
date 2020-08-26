@@ -8,6 +8,7 @@ namespace Chilicki.Ptsa.Data.Configurations.ProjectConfiguration
     {
         public string GtfsImportFolder { get; set; }
         public string DataSummaryOutputFolder { get; set; }
+        public string AlgorithmMeasuresOutputFile { get; set; }
 
         public string PoznanSearchInputsFile { get; set; }
         public string LahtiSearchInputsFile { get; set; }

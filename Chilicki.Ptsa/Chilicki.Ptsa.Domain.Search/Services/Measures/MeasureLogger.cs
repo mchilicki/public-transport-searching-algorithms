@@ -1,7 +1,9 @@
-﻿using Chilicki.Ptsa.Data.Entities;
+﻿using Chilicki.Ptsa.Data.Configurations.ProjectConfiguration;
+using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Data.Repositories;
 using Chilicki.Ptsa.Domain.Search.Aggregates;
 using Chilicki.Ptsa.Domain.Search.Helpers.Extensions;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,18 +16,17 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Measures
     public class MeasureLogger
     {
         readonly TripRepository tripRepository;
-
-        public MeasureLogger(
-            TripRepository tripRepository)
-        {
-            this.tripRepository = tripRepository;
-        }
-
+        readonly string logFolder;
         readonly string dateTimeNowFormat = "yyyy-MM-dd-HH-mm-ss";
         readonly string fileStart = "Dijkstra-";
-        readonly string logFolder = "Measures";
         readonly string fileExtension = ".txt";
         readonly string title = "Dijkstra measurements report";
+
+        public MeasureLogger(
+            IOptions<PathSettings> pathSettingsOptions)
+        {
+            logFolder = pathSettingsOptions.Value.AlgorithmMeasuresOutputFile;
+        }
 
         public async Task Log(PerformanceMeasure measure)
         {
@@ -38,7 +39,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Measures
             if (measures == null)
                 return;
             var nowString = DateTime.Now.ToString(dateTimeNowFormat);
-            var fileName = $"{logFolder}/{fileStart}{nowString}{fileExtension}";
+            var fileName = $"{logFolder}{fileStart}{nowString}{fileExtension}";
             var sb = new StringBuilder();
             MakeTitle(sb, nowString);
             MakeSeparation(sb);
@@ -169,10 +170,16 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Measures
         }
         
         private async Task MakeConnection(StringBuilder sb, Connection conn)
-        {            
-            var trip = await tripRepository.FindWithRouteAsync(conn.TripId.Value);
-            var routeName = trip.Route.ShortName;
-            var headSign = trip.HeadSign;
+        {
+            Trip trip;
+            string routeName = "Empty route name";
+            string headSign = "Empty headsign";
+            if (conn.TripId.HasValue)
+            {
+                trip = await tripRepository.FindWithRouteAsync(conn.TripId.Value);
+                routeName = trip.Route.ShortName;
+                headSign = trip.HeadSign;
+            }                
             sb.AppendLine($"({routeName}) - ({conn.StartVertex.StopName} - " +
                 $"{conn.EndVertex.StopName}) -> {headSign}");
             sb.AppendLine($"Time {conn.DepartureTime} -> {conn.ArrivalTime}");

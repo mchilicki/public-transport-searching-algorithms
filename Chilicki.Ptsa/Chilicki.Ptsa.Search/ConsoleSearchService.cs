@@ -97,11 +97,13 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
 
         private async Task PerformDataSummary()
         {
+            Console.WriteLine($"Calculating data summary for {databaseType}");
             await dataSummaryService.Summarize();
         }
 
         private async Task PerformNearCenterDataSummary()
         {
+            Console.WriteLine($"Calculating data summary from city center only for {databaseType}");
             await dataSummaryService.SummarizeNearCenter();
         }
 

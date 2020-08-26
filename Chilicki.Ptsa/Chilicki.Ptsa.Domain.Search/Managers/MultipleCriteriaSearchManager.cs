@@ -53,7 +53,11 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
         {
             await searchValidator.Validate(searchInputDto);
             var search = await mapper.ToDomain(searchInputDto);
+            Console.WriteLine("Searching with time-dependent multi criterion Dijkstra algorithm");
+            Console.WriteLine($"From {search.StartStop.Name} to {search.DestinationStop.Name} at {search.StartTime}");
+            Console.WriteLine("Fetching graph from database");
             var graph = await graphRepository.GetGraph();
+            Console.WriteLine("Graph fetched, starting searching");
             await PerformSearchWithLog(search, graph);
         }
 

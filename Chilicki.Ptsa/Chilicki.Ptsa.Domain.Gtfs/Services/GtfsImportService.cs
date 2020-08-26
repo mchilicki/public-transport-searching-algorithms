@@ -45,6 +45,7 @@ namespace Chilicki.Ptsa.Domain.Gtfs.Services
 
         public async Task ImportGtfs(string gtfsFolderPath)
         {
+            Console.WriteLine($"Importing GTFS from {gtfsFolderPath}");
             var agency = ReadAgency($"{gtfsFolderPath}{AGENCY}");
             var stops = ReadStops($"{gtfsFolderPath}{STOPS}");
             var routes = ReadRoutes($"{gtfsFolderPath}{ROUTES}", agency);
