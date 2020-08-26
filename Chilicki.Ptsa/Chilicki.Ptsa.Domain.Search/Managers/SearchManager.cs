@@ -25,7 +25,6 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
         readonly SearchValidator searchValidator;
         readonly SearchInputMapper mapper;
         readonly GraphRepository graphRepository;
-        readonly RandomSearchInputGenerator searchInputGenerator;
         readonly ShortMeasureLogger measureLogger;
         private readonly string algorithmName = "SingleDijkstra";
 
@@ -35,7 +34,6 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             SearchValidator searchValidator,
             SearchInputMapper mapper,
             GraphRepository graphRepository,
-            RandomSearchInputGenerator searchInputGenerator,
             ShortMeasureLogger measureLogger)
         {
             this.connectionSearchEngine = connectionSearchEngine;
@@ -43,7 +41,6 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             this.mapper = mapper;
             this.fastestPathResolver = fastestPathResolver;
             this.graphRepository = graphRepository;
-            this.searchInputGenerator = searchInputGenerator;
             this.measureLogger = measureLogger;
         }
 
@@ -91,23 +88,6 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             {                
                 return fastestPathResolver.CreateNotFoundPath(search);
             }
-        }
-
-        public async Task PerformDijkstraBenchmark(int searchInputCount)
-        {
-            var searchInputDtos = CurrentInputSearches.Searches;
-            var searches = await mapper.ToDomain(searchInputDtos);
-            var graph = await graphRepository.GetGraph();
-            var measures = new List<PerformanceMeasure>();
-            foreach (var search in searches)
-            {
-                var stopwatch = Stopwatch.StartNew();
-                var path = PerformSearch(search, graph);
-                stopwatch.Stop();
-                measures.Add(PerformanceMeasure.Create(path, stopwatch.Elapsed));
-                ClearVisitedVertices(graph);
-            }
-            await measureLogger.Log(measures, algorithmName);
         }
 
         public void ClearVisitedVertices(Graph graph)

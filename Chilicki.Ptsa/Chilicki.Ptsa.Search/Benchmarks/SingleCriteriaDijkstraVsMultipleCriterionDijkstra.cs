@@ -1,10 +1,11 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
+using Chilicki.Ptsa.Data.Configurations.ProjectConfiguration;
 using Chilicki.Ptsa.Data.Entities;
 using Chilicki.Ptsa.Data.Repositories;
+using Chilicki.Ptsa.Domain.InputSearches;
 using Chilicki.Ptsa.Domain.Search.Aggregates;
 using Chilicki.Ptsa.Domain.Search.Aggregates.MultipleCriterion;
-using Chilicki.Ptsa.Domain.Search.Configurations.Options;
 using Chilicki.Ptsa.Domain.Search.Dtos;
 using Chilicki.Ptsa.Domain.Search.InputSearches;
 using Chilicki.Ptsa.Domain.Search.Managers;
@@ -12,10 +13,13 @@ using Chilicki.Ptsa.Domain.Search.Mappers;
 using Chilicki.Ptsa.Search.Benchmarks.Singletons;
 using Chilicki.Ptsa.Search.Configurations.Startup;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Chilicki.Ptsa.Benchmarks
@@ -31,9 +35,11 @@ namespace Chilicki.Ptsa.Benchmarks
         private readonly GraphRepository graphRepository;
         private readonly SearchManager dijkstraSearchManager;
         private readonly MultipleCriteriaSearchManager multipleCriteriaSearchManager;
+        private readonly DatabaseType databaseType;
+        private readonly string inputSearchesPath;
 
         public Graph Graph { get; set; }
-        public IEnumerable<SearchInputDto> Searches { get; set; } = CurrentInputSearches.Searches;
+        public IEnumerable<SearchInputDto> Searches { get; set; }
 
         public SingleCriteriaDijkstraVsMultipleCriterionDijkstra()
         {
@@ -44,6 +50,24 @@ namespace Chilicki.Ptsa.Benchmarks
             graphRepository = serviceProvider.GetRequiredService<GraphRepository>();
             dijkstraSearchManager = serviceProvider.GetRequiredService<SearchManager>();
             multipleCriteriaSearchManager = serviceProvider.GetRequiredService<MultipleCriteriaSearchManager>();
+            databaseType = serviceProvider.GetRequiredService<IOptions<ConnectionStrings>>().Value.DatabaseType;
+            inputSearchesPath = serviceProvider.GetRequiredService<IOptions<PathSettings>>().Value.CurrentSearchInputsFile(databaseType);
+
+            string fileText;
+            try
+            {
+                fileText = File.ReadAllText(inputSearchesPath);
+                Searches = JsonConvert.DeserializeObject<IEnumerable<SearchInputDto>>(fileText);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Thread.Sleep(1000000);
+                throw;
+            }            
+            
+            Console.WriteLine($"{Searches.First().StartStopId} -> {Searches.First().DestinationStopId}");
+            Console.WriteLine($"Database - {databaseType}");
             Console.WriteLine("Constructor - Done");
         }
 
@@ -60,12 +84,12 @@ namespace Chilicki.Ptsa.Benchmarks
         [Arguments(4, 8)]
         [Arguments(4, 6)]
         public void SingleCriteriaDijkstra(
-            int minimalTransferTime,
-            int maximalTransferDistanceInMinutes)
+            int minimalTransferInMinutes,
+            int maximalTransferInMinutes)
         {
             var list = new List<FastestPath>();
             var parameters = CreateParameters(
-                120, 15, minimalTransferTime, maximalTransferDistanceInMinutes);
+                120, 15, minimalTransferInMinutes, maximalTransferInMinutes);
             foreach (var search in Searches)
             {
                 var searchInput = searchInputMapper.ToDomainFromGraph(search, parameters, Graph);
@@ -139,12 +163,12 @@ namespace Chilicki.Ptsa.Benchmarks
         public void MultipleCriteriaDijkstra(
             int maxTimeAheadFetchingPossibleConnections, 
             int minimumPossibleConnectionsFetched, 
-            int minimalTransferTime, 
-            int maximalTransferDistanceInMinutes)
+            int minimalTransferInMinutes, 
+            int maximalTransferInMinutes)
         {
             var list = new List<BestConnections>();
             var parameters = CreateParameters(
-                maxTimeAheadFetchingPossibleConnections, minimumPossibleConnectionsFetched, minimalTransferTime, maximalTransferDistanceInMinutes);
+                maxTimeAheadFetchingPossibleConnections, minimumPossibleConnectionsFetched, minimalTransferInMinutes, maximalTransferInMinutes);
             foreach (var search in Searches)
             {
                 var searchInput = searchInputMapper.ToDomainFromGraph(search, parameters, Graph);
@@ -157,15 +181,15 @@ namespace Chilicki.Ptsa.Benchmarks
         private SearchParameters CreateParameters(
             int maxTimeAheadFetchingPossibleConnections,
             int minimumPossibleConnectionsFetched,
-            int minimalTransferTime,
-            int maximalTransferDistanceInMinutes)
+            int minimalTransferInMinutes,
+            int maximalTransferInMinutes)
         {
             return new SearchParameters()
             {
                 MaxTimeAheadFetchingPossibleConnections = maxTimeAheadFetchingPossibleConnections,
                 MinimumPossibleConnectionsFetched = minimumPossibleConnectionsFetched,
-                MinimalTransferTime = minimalTransferTime,
-                MaximalTransferDistanceInMinutes = maximalTransferDistanceInMinutes,
+                MinimalTransferInMinutes = minimalTransferInMinutes,
+                MaximalTransferInMinutes = maximalTransferInMinutes,
             };
         }
     }

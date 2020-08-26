@@ -29,16 +29,31 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
         private IServiceProvider ConfigureDependencyInjection()
         {
             var serviceCollection = new ServiceCollection();
-            serviceCollection.Configure<AppSettings>
-                (Configuration.GetSection(nameof(AppSettings)));
-            serviceCollection.Configure<ConnectionStrings>
-                (Configuration.GetSection(nameof(ConnectionStrings)));
+            ConfigureAppSettingsSections(serviceCollection);
             ServiceProvider = serviceCollection.BuildServiceProvider();
             var searchDependencyInjection = new SearchDependencyInjection();
             var connectionStrings = ServiceProvider.GetService<IOptions<ConnectionStrings>>().Value;
             searchDependencyInjection.Configure(serviceCollection, connectionStrings);
             ServiceProvider = serviceCollection.BuildServiceProvider();
             return ServiceProvider;
+        }
+
+        private void ConfigureAppSettingsSections(ServiceCollection serviceCollection)
+        {
+            serviceCollection.Configure<GraphCreationSettings>
+                (Configuration.GetSection(nameof(GraphCreationSettings)));
+            serviceCollection.Configure<PathSettings>
+                (Configuration.GetSection(nameof(PathSettings)));
+            serviceCollection.Configure<ConnectionStrings>
+                (Configuration.GetSection(nameof(ConnectionStrings)));
+            serviceCollection.Configure<SearchSettings>
+                (Configuration.GetSection(nameof(SearchSettings)));
+            serviceCollection.Configure<CityCenterSettings>
+                (Configuration.GetSection(nameof(CityCenterSettings)));
+            serviceCollection.Configure<ModuleTypes>
+                (Configuration.GetSection(nameof(ModuleTypes)));
+            serviceCollection.Configure<SummarySettings>
+                (Configuration.GetSection(nameof(SummarySettings)));
         }
 
         private void ConfigureAppSettings()

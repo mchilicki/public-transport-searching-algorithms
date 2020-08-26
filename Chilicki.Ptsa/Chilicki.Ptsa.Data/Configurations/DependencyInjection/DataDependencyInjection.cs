@@ -37,7 +37,7 @@ namespace Chilicki.Ptsa.Data.Configurations.DependencyInjection
 
         private void ConfigureDatabases(IServiceCollection services, ConnectionStrings connectionStrings)
         {
-            var databaseConnectionString = connectionStrings.PtsaDatabase;            
+            var databaseConnectionString = connectionStrings.CurrentDatabase;            
             services.AddDbContext<DbContext, PtsaDbContext>(optionsBuilder =>
             {
                 optionsBuilder.UseSqlServer(

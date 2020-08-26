@@ -1,14 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Chilicki.Ptsa.Data.Configurations.ProjectConfiguration
 {
-    public class AppSettings
+    public class SearchSettings
     {
-        public string ImportGtfsPath { get; set; }
         public Guid StartStopId { get; set; }
         public Guid EndStopId { get; set; }
         public TimeSpan StartTime { get; set; }
-        public int BenchmarkIterations { get; set; }
-        public double SimilarVertexMaximumDistanceInKm { get; set; }
+        public SearchParameters Parameters { get; set; }
     }
 }

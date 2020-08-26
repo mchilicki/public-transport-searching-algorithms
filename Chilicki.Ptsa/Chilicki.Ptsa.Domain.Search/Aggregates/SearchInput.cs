@@ -1,5 +1,5 @@
-﻿using Chilicki.Ptsa.Data.Entities;
-using Chilicki.Ptsa.Domain.Search.Configurations.Options;
+﻿using Chilicki.Ptsa.Data.Configurations.ProjectConfiguration;
+using Chilicki.Ptsa.Data.Entities;
 using System;
 
 namespace Chilicki.Ptsa.Domain.Search.Aggregates

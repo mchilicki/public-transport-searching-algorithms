@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Chilicki.Ptsa.Data.Entities;
 using System.Linq;
-using Chilicki.Ptsa.Domain.Search.Configurations.Options;
+using Chilicki.Ptsa.Data.Configurations.ProjectConfiguration;
 
 namespace Chilicki.Ptsa.Domain.Search.Mappers
 {
@@ -31,13 +31,7 @@ namespace Chilicki.Ptsa.Domain.Search.Mappers
                 StartVertex = await vertexRepository.GetByStopId(searchInput.StartStopId),
                 DestinationVertex = await vertexRepository.GetByStopId(searchInput.DestinationStopId),
                 StartTime = searchInput.StartTime,
-                Parameters = new SearchParameters()
-                {
-                    MaxTimeAheadFetchingPossibleConnections = 120,
-                    MaximalTransferDistanceInMinutes = 20,
-                    MinimalTransferTime = 0,
-                    MinimumPossibleConnectionsFetched = 3,
-                }
+                Parameters = searchInput.Parameters,
             };
         }
 

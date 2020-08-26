@@ -5,10 +5,10 @@ using Chilicki.Ptsa.Data.Configurations.ProjectConfiguration;
 using Chilicki.Ptsa.Domain.Gtfs.Services;
 using Chilicki.Ptsa.Domain.Search.Dtos;
 using Chilicki.Ptsa.Domain.Search.Managers;
-using Chilicki.Ptsa.Domain.Search.Mappers;
 using Chilicki.Ptsa.Domain.Search.Services.SearchInputs;
 using Chilicki.Ptsa.Domain.Search.Services.Summary;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Text;
@@ -18,57 +18,75 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
 {
     public class ConsoleSearchService
     {
-        readonly AppSettings appSettings;
-        readonly GtfsImportService importService;
-        readonly SearchManager searchManager;
-        readonly GraphManager graphManager;
-        readonly MultipleCriteriaSearchManager multipleCriteriaSearchManager;
+        private readonly SearchSettings searchSettings;
+        private readonly PathSettings pathSettings;
+        private readonly ModuleType moduleType;
+        private readonly DatabaseType databaseType;
+        private readonly SummarySettings summarySettings;
+        private readonly GtfsImportService importService;
+        private readonly SearchManager searchManager;
+        private readonly GraphManager graphManager;
+        private readonly MultipleCriteriaSearchManager multipleCriteriaSearchManager;
         private readonly RandomSearchInputGenerator searchInputGenerator;
         private readonly DataSummaryService dataSummaryService;
 
         public ConsoleSearchService(
-            IOptions<AppSettings> appSettings,
+            IOptions<SearchSettings> searchSettingsOptions,
             GtfsImportService importService,
             SearchManager searchManager,
             GraphManager graphManager,
             MultipleCriteriaSearchManager multipleCriteriaSearchManager,
             RandomSearchInputGenerator searchInputGenerator,
-            DataSummaryService dataSummaryService)
+            DataSummaryService dataSummaryService,
+            IOptions<PathSettings> pathSettingsOptions,
+            IOptions<ModuleTypes> moduleTypeOptions,
+            IOptions<ConnectionStrings> connectionStringsOptions,
+            IOptions<SummarySettings> summarySettingsOptions)
         {
-            this.appSettings = appSettings.Value;
+            this.searchSettings = searchSettingsOptions.Value;
             this.importService = importService;
             this.searchManager = searchManager;
             this.graphManager = graphManager;
             this.multipleCriteriaSearchManager = multipleCriteriaSearchManager;
             this.searchInputGenerator = searchInputGenerator;
             this.dataSummaryService = dataSummaryService;
+            this.pathSettings = pathSettingsOptions.Value;
+            this.moduleType = moduleTypeOptions.Value.ModuleType;
+            this.databaseType = connectionStringsOptions.Value.DatabaseType;
+            this.summarySettings = summarySettingsOptions.Value;
         }
 
         public async Task Run()
         {
             try
             {
-                var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-                if (environmentName == "GtfsImport" || environmentName == "GtfsImportPC")
-                    await ImportGtfs();
-                if (environmentName == "DijkstraSearch" || environmentName == "DijkstraSearchPC")
-                    await SearchWithDijkstra();
-                if (environmentName == "CreateGraph")
-                    await CreateGraph();
-                if (environmentName == "DijkstraBenchmark")
-                    await PerformDijkstraBenchmark();
-                if (environmentName == "MultipleDijkstraSearch")
-                    await SearchWithMultipleCriteriaDijkstra();
-                if (environmentName == "MultipleDijkstraBenchmark")
-                    await PerformMultipleDijkstraBenchmark();
-                if (environmentName == "GenerateRandomSearchInputs")
-                    await GenerateRandomSearchInputs();
-                if (environmentName == "Benchmarks")
-                    PerformFullBenchmarks();
-                if (environmentName == "DataSummary")
-                    await PerformDataSummary();
-                if (environmentName == "NearCenterDataSummary")
-                    await PerformNearCenterDataSummary();
+                switch (moduleType)
+                {
+                    case ModuleType.ImportGtfs:
+                        await ImportGtfs();
+                        break;
+                    case ModuleType.ConvertGtfsToGraph:
+                        await CreateGraph();
+                        break;
+                    case ModuleType.GenerateRandomSearchInputs:
+                        await GenerateRandomSearchInputs();
+                        break;
+                    case ModuleType.SearchWithDijkstra:
+                        await SearchWithDijkstra();
+                        break;
+                    case ModuleType.SearchWithMultipleCriterionDijkstra:
+                        await SearchWithMultipleCriteriaDijkstra();
+                        break;
+                    case ModuleType.ExecuteBenchmark:
+                        PerformFullBenchmarks();
+                        break;
+                    case ModuleType.CreateDataSummary:
+                        await PerformDataSummary();
+                        break;
+                    case ModuleType.CreateDataSummaryFromCityCenter:
+                        await PerformNearCenterDataSummary();
+                        break;
+                };
             }
             catch (Exception ex)
             {
@@ -89,18 +107,10 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
 
         private async Task GenerateRandomSearchInputs()
         {
-            string path = $"C:\\Users\\Marcin Chilicki\\Desktop\\RandomSearchInputs.txt";
-            var searches = await searchInputGenerator.Generate(25);
-            var sb = new StringBuilder();
-            foreach (var search in searches)
-            {
-                sb.Append($"new SearchInputDto() {{ " +
-                    $"StartStopId = new Guid(\"{search.StartStopId}\"), " +
-                    $"DestinationStopId = new Guid(\"{search.DestinationStopId}\"), " +
-                    $"StartTime = TimeSpan.Parse(\"{search.StartTime}\") }},{Environment.NewLine}");
-            }
-            string result = sb.ToString();
-            File.WriteAllText(path, result);
+            string path = pathSettings.CurrentSearchInputsFile(databaseType);
+            var searches = await searchInputGenerator.Generate(summarySettings.SearchInputCount);
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
+            File.WriteAllText(path, JsonConvert.SerializeObject(searches));
         }
 
         private void PerformFullBenchmarks()
@@ -113,25 +123,15 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
             Console.ReadKey();
         }
 
-        private async Task PerformMultipleDijkstraBenchmark()
-        {
-            await multipleCriteriaSearchManager.PerformDijkstraBenchmark();
-        }
-
-        private async Task PerformDijkstraBenchmark()
-        {
-            await searchManager.PerformDijkstraBenchmark(appSettings.BenchmarkIterations);
-        }
-
         private async Task SearchWithDijkstra()
         {
-            var search = SearchInputDto.Create(appSettings);
+            var search = SearchInputDto.Create(searchSettings);
             await searchManager.SearchFastestConnections(search);
         }
 
         private async Task SearchWithMultipleCriteriaDijkstra()
         {
-            var search = SearchInputDto.Create(appSettings);
+            var search = SearchInputDto.Create(searchSettings);
             await multipleCriteriaSearchManager.SearchBestConnections(search);
         }
 
@@ -142,7 +142,7 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
 
         private async Task ImportGtfs()
         {
-            var gtfsFolderPath = appSettings.ImportGtfsPath;
+            var gtfsFolderPath = pathSettings.GtfsImportFolder;
             await importService.ImportGtfs(gtfsFolderPath);
         }
     }

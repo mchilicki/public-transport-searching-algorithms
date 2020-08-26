@@ -57,23 +57,6 @@ namespace Chilicki.Ptsa.Domain.Search.Managers
             await PerformSearchWithLog(search, graph);
         }
 
-        public async Task PerformDijkstraBenchmark()
-        {
-            var searchInputDtos = CurrentInputSearches.Searches;
-            var searches = await mapper.ToDomain(searchInputDtos);
-            var graph = await graphRepository.GetGraph();
-            var measures = new List<PerformanceMeasure>();
-            foreach (var search in searches)
-            {
-                var stopwatch = Stopwatch.StartNew();
-                var bestConnections = PerformSearch(search, graph);
-                stopwatch.Stop();
-                var paths = bestPathResolver.ResolveBestPaths(search, bestConnections);
-                measures.Add(PerformanceMeasure.Create(paths, stopwatch.Elapsed));
-            }
-            await measureLogger.Log(measures, algorithmName);
-        }
-
         private async Task PerformSearchWithLog(SearchInput search, Graph graph)
         {
             var stopwatch = Stopwatch.StartNew();

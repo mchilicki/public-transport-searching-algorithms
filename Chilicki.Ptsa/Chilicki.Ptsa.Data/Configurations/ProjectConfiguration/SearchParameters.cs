@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Chilicki.Ptsa.Domain.Search.Configurations.Options
+namespace Chilicki.Ptsa.Data.Configurations.ProjectConfiguration
 {
     public class SearchParameters
     {
         public int MaxTimeAheadFetchingPossibleConnections { get; set; }
         public int MinimumPossibleConnectionsFetched { get; set; }
-        public int MinimalTransferTime { get; set; }
-        public int MaximalTransferDistanceInMinutes { get; set; }
+        public int MinimalTransferInMinutes { get; set; }
+        public int MaximalTransferInMinutes { get; set; }
     }
 }

@@ -1,65 +1,7 @@
 {
   "profiles": {
-    "GtfsImport": {
+    "Ptsa": {
       "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "GtfsImport"
-      }
-    },
-    "CreateGraph": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "CreateGraph"
-      }
-    },
-    "GenerateRandomSearchInputs": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "GenerateRandomSearchInputs"
-      }
-    },
-    "Benchmarks": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Benchmarks"
-      }
-    },
-    "DijkstraSearch": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "DijkstraSearch"
-      }
-    },
-    "MultipleDijkstraSearch": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "MultipleDijkstraSearch"
-      },
-      "nativeDebugging": false
-    },
-    "DataSummary": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "DataSummary"
-      }
-    },
-    "NearCenterDataSummary": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "NearCenterDataSummary"
-      }
-    },
-    "DijkstraBenchmark": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "DijkstraBenchmark"
-      }
-    },
-    "MultipleDijkstraBenchmark": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "MultipleDijkstraBenchmark"
-      }
     }
   }
 }

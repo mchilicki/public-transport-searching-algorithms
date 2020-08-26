@@ -1,5 +1,7 @@
-﻿using Chilicki.Ptsa.Data.Repositories;
+﻿using Chilicki.Ptsa.Data.Configurations.ProjectConfiguration;
+using Chilicki.Ptsa.Data.Repositories;
 using Chilicki.Ptsa.Domain.Search.Services.SearchInputs;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,26 +17,23 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Summary
         private readonly GraphRepository graphRepository;
         private readonly RouteRepository routeRepository;
         private readonly TripRepository tripRepository;
-        private readonly VertexRepository vertexRepository;
-        private readonly ConnectionRepository connectionRepository;
         private readonly StopsFinder stopsFinder;
+        private readonly PathSettings pathSettings;
 
         public DataSummaryService(
             AgencyRepository agencyRepository,
             GraphRepository graphRepository,
             RouteRepository routeRepository,
             TripRepository tripRepository,
-            VertexRepository vertexRepository,
-            ConnectionRepository connectionRepository,
-            StopsFinder stopsFinder)
+            StopsFinder stopsFinder,
+            IOptions<PathSettings> pathSettingsOptions)
         {
             this.agencyRepository = agencyRepository;
             this.graphRepository = graphRepository;
             this.routeRepository = routeRepository;
             this.tripRepository = tripRepository;
-            this.vertexRepository = vertexRepository;
-            this.connectionRepository = connectionRepository;
             this.stopsFinder = stopsFinder;
+            pathSettings = pathSettingsOptions.Value;
         }
 
         public async Task Summarize()
@@ -92,7 +91,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Summary
             AppendLine(sb, "MinSimilarConnectionsPerVertexCount", minSimilarConnectionsPerVertexCount);
             AppendLine(sb, "MaxSimilarConnectionsPerVertexCount", maxSimilarConnectionsPerVertexCount);
             string summary = sb.ToString();
-            File.WriteAllText($"Summaries\\Summary-{DateTime.Now.ToShortDateString()}.txt", summary);
+            File.WriteAllText($"{pathSettings.DataSummaryOutputFolder}Summary-{DateTime.Now.ToShortDateString()}.txt", summary);
         }
 
         public async Task SummarizeNearCenter()
@@ -135,7 +134,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Summary
             AppendLine(sb, "MinSimilarConnectionsPerVertexCount", minSimilarConnectionsPerVertexCount);
             AppendLine(sb, "MaxSimilarConnectionsPerVertexCount", maxSimilarConnectionsPerVertexCount);
             string summary = sb.ToString();
-            File.WriteAllText($"Summaries\\Summary-{DateTime.Now.ToShortDateString()}.txt", summary);
+            File.WriteAllText($"{pathSettings.DataSummaryOutputFolder}Summary-{DateTime.Now.ToShortDateString()}.txt", summary);
         }
 
         private void AppendLine(StringBuilder sb, string name, int count)

@@ -22,7 +22,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
         readonly ISimilarVertexRepository similarVertexRepository;
         private readonly HaversineDistanceCalculator distanceCalculator;
         private readonly KilometersToDistanceMinutesConverter minutesConverter;
-        private readonly double NEIGHBOUR_MAXIMUM_DISTANCE = 0.8;
+        private readonly double SimilarVertexMaximalDistanceInKm;
 
         public GraphFactory(
             ConnectionFactory connectionFactory,
@@ -32,7 +32,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
             ISimilarVertexRepository similarVertexRepository,
             HaversineDistanceCalculator distanceCalculator,
             KilometersToDistanceMinutesConverter minutesConverter,
-            IOptions<AppSettings> options)
+            IOptions<GraphCreationSettings> options)
         {
             this.connectionFactory = connectionFactory;
             this.connectionRepository = connectionRepository;
@@ -41,7 +41,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
             this.similarVertexRepository = similarVertexRepository;
             this.distanceCalculator = distanceCalculator;
             this.minutesConverter = minutesConverter;
-            NEIGHBOUR_MAXIMUM_DISTANCE = options.Value.SimilarVertexMaximumDistanceInKm;
+            SimilarVertexMaximalDistanceInKm = options.Value.SimilarVertexMaximumDistanceInKm;
         }
 
         public async Task<Graph> CreateGraph(IEnumerable<Stop> stops)
@@ -160,7 +160,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.GraphFactories
                 if (vertex.Stop.Id == currentVertex.Stop.Id)
                     continue;
                 var distanceInKm = distanceCalculator.CalculateDistance(vertex, currentVertex);
-                if (distanceInKm > NEIGHBOUR_MAXIMUM_DISTANCE)
+                if (distanceInKm > SimilarVertexMaximalDistanceInKm)
                     continue;
                 var distanceInMinutes = minutesConverter.ConvertToDistanceInMinutes(distanceInKm);
                 list.Add((vertex, distanceInMinutes));

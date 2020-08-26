@@ -8,8 +8,9 @@ namespace Chilicki.Ptsa.Domain.Search.Dtos
         public Guid StartStopId { get; set; }
         public Guid DestinationStopId { get; set; }
         public TimeSpan StartTime { get; set; }
+        public SearchParameters Parameters { get; set; }
 
-        public static SearchInputDto Create(
+        public static SearchInputDto Create(            
             Guid startStopId, Guid destinationStopId, TimeSpan startTime)
         {
             return new SearchInputDto()
@@ -17,16 +18,17 @@ namespace Chilicki.Ptsa.Domain.Search.Dtos
                 StartStopId = startStopId,
                 DestinationStopId = destinationStopId,
                 StartTime = startTime,
-            };            
+            };
         }
 
-        public static SearchInputDto Create(AppSettings settings)
+        public static SearchInputDto Create(SearchSettings settings)
         {
             return new SearchInputDto
             {
                 StartStopId = settings.StartStopId,
                 DestinationStopId = settings.EndStopId,
                 StartTime = settings.StartTime,
+                Parameters = settings.Parameters,
             };            
         }
 
