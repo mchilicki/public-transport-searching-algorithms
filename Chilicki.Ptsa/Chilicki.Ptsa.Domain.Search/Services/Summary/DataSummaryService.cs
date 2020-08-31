@@ -88,7 +88,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Summary
             AppendLine(sb, "MinSimilarConnectionsPerVertexCount", minSimilarConnectionsPerVertexCount);
             AppendLine(sb, "MaxSimilarConnectionsPerVertexCount", maxSimilarConnectionsPerVertexCount);
             string summary = sb.ToString();
-            string path = $"{pathSettings.DataSummaryOutputFolder}Summary-{databaseType}-{DateTime.Now.ToShortDateString()}.txt";
+            string path = $"{pathSettings.DataSummaryOutputFolder}Summary-{databaseType}-{DateTime.Now:yyyy-MM-dd}.txt";
             Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
             File.WriteAllText(path, summary);
         }
@@ -130,7 +130,7 @@ namespace Chilicki.Ptsa.Domain.Search.Services.Summary
             AppendLine(sb, "MinSimilarConnectionsPerVertexCount", minSimilarConnectionsPerVertexCount);
             AppendLine(sb, "MaxSimilarConnectionsPerVertexCount", maxSimilarConnectionsPerVertexCount);
             string summary = sb.ToString();
-            string path = $"{pathSettings.DataSummaryOutputFolder}SummaryCityCenter-{databaseType}-{DateTime.Now.ToShortDateString()}.txt";
+            string path = $"{pathSettings.DataSummaryOutputFolder}SummaryCityCenter-{databaseType}-{DateTime.Now:yyyy-MM-dd}.txt";
             Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
             File.WriteAllText(path, summary);
         }
