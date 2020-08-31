@@ -1,5 +1,7 @@
 ﻿using Chilicki.Ptsa.Data.Configurations.ProjectConfiguration;
+using Chilicki.Ptsa.Data.Databases;
 using Chilicki.Ptsa.Search.Configurations.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -17,6 +19,7 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
         public async Task Run()
         {
             Configure();
+            await MigrateDatabase();
             await RunService();
         }
 
@@ -65,6 +68,12 @@ namespace Chilicki.Ptsa.Search.Configurations.Startup
                 .AddJsonFile($"appsettings.{environmentName}.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
+        }
+
+        private async Task MigrateDatabase()
+        {
+            var dbContext = ServiceProvider.GetRequiredService<DbContext>();
+            await dbContext.Database.MigrateAsync();
         }
 
         private async Task RunService()
